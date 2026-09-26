@@ -1,5 +1,7 @@
 // Lines and line segments: a port of GLMakie's lines.geom / line_segment.geom and lines.frag to
-// instanced 4-vertex triangle strips with vertex pulling (one instance per segment).
+// instanced 4-vertex triangle strips (one instance per segment). Each instance gets the points
+// around its segment (GLMakie's lines_adjacency p0..p3) and its end colors as instance-step
+// vertex attributes.
 //
 // Every vertex recomputes the segment's geometry from its neighbours. Joint data (miter normal,
 // truncation, discard line) is derived from segment directions computed by the same expression in
@@ -12,8 +14,8 @@ const SQUARE: u32 = 1u;
 const ROUND: u32 = 2u;
 const BEVEL: u32 = 3u;            // joinstyle: 0 miter, 2 round, 3 bevel
 const GUARD: f32 = 8192.0;        // px beyond the target where segments are clipped
-const MIN_LEN: f32 = 1e-3;        // px; shorter segments are skipped and bridged by their neighbours
-const MAX_SKIP: u32 = 8u;         // degenerate segments looked past when searching for a neighbour
+const MIN_LEN: f32 = 1e-3;        // px; shorter segments are skipped (exact duplicate points are
+                                  // bridged by their neighbours, see line.rs)
 
 struct LineU {
     xform: vec4<f32>,             // device px = local * xy + zw
@@ -34,11 +36,18 @@ struct LineU {
     cm: CMap,
 };
 @group(1) @binding(0) var<uniform> u: LineU;
-@group(1) @binding(1) var<storage, read> pts: array<vec2<f32>>;
-@group(1) @binding(2) var<storage, read> cum: array<f32>;   // arc length (px) mod dash period
-@group(1) @binding(3) var<storage, read> lcol: array<u32>;
-@group(1) @binding(4) var<storage, read> lval: array<f32>;
-@group(1) @binding(5) var lut: texture_2d<f32>;
+@group(1) @binding(1) var lut: texture_2d<f32>;
+
+// Per segment k (points k and k + 1). Streams a line doesn't use hold arbitrary data.
+struct LineIn {
+    @location(0) q0: vec2<f32>,   // the point before p1 (past exact duplicates; across the seam of closed loops)
+    @location(1) a: vec2<f32>,    // p1 = point k
+    @location(2) b: vec2<f32>,    // p2 = point k + 1
+    @location(3) q3: vec2<f32>,   // the point after p2
+    @location(4) col1: u32,       // premultiplied RGBA8 (color_mode 1) or f32 bits of the value (2)
+    @location(5) col2: u32,
+    @location(6) cum1: f32,       // arc length (px) at p1 mod the dash period
+};
 
 struct LineV {
     @builtin(position) pos: vec4<f32>,
@@ -68,10 +77,10 @@ fn sign_nz(x: f32) -> f32 { return select(-1.0, 1.0, x >= 0.0); }
 fn finite2(p: vec2<f32>) -> bool { return finite_bits(p.x) && finite_bits(p.y); }
 fn to_px(q: vec2<f32>) -> vec2<f32> { return q * u.xform.xy + u.xform.zw; }
 
-// Premultiplied color (or `(value, 0, 0, 0)` for colormapped lines) of point i.
-fn vcolor(i: u32) -> vec4<f32> {
-    if (u.color_mode == 1u) { return unpack4x8unorm(lcol[i]); }
-    if (u.color_mode == 2u) { return vec4<f32>(lval[i], 0.0, 0.0, 0.0); }
+// Premultiplied color (or `(value, 0, 0, 0)` for colormapped lines) of a point's stream entry.
+fn vcolor(c: u32) -> vec4<f32> {
+    if (u.color_mode == 1u) { return unpack4x8unorm(c); }
+    if (u.color_mode == 2u) { return vec4<f32>(bitcast<f32>(c), 0.0, 0.0, 0.0); }
     return u.color;
 }
 
@@ -84,14 +93,16 @@ fn clip_axis(t: vec2<f32>, s: f32, d: f32, lo: f32, hi: f32) -> vec2<f32> {
 }
 
 @vertex
-fn vs_line(@builtin(vertex_index) vid: u32, @builtin(instance_index) seg: u32) -> LineV {
+fn vs_line(@builtin(vertex_index) vid: u32, @builtin(instance_index) seg: u32, v: LineIn) -> LineV {
     var o: LineV;   // zero-initialised: an early return gives a degenerate quad
     let strip = u.segments == 0u;
-    let i1 = select(2u * seg, seg, strip);
+    // Segments mode draws the pairs (k, k + 1) of even k.
+    if (!strip && (seg & 1u) == 1u) { return o; }
+    let i1 = seg;
     let i2 = i1 + 1u;
     if (i2 >= u.n) { return o; }
-    let a = pts[i1];
-    let b = pts[i2];
+    let a = v.a;
+    let b = v.b;
     if (!(finite2(a) && finite2(b))) { return o; }
     var p1 = to_px(a);
     var p2 = to_px(b);
@@ -100,8 +111,8 @@ fn vs_line(@builtin(vertex_index) vid: u32, @builtin(instance_index) seg: u32) -
     if (!(finite2(p1) && finite2(p2)) || len12 < MIN_LEN) { return o; }
     let v1 = normalize(d12);
 
-    // Directions of the neighbouring drawn segments (past degenerate ones), computed exactly as
-    // those segments compute their own v1.
+    // Directions of the neighbouring drawn segments, computed exactly as those segments compute
+    // their own v1 (so both sides of a joint agree bit for bit).
     var ok0 = false;
     var ok3 = false;
     var v0 = v1;
@@ -110,46 +121,28 @@ fn vs_line(@builtin(vertex_index) vid: u32, @builtin(instance_index) seg: u32) -
     var len2 = 0.0;
     if (strip) {
         let closed = u.closed == 1u;
-        var j = i1;
-        for (var k = 0u; k < MAX_SKIP; k++) {
-            if (j == 0u) {
-                if (!closed) { break; }
-                j = u.n - 1u;   // continue with the last segment (its end repeats point 0)
-            }
-            let q = pts[j - 1u];
-            if (!finite2(q)) { break; }
-            let d = to_px(pts[j]) - to_px(q);
+        if ((i1 > 0u || closed) && finite2(v.q0)) {
+            let d = p1 - to_px(v.q0);
             if (length(d) >= MIN_LEN) {
                 v0 = normalize(d);
                 len0 = length(d);
                 ok0 = finite2(v0);
-                break;
             }
-            j -= 1u;
         }
-        j = i2;
-        for (var k = 0u; k < MAX_SKIP; k++) {
-            if (j + 1u >= u.n) {
-                if (!closed) { break; }
-                j = 0u;
-            }
-            let q = pts[j + 1u];
-            if (!finite2(q)) { break; }
-            let d = to_px(q) - to_px(pts[j]);
+        if ((i2 + 1u < u.n || closed) && finite2(v.q3)) {
+            let d = to_px(v.q3) - p2;
             if (length(d) >= MIN_LEN) {
                 v2 = normalize(d);
                 len2 = length(d);
                 ok3 = finite2(v2);
-                break;
             }
-            j += 1u;
         }
     }
 
-    var c1 = vcolor(i1);
-    var c2 = vcolor(i2);
+    var c1 = vcolor(v.col1);
+    var c2 = vcolor(v.col2);
     var cum0 = 0.0;
-    if (strip && u.n_breaks > 1u) { cum0 = cum[i1]; }
+    if (strip && u.n_breaks > 1u) { cum0 = v.cum1; }
 
     // Guard band: clip far off-screen ends so vertices and interpolated SDFs keep precision.
     // A clipped end becomes a (far away, invisible) cap.

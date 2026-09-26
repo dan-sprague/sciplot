@@ -74,14 +74,21 @@ affine `AxisXform::affine(ppu)` computed in f64, so pan/zoom never re-uploads pl
 The layout port (src/layout) is GridLayoutBase-exact: see `LayoutItem`, `BlockSize`, `AlignMode`.
 
 **A new GPU pipeline** (`src/render/gpu/pipelines/<name>.rs` + `<name>.wgsl`):
-`create(device, globals_layout) -> <Name>Pipeline` and `prepare(&mut Frame, &Prim..., xform) ->
-Option<DrawCmd>`. `Frame` (src/render/gpu/frame.rs) provides `storage(&Buf)` / `buffer(&Buf, usage)`
-(cached by `BufKey`), `transient(bytes, usage)`, `push_uniform(&T) -> dyn offset` (<= 256 B blocks),
-`uniform_binding::<T>()`, `lut(&Arc<Vec<Color>>)`, `dummy()`, `ppu`, `size`. WGSL files get
-`common.wgsl` prepended (Globals at group 0: `g.target_px`, `g.ppu`, `lin_samp`; `px_to_clip`,
-`finite_bits`, `nan_bits`, `CMap`, `cmap_lookup`, `premul`). Register: one field in `Pipelines`, one
-line in `Pipelines::new`, one match arm in `Renderer::render` (`src/render/gpu/renderer.rs`).
-Integer varyings need `@interpolate(flat)`.
+`SHADER`, `layout(device) -> BindGroupLayout`, `pipeline(device, &Layouts, &ShaderModule, format) ->
+RenderPipeline` and `prepare(&mut Frame, &Prim..., xform) -> Option<DrawCmd>`. Everything must run on
+WebGPU **and WebGL2**: no storage buffers/textures or compute; per-element data comes in through
+instance-step vertex buffers (<= 8 buffers, 16 attributes; bind one buffer at several offsets to read
+neighbours, as `line` does), big arrays through `R32Float` textures + `textureLoad` (unfilterable;
+tile when larger than `max_texture_dimension_2d`, as `field` does). `Frame` (src/render/gpu/frame.rs)
+provides `vertex(&Buf)` / `points(&Buf, append, closed)` / `cached(key, rev, ..)` /
+`data_texture(..)` (cached by `BufKey` + a `tag`), `transient(bytes, usage)`, `push_uniform(&T) -> dyn
+offset` (<= 256 B blocks), `uniform_binding::<T>()`, `lut(&Arc<Vec<Color>>)`, `dummy_tex()`, `ppu`,
+`size`. WGSL files get `common.wgsl` prepended (Globals at group 0: `g.target_px`, `g.ppu`,
+`lin_samp`; `px_to_clip`, `finite_bits`, `nan_bits`, `CMap`, `cmap_lookup`, `premul`). Pipelines are
+built per target format (`Gpu::pipelines(format)`; canvases may be RGBA or BGRA). Register: one field
+in `Layouts` and `Pipelines` (+ constructors and `sources()`), one match arm in `Renderer::render_to`
+(`src/render/gpu/renderer.rs`). Integer varyings need `@interpolate(flat)`. `tests/portability.rs`
+renders on a device with WebGL2 limits and translates every shader to GLSL ES 3.00; keep it green.
 
 ## Verifying
 

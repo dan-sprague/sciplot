@@ -7,7 +7,8 @@ use crate::figure::Figure;
 use parking_lot::{Condvar, Mutex};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::time::{Duration, Instant};
+use std::time::Duration;
+use web_time::Instant;
 use winit::event_loop::EventLoopProxy;
 use winit::platform::run_on_demand::EventLoopExtRunOnDemand;
 

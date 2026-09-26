@@ -7,19 +7,19 @@ struct GlyphU {
     _pad: vec2<f32>,
 };
 
+// One glyph per instance (an instance-step vertex buffer).
 struct GlyphI {
-    origin: vec2<f32>,   // glyph origin on the baseline, device px
-    off: vec2<f32>,      // slot top-left relative to the origin, upright, y down
-    size: vec2<f32>,     // slot size in px (= texels)
-    uv: vec2<f32>,       // slot top-left texel
-    cs: vec2<f32>,       // cos, sin of the counter-clockwise angle
-    color: u32,          // premultiplied RGBA8
-    flags: u32,          // 1: sample linearly
+    @location(0) origin: vec2<f32>,   // glyph origin on the baseline, device px
+    @location(1) off: vec2<f32>,      // slot top-left relative to the origin, upright, y down
+    @location(2) size: vec2<f32>,     // slot size in px (= texels)
+    @location(3) uv: vec2<f32>,       // slot top-left texel
+    @location(4) cs: vec2<f32>,       // cos, sin of the counter-clockwise angle
+    @location(5) color: u32,          // premultiplied RGBA8
+    @location(6) flags: u32,          // 1: sample linearly
 };
 
 @group(1) @binding(0) var<uniform> gu: GlyphU;
-@group(1) @binding(1) var<storage, read> glyphs: array<GlyphI>;
-@group(1) @binding(2) var atlas: texture_2d<f32>;
+@group(1) @binding(1) var atlas: texture_2d<f32>;
 
 struct GlyphV {
     @builtin(position) pos: vec4<f32>,
@@ -30,8 +30,7 @@ struct GlyphV {
 };
 
 @vertex
-fn vs_glyph(@builtin(vertex_index) vid: u32, @builtin(instance_index) i: u32) -> GlyphV {
-    let gi = glyphs[i];
+fn vs_glyph(@builtin(vertex_index) vid: u32, gi: GlyphI) -> GlyphV {
     let corner = vec2<f32>(f32(vid & 1u), f32(vid >> 1u));
     let l = gi.off + corner * gi.size;
     let c = gi.cs.x;

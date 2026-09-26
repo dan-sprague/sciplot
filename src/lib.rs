@@ -52,6 +52,9 @@ pub mod testing;
 
 #[doc(hidden)]
 pub use macros::{__as_axis, AsAxis};
+/// GPU portability hooks (WebGL2-limited contexts, shader sources) for `tests/portability.rs`.
+#[doc(hidden)]
+pub use render::gpu::testing as gpu_testing;
 
 pub use attrs::Conv;
 pub use blocks::axis::AxisTheme;

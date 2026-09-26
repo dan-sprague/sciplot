@@ -9,6 +9,7 @@ mod position;
 mod save;
 
 pub use position::{GridPosition, IntoSpan, Prepend, Side, Span};
+#[allow(unused_imports)] // used by the window frame dump and tests (not in wasm builds)
 pub(crate) use save::write_png;
 pub use save::{RgbaImage, Save};
 

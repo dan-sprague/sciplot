@@ -6,7 +6,8 @@ use crate::error::{Error, Result};
 use crate::figure::Figure;
 use std::cell::{Cell, RefCell};
 use std::marker::PhantomData;
-use std::time::{Duration, Instant};
+use std::time::Duration;
+use web_time::Instant;
 use winit::platform::pump_events::EventLoopExtPumpEvents;
 use winit::window::WindowId;
 
