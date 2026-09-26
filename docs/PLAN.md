@@ -288,3 +288,46 @@ Execution:
   - 2048² heatmap pan: < 3 ms GPU; its `set_data`: < 10 ms;
   - S1 PNG export: < 150 ms warm;
   - idle: ≈ 0 % CPU.
+
+---
+
+## 8. Update (2026-09-26): WASM visualization of dynamic systems is a major focus
+
+The base stays a usable library for publication-quality science/biology figures. On top of it,
+interactive **in-browser dynamic systems** become a core target. User decisions:
+- **Browsers: WebGPU with WebGL2 fallback.** Pipelines must not use storage buffers: feed shaders
+  through vertex/instance buffers (lines bind one buffer at several offsets for p0..p3) and data
+  textures (`R32Float` + `textureLoad`) instead. Pipelines are created per target format (the web
+  canvas may be `Rgba8Unorm` or `Bgra8Unorm`); keep non-sRGB targets.
+- **Web model: the simulation runs in wasm first; standalone HTML export after.** One wasm module holds the
+  Rust simulation and the figure, mounted in a canvas, driven by a per-frame callback. Later:
+  `fig.save("fig.html")` for self-contained interactive figures (pan/zoom/hover) for supplements.
+- **Dynamic-systems features (all wanted):** parameter widgets (Makie-style Slider/SliderGrid/Toggle/
+  Button blocks drawn by ezviz itself, with `on_change` callbacks), vector fields (arrows, streamplot),
+  contour/contourf (nullclines, level sets), 3D (Axis3 with lines3d/scatter3d/surface, orbit camera).
+
+Architecture rules that follow:
+- Core (figure, scene, layout, text, ticks, SVG) stays platform-independent: no threads, no
+  `std::time::Instant` (use `web-time`), no blocking; GPU init has an async path (wasm) and a sync
+  wrapper (native); file-path `save` gets byte-returning siblings (`to_png_bytes`, `to_svg_string`).
+- **Portable animation API:** `fig.animate(|frame| { ... })` runs a callback every display frame on
+  the event-loop thread (native main thread / browser `requestAnimationFrame` via winit), with `t`,
+  `dt`, frame count and stop control. Widget callbacks run on the same thread. The native-only
+  `show_live` (simulation on a worker thread) stays for heavy simulations.
+- **Web entry:** on wasm, `fig.show()` mounts into a canvas (by id, or appended to the body) and
+  returns immediately (`EventLoop::spawn_app`). A demo lives in `examples/web/` (Lorenz and
+  Gray–Scott with sliders). It is verified by building for `wasm32-unknown-unknown` and rendering the
+  page in headless Chrome with WebGPU enabled and with WebGL2 forced; this captures the page, never
+  the desktop.
+
+Revised order after wave 1 merges:
+1. **Portability pass:** no storage buffers, per-format pipelines, `web-time`, async GPU init, byte
+   exports; the `wasm32` build compiles. Also finish the 2D core: Axis tick attributes, Legend,
+   Colorbar, Label, h/v/ablines, and the `animate` API on native.
+2. **Web backend:** canvas mount, input events, HiDPI, the demo, and headless-browser checks
+   (WebGPU and WebGL2).
+3. **Dynamic systems 2D:** widgets (Slider/SliderGrid/Toggle/Button), arrows + streamplot,
+   contour/contourf.
+4. **3D:** Axis3, depth buffer, orbit camera, lines3d/scatter3d/surface/mesh, 3D ticks.
+5. **Standalone interactive HTML export.**
+6. The remaining original polish milestones (M8–M10: interaction polish, live polish, themes/perf/docs).
