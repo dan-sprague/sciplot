@@ -110,10 +110,12 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
             cols: bslot.place.cols,
             side: bslot.place.side,
             protrusion,
-            width: attrs.width,
-            height: attrs.height,
+            width: attrs.width.into(),
+            height: attrs.height.into(),
             tellwidth: true,
             tellheight: true,
+            round: true,
+            ..Default::default()
         });
         axes.push(AxisFrame {
             id,

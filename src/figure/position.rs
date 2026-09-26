@@ -131,6 +131,9 @@ impl GridPosition {
                     s.place.rows.0 += 1;
                     s.place.rows.1 += 1;
                 }
+                // Sizes and gaps move with their rows (Makie offsets).
+                st.grid.rowsizes.iter_mut().for_each(|(i, _)| *i += 1);
+                st.grid.rowgaps.iter_mut().for_each(|(i, _)| *i += 1);
                 (1, 1)
             }
         };
@@ -143,6 +146,9 @@ impl GridPosition {
                     s.place.cols.0 += 1;
                     s.place.cols.1 += 1;
                 }
+                // Sizes and gaps move with their cols (Makie offsets).
+                st.grid.colsizes.iter_mut().for_each(|(i, _)| *i += 1);
+                st.grid.colgaps.iter_mut().for_each(|(i, _)| *i += 1);
                 (1, 1)
             }
         };
