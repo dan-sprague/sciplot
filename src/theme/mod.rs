@@ -6,6 +6,7 @@ use crate::color::{Color, WONG};
 use crate::plots::band::{BandAttrs, BandTheme};
 use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
 use crate::plots::hist::{HistAttrs, HistTheme};
+use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
 use crate::plots::textplot::TextAttrs;
 use parking_lot::RwLock;
@@ -68,6 +69,7 @@ pub struct Theme {
     pub(crate) hist: HistAttrs,
     pub(crate) band: BandAttrs,
     pub(crate) text: TextAttrs,
+    pub(crate) heatmap: HeatmapAttrs,
 }
 
 macro_rules! theme_setters {
@@ -134,6 +136,12 @@ impl Theme {
         self
     }
 
+    /// Heatmap defaults: `Theme::new().heatmap(|h| h.colormap(Colormap::MAGMA))`.
+    pub fn heatmap(mut self, f: impl FnOnce(HeatmapTheme) -> HeatmapTheme) -> Self {
+        self.heatmap = f(HeatmapTheme(self.heatmap)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -159,6 +167,7 @@ impl Theme {
         out.hist.merge_from(&self.hist);
         out.band.merge_from(&self.band);
         out.text.merge_from(&self.text);
+        out.heatmap.merge_from(&self.heatmap);
         out
     }
 

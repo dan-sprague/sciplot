@@ -6,6 +6,7 @@
 //! and one match arm in `Renderer::render`.
 
 pub(crate) mod glyph;
+pub(crate) mod field;
 pub(crate) mod mesh;
 pub(crate) mod sprite;
 
@@ -17,6 +18,7 @@ pub(crate) struct Pipelines {
     pub sampler: wgpu::Sampler,
     pub nearest: wgpu::Sampler,
     pub mesh: mesh::MeshPipeline,
+    pub field: field::FieldPipeline,
     pub sprite: sprite::SpritePipeline,
     pub glyph: glyph::GlyphPipeline,
 }
@@ -53,6 +55,7 @@ impl Pipelines {
         });
         Pipelines {
             mesh: mesh::create(device, &globals_layout),
+            field: field::create(device, &globals_layout),
             sprite: sprite::create(device, &globals_layout),
             glyph: glyph::create(device, &globals_layout),
             globals_layout,
