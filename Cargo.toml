@@ -10,7 +10,7 @@ include = ["src/**", "assets/fonts/**", "LICENSE-MIT", "README.md"]
 
 [features]
 default = ["window", "cpu-png"]
-window = ["dep:winit", "dep:objc2", "dep:objc2-quartz-core", "dep:objc2-core-graphics", "dep:objc2-foundation"]
+window = ["dep:winit", "dep:objc2", "dep:objc2-quartz-core", "dep:objc2-core-graphics"]
 cpu-png = ["dep:resvg"]
 ndarray = ["dep:ndarray"]
 testing = ["window"]
@@ -30,9 +30,8 @@ resvg = { version = "0.48.1", optional = true, default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = { version = "0.6", optional = true }
-objc2-foundation = { version = "0.3", optional = true }
-objc2-quartz-core = { version = "0.3", optional = true }
-objc2-core-graphics = { version = "0.3", optional = true }
+objc2-quartz-core = { version = "0.3", optional = true, default-features = false, features = ["std", "CALayer", "CAMetalLayer", "objc2-core-graphics"] }
+objc2-core-graphics = { version = "0.3", optional = true, default-features = false, features = ["std", "CGColorSpace"] }
 
 [dev-dependencies]
 rand = "0.9"
