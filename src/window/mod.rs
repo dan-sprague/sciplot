@@ -5,6 +5,7 @@
 //! frame (draw list, axis frames, the snapshot it came from); hover and the rectangle-zoom shade
 //! are overlays appended to that draw list, so they never trigger a relayout.
 
+mod animate;
 pub mod interact;
 mod live;
 #[cfg(target_os = "macos")]
@@ -14,6 +15,7 @@ mod pump;
 #[cfg(feature = "testing")]
 pub mod testing;
 
+pub use animate::Frame;
 pub use live::Live;
 pub use pump::Screen;
 

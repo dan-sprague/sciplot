@@ -109,6 +109,9 @@ pub use window::show_all;
 pub use window::testing as window_testing;
 #[cfg(feature = "window")]
 pub use window::{Live, Screen};
+/// The per-frame state passed to [`Figure::animate`] callbacks.
+#[cfg(feature = "window")]
+pub use window::Frame;
 
 /// Logs a warning once per distinct message.
 pub(crate) fn warn_once(msg: &'static str) {
