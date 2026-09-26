@@ -90,14 +90,26 @@ impl Figure {
         }
     }
 
+    /// The figure as PNG file bytes (no file I/O; works in the browser with the `cpu-png`
+    /// feature). Same rendering as [`Figure::render_rgba`]; the PNG records the resolution.
+    pub fn to_png_bytes(&self, opts: &Save) -> Result<Vec<u8>> {
+        let img = self.render_rgba(opts)?;
+        let mut out = Vec::new();
+        encode_png(&mut out, &img, opts.px_per_unit)?;
+        Ok(out)
+    }
+
     /// Renders to an RGBA8 image at `opts.px_per_unit` (headless; any thread). Uses the GPU, or
-    /// the CPU rasterizer when no GPU adapter exists or `opts.cpu(true)` is set.
+    /// the CPU rasterizer when no GPU adapter exists or `opts.cpu(true)` is set. In the browser
+    /// (wasm32) bitmaps always come from the CPU rasterizer: a GPU readback can't be awaited
+    /// synchronously there.
     pub fn render_rgba(&self, opts: &Save) -> Result<RgbaImage> {
         let st = self.sh.snapshot();
         #[cfg(feature = "cpu-png")]
         let force_cpu = opts.cpu || crate::render::cpu::forced_by_env();
         #[cfg(not(feature = "cpu-png"))]
         let force_cpu = false;
+        #[cfg(not(target_arch = "wasm32"))]
         if !force_cpu {
             match crate::render::gpu::gpu() {
                 Ok(gpu) => {
@@ -119,6 +131,7 @@ impl Figure {
         }
         #[cfg(feature = "cpu-png")]
         {
+            let _ = force_cpu;
             let (mut dl, _) = crate::scene::build(&st, None, &mut crate::scene::SceneCache::new());
             if let Some(bg) = opts.background {
                 dl.background = bg;
@@ -127,7 +140,10 @@ impl Figure {
             Ok(RgbaImage { width, height, data })
         }
         #[cfg(not(feature = "cpu-png"))]
-        Err(Error::Gpu("the CPU rasterizer needs the `cpu-png` feature".into()))
+        {
+            let _ = (st, force_cpu, opts);
+            Err(Error::Gpu("the CPU rasterizer needs the `cpu-png` feature".into()))
+        }
     }
 
     /// The figure as a standalone SVG document (`width`/`height` in points from
@@ -144,8 +160,13 @@ impl Figure {
 }
 
 pub(crate) fn write_png(path: &Path, img: &RgbaImage, px_per_unit: f64) -> Result<()> {
-    let file = std::io::BufWriter::new(std::fs::File::create(path)?);
-    let mut enc = png::Encoder::new(file, img.width, img.height);
+    encode_png(std::io::BufWriter::new(std::fs::File::create(path)?), img, px_per_unit)
+}
+
+/// Encodes `img` as an sRGB RGBA8 PNG with its physical resolution (`px_per_unit` at 96 units
+/// per inch).
+pub(crate) fn encode_png(out: impl std::io::Write, img: &RgbaImage, px_per_unit: f64) -> Result<()> {
+    let mut enc = png::Encoder::new(out, img.width, img.height);
     enc.set_color(png::ColorType::Rgba);
     enc.set_depth(png::BitDepth::Eight);
     enc.set_source_srgb(png::SrgbRenderingIntent::Perceptual);

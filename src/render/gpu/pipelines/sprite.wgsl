@@ -16,11 +16,14 @@ struct SpriteU {
     cm: CMap,
 };
 @group(1) @binding(0) var<uniform> m: SpriteU;
-@group(1) @binding(1) var<storage, read> mpos: array<vec2<f32>>;
-@group(1) @binding(2) var<storage, read> mcol: array<u32>;
-@group(1) @binding(3) var<storage, read> mval: array<f32>;
-@group(1) @binding(4) var<storage, read> msize: array<f32>;
-@group(1) @binding(5) var lut: texture_2d<f32>;
+@group(1) @binding(1) var lut: texture_2d<f32>;
+
+// Per-instance streams (unused ones hold arbitrary data).
+struct MarkerIn {
+    @location(0) pos: vec2<f32>,
+    @location(1) col: u32,     // premultiplied RGBA8 (col_mode 1) or f32 bits of the value (2)
+    @location(2) size: f32,    // units (size_stride 1)
+};
 
 struct MarkerV {
     @builtin(position) pos: vec4<f32>,
@@ -44,21 +47,21 @@ fn shape_radius(shape: u32) -> f32 {
 }
 
 @vertex
-fn vs_marker(@builtin(vertex_index) vid: u32, @builtin(instance_index) i: u32) -> MarkerV {
+fn vs_marker(@builtin(vertex_index) vid: u32, v: MarkerIn) -> MarkerV {
     var o: MarkerV;
-    let p = mpos[i];
+    let p = v.pos;
     if (!(finite_bits(p.x) && finite_bits(p.y))) {
         o.pos = vec4<f32>(0.0, 0.0, 0.0, 0.0);
         return o;
     }
     var size = m.size;
-    if (m.size_stride != 0u) { size = msize[i]; }
+    if (m.size_stride != 0u) { size = v.size; }
     size = size * g.ppu;
     var c = m.color;
     if (m.col_mode == 1u) {
-        c = unpack4x8unorm(mcol[i]);
+        c = unpack4x8unorm(v.col);
     } else if (m.col_mode == 2u) {
-        c = premul(cmap_lookup(mval[i], m.cm, lut));
+        c = premul(cmap_lookup(bitcast<f32>(v.col), m.cm, lut));
     }
     let half = shape_radius(m.shape) * size + m.stroke * g.ppu + 1.0;
     let corner = vec2<f32>(f32(vid & 1u), f32(vid >> 1u)) * 2.0 - 1.0;
@@ -145,7 +148,9 @@ fn marker_sdf(shape: u32, q: vec2<f32>) -> f32 {
 
 @fragment
 fn fs_marker(in: MarkerV) -> @location(0) vec4<f32> {
-    let q = rot(in.q, -m.rotation);
+    // The shape turns counter-clockwise by `rotation` (Makie, CairoMakie, the SVG backend): look
+    // up the unrotated SDF at the point turned back clockwise.
+    let q = rot(in.q, m.rotation);
     let d = marker_sdf(m.shape, q / in.size) * in.size;   // device px
     let aa = 0.70710678;
     let sw = m.stroke * g.ppu;

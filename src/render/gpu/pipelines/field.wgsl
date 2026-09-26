@@ -1,23 +1,23 @@
-// Heatmaps: one quad over the cell bounds; each fragment finds its cell (affine map for regular
-// grids, binary search over an edges buffer otherwise) and colormaps the value.
+// Heatmaps: one quad over the cell bounds (per tile); each fragment finds its cell (affine map for
+// regular grids, binary search over an edges texture otherwise) and colormaps the value.
 
 struct FieldU {
     rect_px: vec4<f32>,     // quad in device px: x0, y0, x1, y1
     imap: vec4<f32>,        // regular axes: fractional cell index = frag.xy * imap.xy + imap.zw
     lmap: vec4<f32>,        // irregular axes: local coordinate = frag.xy * lmap.xy + lmap.zw
     dims: vec2<u32>,        // nx, ny cells
-    row0: u32,              // first row held in `z` (row bands for fields above the binding limit)
-    rows: u32,              // rows held in `z`
-    interpolate: u32,
-    irregular: u32,         // bit 0: x uses xedges, bit 1: y uses yedges
     xdir: f32,              // sign of xedges[nx] - xedges[0]
     ydir: f32,
+    tile: vec4<u32>,        // first column, first row, columns, rows held in `z`
+    interpolate: u32,
+    irregular: u32,         // bit 0: x uses xedges, bit 1: y uses yedges
+    edge_w: vec2<u32>,      // row widths of the edge textures
     cm: CMap,
 };
 @group(1) @binding(0) var<uniform> h: FieldU;
-@group(1) @binding(1) var<storage, read> z: array<f32>;       // x fastest (Makie z[i, j])
-@group(1) @binding(2) var<storage, read> xedges: array<f32>;  // nx + 1 local coordinates
-@group(1) @binding(3) var<storage, read> yedges: array<f32>;  // ny + 1 local coordinates
+@group(1) @binding(1) var z: texture_2d<f32>;       // R32Float, x fastest (Makie z[i, j])
+@group(1) @binding(2) var xedges: texture_2d<f32>;  // nx + 1 local coordinates, rows of edge_w.x
+@group(1) @binding(3) var yedges: texture_2d<f32>;  // ny + 1 local coordinates, rows of edge_w.y
 @group(1) @binding(4) var lut: texture_2d<f32>;
 
 @vertex
@@ -26,17 +26,26 @@ fn vs_field(@builtin(vertex_index) vid: u32) -> @builtin(position) vec4<f32> {
     return px_to_clip(mix(h.rect_px.xy, h.rect_px.zw, t));
 }
 
-// Storage pointers can't be function parameters without an extension: one search per axis.
+fn xedge(i: u32) -> f32 {
+    return textureLoad(xedges, vec2<i32>(i32(i % h.edge_w.x), i32(i / h.edge_w.x)), 0).r;
+}
+
+fn yedge(i: u32) -> f32 {
+    return textureLoad(yedges, vec2<i32>(i32(i % h.edge_w.y), i32(i / h.edge_w.y)), 0).r;
+}
+
+// One search per axis (textures as function arguments don't translate to every backend).
 fn search_x(l: f32) -> f32 {
     var lo = 0u;
     var hi = h.dims.x;
     loop {
         if (hi - lo <= 1u) { break; }
         let mid = (lo + hi) >> 1u;
-        if ((xedges[mid] - l) * h.xdir <= 0.0) { lo = mid; } else { hi = mid; }
+        if ((xedge(mid) - l) * h.xdir <= 0.0) { lo = mid; } else { hi = mid; }
     }
-    let w = xedges[lo + 1u] - xedges[lo];
-    return f32(lo) + select(0.5, clamp((l - xedges[lo]) / w, 0.0, 1.0), w != 0.0);
+    let e = xedge(lo);
+    let w = xedge(lo + 1u) - e;
+    return f32(lo) + select(0.5, clamp((l - e) / w, 0.0, 1.0), w != 0.0);
 }
 
 fn search_y(l: f32) -> f32 {
@@ -45,17 +54,19 @@ fn search_y(l: f32) -> f32 {
     loop {
         if (hi - lo <= 1u) { break; }
         let mid = (lo + hi) >> 1u;
-        if ((yedges[mid] - l) * h.ydir <= 0.0) { lo = mid; } else { hi = mid; }
+        if ((yedge(mid) - l) * h.ydir <= 0.0) { lo = mid; } else { hi = mid; }
     }
-    let w = yedges[lo + 1u] - yedges[lo];
-    return f32(lo) + select(0.5, clamp((l - yedges[lo]) / w, 0.0, 1.0), w != 0.0);
+    let e = yedge(lo);
+    let w = yedge(lo + 1u) - e;
+    return f32(lo) + select(0.5, clamp((l - e) / w, 0.0, 1.0), w != 0.0);
 }
 
-// Value of cell (ix, iy), clamped to the grid (GLMakie's clamp-to-edge) and to the rows held.
+// Value of cell (ix, iy), clamped to the grid (GLMakie's clamp-to-edge) and to the cells held.
 fn zval(ix: i32, iy: i32) -> f32 {
-    let x = u32(clamp(ix, 0, i32(h.dims.x) - 1));
-    let y = u32(clamp(iy, max(0, i32(h.row0)), min(i32(h.dims.y), i32(h.row0 + h.rows)) - 1));
-    return z[(y - h.row0) * h.dims.x + x];
+    let t = vec4<i32>(h.tile);
+    let x = clamp(ix, max(0, t.x), min(i32(h.dims.x), t.x + t.z) - 1);
+    let y = clamp(iy, max(0, t.y), min(i32(h.dims.y), t.y + t.w) - 1);
+    return textureLoad(z, vec2<i32>(x - t.x, y - t.y), 0).r;
 }
 
 @fragment

@@ -3,7 +3,7 @@
 
 use super::frame::{DrawCmd, Frame, RenderStats, Resources, UNIFORM_ALIGN};
 use super::pipelines;
-use super::{Gpu, MSAA, TARGET_FORMAT};
+use super::{Gpu, MSAA, OFFSCREEN_FORMAT, TARGET_FORMAT};
 use crate::error::{Error, Result};
 use crate::scene::SceneCache;
 use crate::scene::drawlist::{DrawList, Prim, Rect, Space};
@@ -20,7 +20,7 @@ struct GlobalsU {
 
 pub(crate) struct Renderer {
     res: Resources,
-    msaa: Option<(wgpu::TextureView, [u32; 2])>,
+    msaa: Option<(wgpu::TextureView, [u32; 2], wgpu::TextureFormat)>,
     uniforms: Option<(wgpu::Buffer, usize)>,
     globals_buf: wgpu::Buffer,
     globals_bg: wgpu::BindGroup,
@@ -28,7 +28,10 @@ pub(crate) struct Renderer {
     pub scene: SceneCache,
     /// Counters for the last rendered frame.
     pub stats: RenderStats,
-    warned: bool,
+    /// Uniform block alignment (the WebGPU 256 B, or more if the device needs it).
+    ualign: usize,
+    /// Format of offscreen targets (`render_rgba`).
+    offscreen_format: wgpu::TextureFormat,
 }
 
 impl Renderer {
@@ -43,12 +46,13 @@ impl Renderer {
         });
         let globals_bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("globals"),
-            layout: &res.pipes.globals_layout,
+            layout: &res.layouts.globals,
             entries: &[
                 wgpu::BindGroupEntry { binding: 0, resource: globals_buf.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&res.pipes.sampler) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&res.layouts.sampler) },
             ],
         });
+        let ualign = UNIFORM_ALIGN.max(device.limits().min_uniform_buffer_offset_alignment as usize);
         Renderer {
             res,
             msaa: None,
@@ -57,15 +61,23 @@ impl Renderer {
             globals_bg,
             scene: SceneCache::new(),
             stats: RenderStats::default(),
-            warned: false,
+            ualign,
+            offscreen_format: OFFSCREEN_FORMAT,
         }
     }
 
-    fn msaa_view(&mut self, size: [u32; 2]) -> wgpu::TextureView {
-        if let Some((v, s)) = &self.msaa {
-            if *s == size {
-                return v.clone();
-            }
+    /// Renders offscreen images ([`Renderer::render_rgba`]) into `format` targets
+    /// (`Rgba8Unorm` or `Bgra8Unorm`).
+    pub fn set_offscreen_format(&mut self, format: wgpu::TextureFormat) {
+        self.offscreen_format = format;
+    }
+
+    fn msaa_view(&mut self, size: [u32; 2], format: wgpu::TextureFormat) -> wgpu::TextureView {
+        if let Some((v, s, f)) = &self.msaa
+            && *s == size
+            && *f == format
+        {
+            return v.clone();
         }
         let tex = self.res.gpu.device.create_texture(&wgpu::TextureDescriptor {
             label: Some("msaa"),
@@ -73,22 +85,22 @@ impl Renderer {
             mip_level_count: 1,
             sample_count: MSAA,
             dimension: wgpu::TextureDimension::D2,
-            format: TARGET_FORMAT,
+            format,
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             view_formats: &[],
         });
         let v = tex.create_view(&wgpu::TextureViewDescriptor::default());
-        self.msaa = Some((v.clone(), size));
+        self.msaa = Some((v.clone(), size, format));
         v
     }
 
     /// A uniform ring large enough for `n` blocks.
     fn uniform_ring(&mut self, n: usize) -> wgpu::Buffer {
-        let need = (n.max(1)) * UNIFORM_ALIGN;
-        if let Some((b, cap)) = &self.uniforms {
-            if *cap >= need {
-                return b.clone();
-            }
+        let need = n.max(1) * self.ualign;
+        if let Some((b, cap)) = &self.uniforms
+            && *cap >= need
+        {
+            return b.clone();
         }
         let cap = need.next_power_of_two().max(64 * 1024);
         let b = self.res.gpu.device.create_buffer(&wgpu::BufferDescriptor {
@@ -101,7 +113,8 @@ impl Renderer {
         b
     }
 
-    /// Encodes one frame of `dl` into `target` (size in device pixels).
+    /// Encodes one frame of `dl` into a window surface `target` of [`TARGET_FORMAT`] (size in
+    /// device pixels).
     pub fn render(
         &mut self,
         dl: &DrawList,
@@ -109,19 +122,39 @@ impl Renderer {
         size: [u32; 2],
         ppu: f64,
     ) -> wgpu::CommandBuffer {
+        self.render_to(dl, target, TARGET_FORMAT, size, ppu)
+    }
+
+    /// Encodes one frame of `dl` into `target` of `format` (size in device pixels).
+    pub fn render_to(
+        &mut self,
+        dl: &DrawList,
+        target: &wgpu::TextureView,
+        format: wgpu::TextureFormat,
+        size: [u32; 2],
+        ppu: f64,
+    ) -> wgpu::CommandBuffer {
         self.res.frame += 1;
         self.res.stats = RenderStats::default();
-        let msaa = self.msaa_view(size);
+        let msaa = self.msaa_view(size, format);
         let g = GlobalsU { target_px: [size[0] as f32, size[1] as f32], ppu: ppu as f32, _pad: 0.0 };
         self.res.gpu.queue.write_buffer(&self.globals_buf, 0, bytemuck::bytes_of(&g));
 
         let ubuf = self.uniform_ring(dl.items.len());
-        let mut uniforms: Vec<u8> = Vec::with_capacity(dl.items.len() * UNIFORM_ALIGN);
-        let pipes = self.res.pipes.clone();
+        let mut uniforms: Vec<u8> = Vec::with_capacity(dl.items.len() * self.ualign);
+        let pipes = self.res.gpu.pipelines(format);
         let mut draws: Vec<([u32; 4], DrawCmd)> = Vec::with_capacity(dl.items.len());
         let full = [0, 0, size[0], size[1]];
         {
-            let mut f = Frame { res: &mut self.res, pipes, uniforms: &mut uniforms, ubuf: ubuf.clone(), ppu, size };
+            let mut f = Frame {
+                res: &mut self.res,
+                pipes,
+                uniforms: &mut uniforms,
+                ubuf: ubuf.clone(),
+                ualign: self.ualign,
+                ppu,
+                size,
+            };
             pipelines::glyph::begin_frame(&mut f, dl);
             for item in &dl.items {
                 let scissor = match item.clip {
@@ -131,10 +164,14 @@ impl Renderer {
                     },
                     None => full,
                 };
-                let xform: [f32; 4] = match item.space {
-                    Space::Figure => [ppu as f32, ppu as f32, 0.0, 0.0],
-                    Space::Data(i) => dl.axes[i as usize].affine(ppu).map(|v| v as f32),
+                let aff = match item.space {
+                    Space::Figure => [ppu, ppu, 0.0, 0.0],
+                    Space::Data(i) => match dl.axes.get(i as usize) {
+                        Some(a) => a.affine(ppu),
+                        None => continue,
+                    },
                 };
+                let xform: [f32; 4] = aff.map(|v| v as f32);
                 let cmd = match &item.prim {
                     Prim::Rects(r) => pipelines::mesh::prepare_rects(&mut f, r),
                     Prim::Mesh(m) => pipelines::mesh::prepare(&mut f, m, xform),
@@ -142,22 +179,10 @@ impl Renderer {
                     Prim::Lines(l) => pipelines::line::prepare(&mut f, l, xform),
                     Prim::Glyphs(g) => pipelines::glyph::prepare(&mut f, g, xform),
                     Prim::Field(p) => {
-                        let aff = match item.space {
-                            Space::Figure => [ppu, ppu, 0.0, 0.0],
-                            Space::Data(i) => dl.axes[i as usize].affine(ppu),
-                        };
                         let mut cmds = pipelines::field::prepare(&mut f, p, aff);
                         let last = cmds.pop();
                         draws.extend(cmds.into_iter().map(|c| (scissor, c)));
                         last
-                    }
-                    #[allow(unreachable_patterns)]
-                    _ => {
-                        if !self.warned {
-                            log::debug!("ezviz: primitive not yet supported by the GPU backend");
-                            self.warned = true;
-                        }
-                        None
                     }
                 };
                 if let Some(cmd) = cmd {
@@ -198,8 +223,8 @@ impl Renderer {
                 pass.set_scissor_rect(sc[0], sc[1], sc[2], sc[3]);
                 pass.set_pipeline(&d.pipeline);
                 pass.set_bind_group(1, &d.bind, &[d.offset]);
-                if let Some(vb) = &d.vb {
-                    pass.set_vertex_buffer(0, vb.slice(..));
+                for (slot, (vb, off)) in d.vbs.iter().enumerate() {
+                    pass.set_vertex_buffer(slot as u32, vb.slice(*off..));
                 }
                 pass.draw(d.vertices.clone(), d.instances.clone());
             }
@@ -210,6 +235,8 @@ impl Renderer {
     }
 
     /// Renders `dl` offscreen at `ppu` and reads back straight-alpha RGBA8 rows (top row first).
+    /// Blocks until the GPU is done (native only: the browser can't wait for a readback).
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn render_rgba(&mut self, dl: &DrawList, ppu: f64) -> Result<(u32, u32, Vec<u8>)> {
         let w = (dl.size[0] * ppu).round().max(1.0) as u32;
         let h = (dl.size[1] * ppu).round().max(1.0) as u32;
@@ -219,6 +246,12 @@ impl Renderer {
                 "a {w}x{h} px image exceeds the GPU texture limit of {max} px; lower px_per_unit/dpi or the figure size"
             )));
         }
+        let format = self.offscreen_format;
+        let bgra = match format {
+            wgpu::TextureFormat::Rgba8Unorm => false,
+            wgpu::TextureFormat::Bgra8Unorm => true,
+            f => return Err(Error::Gpu(format!("unsupported offscreen format {f:?}"))),
+        };
         let device = self.res.gpu.device.clone();
         let tex = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("offscreen"),
@@ -226,12 +259,12 @@ impl Renderer {
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format: TARGET_FORMAT,
+            format,
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[],
         });
         let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
-        let frame_cmd = self.render(dl, &view, [w, h], ppu);
+        let frame_cmd = self.render_to(dl, &view, format, [w, h], ppu);
 
         let unpadded = w * 4;
         let padded = unpadded.next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
@@ -265,23 +298,38 @@ impl Renderer {
             .poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None })
             .map_err(|e| Error::Gpu(e.to_string()))?;
         rx.recv().map_err(|e| Error::Gpu(e.to_string()))?.map_err(|e| Error::Gpu(e.to_string()))?;
-        let mut rgba = Vec::with_capacity((unpadded * h) as usize);
-        {
+        let rgba = {
             let data = slice.get_mapped_range().map_err(|e| Error::Gpu(e.to_string()))?;
-            for row in data.chunks_exact(padded as usize) {
-                for px in row[..unpadded as usize].chunks_exact(4) {
-                    // BGRA premultiplied -> RGBA straight alpha.
-                    let a = px[3];
-                    let un = |v: u8| {
-                        if a == 0 || a == 255 { v } else { ((v as u32 * 255 + a as u32 / 2) / a as u32).min(255) as u8 }
-                    };
-                    rgba.extend_from_slice(&[un(px[2]), un(px[1]), un(px[0]), a]);
-                }
-            }
-        }
+            unpremultiply_rows(&data, padded as usize, unpadded as usize, bgra)
+        };
         buf.unmap();
         Ok((w, h, rgba))
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+impl Renderer {
+    /// Offscreen readback needs to block on the GPU, which the browser can't do.
+    pub fn render_rgba(&mut self, _dl: &DrawList, _ppu: f64) -> Result<(u32, u32, Vec<u8>)> {
+        Err(Error::Gpu("synchronous GPU readback is not available in the browser".into()))
+    }
+}
+
+/// Premultiplied RGBA or BGRA rows (`stride` bytes apart, `width` bytes used) -> straight-alpha
+/// RGBA.
+fn unpremultiply_rows(data: &[u8], stride: usize, width: usize, bgra: bool) -> Vec<u8> {
+    let mut rgba = Vec::with_capacity(width * (data.len() / stride.max(1)));
+    for row in data.chunks_exact(stride) {
+        for px in row[..width].as_chunks::<4>().0 {
+            let a = px[3];
+            let un = |v: u8| {
+                if a == 0 || a == 255 { v } else { ((v as u32 * 255 + a as u32 / 2) / a as u32).min(255) as u8 }
+            };
+            let (r, b) = if bgra { (px[2], px[0]) } else { (px[0], px[2]) };
+            rgba.extend_from_slice(&[un(r), un(px[1]), un(b), a]);
+        }
+    }
+    rgba
 }
 
 /// Clip rectangle (units) -> scissor (device px), clamped; `None` if empty.
@@ -291,4 +339,19 @@ fn scissor(r: Rect, ppu: f64, size: [u32; 2]) -> Option<[u32; 4]> {
     let x1 = (r.right() * ppu).round().clamp(0.0, size[0] as f64) as u32;
     let y1 = (r.bottom() * ppu).round().clamp(0.0, size[1] as f64) as u32;
     (x1 > x0 && y1 > y0).then_some([x0, y0, x1 - x0, y1 - y0])
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn readback_handles_both_channel_orders() {
+        let rgba = [200u8, 100, 50, 255, 64, 32, 16, 128, 0, 0, 0, 0, 0, 0];
+        let bgra = [50u8, 100, 200, 255, 16, 32, 64, 128, 0, 0, 0, 0, 0, 0];
+        let a = unpremultiply_rows(&rgba, 14, 12, false);
+        let b = unpremultiply_rows(&bgra, 14, 12, true);
+        assert_eq!(a, b);
+        assert_eq!(&a[..8], &[200, 100, 50, 255, 128, 64, 32, 128]);
+    }
 }

@@ -16,9 +16,9 @@ ndarray = ["dep:ndarray"]
 testing = ["window"]
 
 [dependencies]
-wgpu = { version = "30.0.1", default-features = false, features = ["std", "parking_lot", "wgsl", "metal", "vulkan", "dx12"] }
+wgpu = { version = "30.0.1", default-features = false, features = ["std", "parking_lot", "wgsl"] }
 winit = { version = "0.30.13", optional = true }
-pollster = "1.0.1"
+web-time = "1"
 bytemuck = { version = "1.25.2", features = ["derive"] }
 parking_lot = "0.12.5"
 png = "0.18.1"
@@ -28,12 +28,21 @@ log = "0.4.34"
 ndarray = { version = "0.17.2", optional = true }
 resvg = { version = "0.48.1", optional = true, default-features = false }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+wgpu = { version = "30.0.1", default-features = false, features = ["metal", "vulkan", "dx12"] }
+pollster = "1.0.1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wgpu = { version = "30.0.1", default-features = false, features = ["webgpu", "webgl"] }
+
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = { version = "0.6", optional = true }
 objc2-quartz-core = { version = "0.3", optional = true, default-features = false, features = ["std", "CALayer", "CAMetalLayer", "objc2-core-graphics"] }
 objc2-core-graphics = { version = "0.3", optional = true, default-features = false, features = ["std", "CGColorSpace"] }
 
 [dev-dependencies]
+# Already in the tree through wgpu; the GLSL ES 3.00 writer checks that every shader translates for WebGL2.
+naga = { version = "30.0.1", features = ["wgsl-in", "glsl-out"] }
 rand = "0.9"
 serde_json = "1"
 trybuild = "1"

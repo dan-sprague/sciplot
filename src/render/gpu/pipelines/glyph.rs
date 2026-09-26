@@ -6,6 +6,7 @@
 
 use super::super::Gpu;
 use super::super::frame::{DrawCmd, Frame};
+use super::Layouts;
 use crate::scene::drawlist::{DrawList, GlyphInst, GlyphsPrim, Item, Prim, Space};
 use crate::text::atlas::{Atlas, Change, GlyphKey, SUBPIXEL_BINS};
 use bytemuck::{Pod, Zeroable};
@@ -18,10 +19,7 @@ const ATLAS_MAX: u32 = 4096;
 /// Glyphs larger than this (device px em size) are not drawn.
 const MAX_GLYPH_PX: f32 = 1024.0;
 
-pub(crate) struct GlyphPipeline {
-    pub layout: wgpu::BindGroupLayout,
-    pub pipeline: wgpu::RenderPipeline,
-}
+pub(crate) const SHADER: &str = include_str!("glyph.wgsl");
 
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
@@ -30,7 +28,7 @@ struct GlyphU {
     _pad: [f32; 2],
 }
 
-/// WGSL `GlyphI`.
+/// WGSL `GlyphI`: one instance-step vertex (48 bytes).
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
 struct GlyphI {
@@ -45,24 +43,34 @@ struct GlyphI {
 
 const FLAG_LINEAR: u32 = 1;
 
-pub(crate) fn create(device: &wgpu::Device, globals: &wgpu::BindGroupLayout) -> GlyphPipeline {
-    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+pub(crate) fn layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
         label: Some("glyph"),
-        entries: &[super::uniform_entry(0, true), super::storage_entry(1), super::texture_entry(2, true)],
-    });
-    let shader = super::module(device, "glyph", include_str!("glyph.wgsl"));
-    let pipeline = super::pipeline(
+        entries: &[super::uniform_entry(0, true), super::texture_entry(1, true)],
+    })
+}
+
+pub(crate) fn pipeline(
+    device: &wgpu::Device,
+    l: &Layouts,
+    shader: &wgpu::ShaderModule,
+    format: wgpu::TextureFormat,
+) -> wgpu::RenderPipeline {
+    const ATTRS: [wgpu::VertexAttribute; 7] = wgpu::vertex_attr_array![
+        0 => Float32x2, 1 => Float32x2, 2 => Float32x2, 3 => Float32x2, 4 => Float32x2, 5 => Uint32, 6 => Uint32
+    ];
+    super::pipeline(
         device,
         "glyph",
-        &shader,
+        shader,
         "vs_glyph",
         "fs_glyph",
-        globals,
-        &layout,
-        &[],
+        l,
+        &l.glyph,
+        &[super::instance_attr(std::mem::size_of::<GlyphI>() as u64, &ATTRS)],
         wgpu::PrimitiveTopology::TriangleStrip,
-    );
-    GlyphPipeline { layout, pipeline }
+        format,
+    )
 }
 
 /// The glyph atlas of one render context: CPU packer plus its GPU texture.
@@ -243,22 +251,21 @@ pub(crate) fn prepare(f: &mut Frame, g: &GlyphsPrim, xform: [f32; 4]) -> Option<
     }
     let atlas_px = cache.atlas.size() as f32;
     let view = cache.view.clone();
-    let buf = f.transient(bytemuck::cast_slice(&inst), wgpu::BufferUsages::STORAGE);
+    let buf = f.transient(bytemuck::cast_slice(&inst), wgpu::BufferUsages::VERTEX);
     let offset = f.push_uniform(&GlyphU { atlas_px: [atlas_px; 2], _pad: [0.0; 2] });
     let bind = f.device().create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some("glyph"),
-        layout: &f.pipes.glyph.layout,
+        layout: &f.layouts().glyph,
         entries: &[
             wgpu::BindGroupEntry { binding: 0, resource: f.uniform_binding::<GlyphU>() },
-            wgpu::BindGroupEntry { binding: 1, resource: buf.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(&view) },
+            wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(&view) },
         ],
     });
     Some(DrawCmd {
-        pipeline: f.pipes.glyph.pipeline.clone(),
+        pipeline: f.pipes.glyph.clone(),
         bind,
         offset,
-        vb: None,
+        vbs: vec![(buf, 0)],
         vertices: 0..4,
         instances: 0..inst.len() as u32,
     })

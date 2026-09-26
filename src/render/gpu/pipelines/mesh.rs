@@ -1,13 +1,11 @@
 //! `mesh`: filled triangles (fills, legend patches) and pixel-snapped decoration rectangles.
 
 use super::super::frame::{DrawCmd, Frame};
+use super::Layouts;
 use crate::scene::drawlist::{MeshPrim, MeshVertex, RectPrim};
 use bytemuck::{Pod, Zeroable};
 
-pub(crate) struct MeshPipeline {
-    pub layout: wgpu::BindGroupLayout,
-    pub pipeline: wgpu::RenderPipeline,
-}
+pub(crate) const SHADER: &str = include_str!("mesh.wgsl");
 
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
@@ -15,46 +13,53 @@ struct MeshU {
     xform: [f32; 4],
 }
 
-pub(crate) fn create(device: &wgpu::Device, globals: &wgpu::BindGroupLayout) -> MeshPipeline {
-    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+pub(crate) fn layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
         label: Some("mesh"),
         entries: &[super::uniform_entry(0, true)],
-    });
-    let shader = super::module(device, "mesh", include_str!("mesh.wgsl"));
+    })
+}
+
+pub(crate) fn pipeline(
+    device: &wgpu::Device,
+    l: &Layouts,
+    shader: &wgpu::ShaderModule,
+    format: wgpu::TextureFormat,
+) -> wgpu::RenderPipeline {
     let vb = wgpu::VertexBufferLayout {
         array_stride: std::mem::size_of::<MeshVertex>() as u64,
         step_mode: wgpu::VertexStepMode::Vertex,
         attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Unorm8x4],
     };
-    let pipeline = super::pipeline(
+    super::pipeline(
         device,
         "mesh",
-        &shader,
+        shader,
         "vs_mesh",
         "fs_mesh",
-        globals,
-        &layout,
+        l,
+        &l.mesh,
         &[Some(vb)],
         wgpu::PrimitiveTopology::TriangleList,
-    );
-    MeshPipeline { layout, pipeline }
+        format,
+    )
 }
 
 fn draw(f: &mut Frame, vb: wgpu::Buffer, count: u32, xform: [f32; 4]) -> DrawCmd {
     let offset = f.push_uniform(&MeshU { xform });
     let bind = f.device().create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some("mesh"),
-        layout: &f.pipes.mesh.layout,
+        layout: &f.layouts().mesh,
         entries: &[wgpu::BindGroupEntry { binding: 0, resource: f.uniform_binding::<MeshU>() }],
     });
-    DrawCmd { pipeline: f.pipes.mesh.pipeline.clone(), bind, offset, vb: Some(vb), vertices: 0..count, instances: 0..1 }
+    DrawCmd { pipeline: f.pipes.mesh.clone(), bind, offset, vbs: vec![(vb, 0)], vertices: 0..count, instances: 0..1 }
 }
 
 pub(crate) fn prepare(f: &mut Frame, m: &MeshPrim, xform: [f32; 4]) -> Option<DrawCmd> {
     if m.verts.data.is_empty() {
         return None;
     }
-    let vb = f.buffer(&m.verts, wgpu::BufferUsages::VERTEX);
+    let vb = f.vertex(&m.verts);
     Some(draw(f, vb, m.verts.data.len() as u32, xform))
 }
 

@@ -1,20 +1,27 @@
 //! `line`: polylines and line segments (a port of GLMakie's line shaders) as instanced 4-vertex
-//! triangle strips, one instance per segment, pulling points from a storage buffer.
+//! triangle strips, one instance per segment.
+//!
+//! Instance `k` draws the segment from point `k` to `k + 1` (in segments mode only even `k`). The
+//! point buffer from `Frame::points` is bound at four offsets (instance step, stride 8) so each
+//! instance reads `p[k - 1] .. p[k + 2]`; per-point colors (or values) are bound at two offsets
+//! for both ends, and dash arc lengths at one. When consecutive points repeat exactly, the
+//! neighbours past the duplicates (up to `MAX_SKIP`) are resolved on the CPU into per-segment
+//! `prev`/`next` buffers that take the place of `p[k - 1]` and `p[k + 2]`.
 
-use super::super::frame::{CMapU, DrawCmd, Frame, premul};
-use crate::data::points::split_append_rev;
+use super::super::frame::{CMapU, DrawCmd, Frame, POINTS_OFFSET, premul, tag};
+use super::Layouts;
 use crate::scene::drawlist::{Buf, LinesPrim, PrimColor};
 use crate::style::{JoinStyle, LineCap};
 use bytemuck::{Pod, Zeroable};
 use std::hash::{Hash, Hasher};
 
+pub(crate) const SHADER: &str = include_str!("line.wgsl");
+
 /// Most dash boundaries a pattern may have (`LineU::breaks`).
 const MAX_BREAKS: usize = 16;
-
-pub(crate) struct LinePipeline {
-    pub layout: wgpu::BindGroupLayout,
-    pub pipeline: wgpu::RenderPipeline,
-}
+/// Exact duplicate points looked past when searching for a joint's neighbour (as `MAX_SKIP` in
+/// line.wgsl did when it searched on the GPU).
+const MAX_SKIP: usize = 8;
 
 /// WGSL `LineU` (see line.wgsl).
 #[repr(C)]
@@ -37,31 +44,39 @@ struct LineU {
     cm: CMapU,
 }
 
-pub(crate) fn create(device: &wgpu::Device, globals: &wgpu::BindGroupLayout) -> LinePipeline {
-    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+pub(crate) fn layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
         label: Some("line"),
-        entries: &[
-            super::uniform_entry(0, true),
-            super::storage_entry(1),
-            super::storage_entry(2),
-            super::storage_entry(3),
-            super::storage_entry(4),
-            super::texture_entry(5, true),
-        ],
-    });
-    let shader = super::module(device, "line", include_str!("line.wgsl"));
-    let pipeline = super::pipeline(
+        entries: &[super::uniform_entry(0, true), super::texture_entry(1, true)],
+    })
+}
+
+pub(crate) fn pipeline(
+    device: &wgpu::Device,
+    l: &Layouts,
+    shader: &wgpu::ShaderModule,
+    format: wgpu::TextureFormat,
+) -> wgpu::RenderPipeline {
+    super::pipeline(
         device,
         "line",
-        &shader,
+        shader,
         "vs_line",
         "fs_line",
-        globals,
-        &layout,
-        &[],
+        l,
+        &l.line,
+        &[
+            super::instance_attr(8, &wgpu::vertex_attr_array![0 => Float32x2]),
+            super::instance_attr(8, &wgpu::vertex_attr_array![1 => Float32x2]),
+            super::instance_attr(8, &wgpu::vertex_attr_array![2 => Float32x2]),
+            super::instance_attr(8, &wgpu::vertex_attr_array![3 => Float32x2]),
+            super::instance_attr(4, &wgpu::vertex_attr_array![4 => Uint32]),
+            super::instance_attr(4, &wgpu::vertex_attr_array![5 => Uint32]),
+            super::instance_attr(4, &wgpu::vertex_attr_array![6 => Float32]),
+        ],
         wgpu::PrimitiveTopology::TriangleStrip,
-    );
-    LinePipeline { layout, pipeline }
+        format,
+    )
 }
 
 pub(crate) fn prepare(f: &mut Frame, l: &LinesPrim, xform: [f32; 4]) -> Option<DrawCmd> {
@@ -71,14 +86,13 @@ pub(crate) fn prepare(f: &mut Frame, l: &LinesPrim, xform: [f32; 4]) -> Option<D
     if nseg == 0 || width_px.is_nan() || width_px <= 0.0 || n > u32::MAX as usize {
         return None;
     }
-    let pts = upload_points(f, &l.pts, l.append);
-    let (color_mode, color, col, val, cm, lut) = match &l.color {
-        PrimColor::Uniform(c) => (0, premul(*c), f.dummy(), f.dummy(), CMapU::default(), f.dummy_lut()),
-        PrimColor::PerElement(b) if b.len() >= n => {
-            (1, [0.0; 4], f.storage(b), f.dummy(), CMapU::default(), f.dummy_lut())
-        }
+    let closed = l.closed && !l.segments;
+    let pts = f.points(&l.pts, l.append, closed);
+    let (color_mode, color, col, cm, lut) = match &l.color {
+        PrimColor::Uniform(c) => (0, premul(*c), None, CMapU::default(), f.dummy_lut()),
+        PrimColor::PerElement(b) if b.len() >= n => (1, [0.0; 4], Some(f.vertex(b)), CMapU::default(), f.dummy_lut()),
         PrimColor::Values(b, map) if b.len() >= n => {
-            (2, [0.0; 4], f.dummy(), f.storage(b), CMapU::from(map), f.lut(&map.lut))
+            (2, [0.0; 4], Some(f.vertex(b)), CMapU::from(map), f.lut(&map.lut))
         }
         _ => {
             crate::warn_once("line colors have fewer entries than points; drawing nothing");
@@ -94,14 +108,39 @@ pub(crate) fn prepare(f: &mut Frame, l: &LinesPrim, xform: [f32; 4]) -> Option<D
             breaks[..p.len()].copy_from_slice(p);
             let len = p[p.len() - 1] - p[0];
             let cum = if l.segments {
-                f.dummy()
+                None
             } else {
                 let period = len as f64 * width_px.max(0.8);
-                dash_arc_lengths(f, &l.pts, xform, period)
+                Some(dash_arc_lengths(f, &l.pts, xform, period))
             };
             (p.len() as u32, len, cum)
         }
-        None => (0, 1.0, f.dummy()),
+        None => (0, 1.0, None),
+    };
+
+    // Joint neighbours: the points before and after each segment, or (past exact duplicates)
+    // resolved per segment on the CPU.
+    let (prev, next) = if !l.segments && f.has_duplicates(&l.pts) {
+        let nb = std::cell::OnceCell::new();
+        let calc = || nb.get_or_init(|| neighbours(&l.pts.data, closed));
+        let usage = wgpu::BufferUsages::VERTEX;
+        let (prev, next) = match l.pts.key {
+            Some(k) => {
+                let rev = hash((k.rev, closed));
+                let bytes = |v: &Vec<[f32; 2]>| bytemuck::cast_slice::<_, u8>(v).to_vec();
+                (
+                    f.cached_with((k.uid, k.part, tag::PREV), rev, usage, || bytes(&calc().0)),
+                    f.cached_with((k.uid, k.part, tag::NEXT), rev, usage, || bytes(&calc().1)),
+                )
+            }
+            None => {
+                let (p, q) = calc();
+                (f.transient(bytemuck::cast_slice(p), usage), f.transient(bytemuck::cast_slice(q), usage))
+            }
+        };
+        ((prev, 0), (next, 0))
+    } else {
+        ((pts.clone(), 0), (pts.clone(), 3 * 8))
     };
 
     let offset = f.push_uniform(&LineU {
@@ -124,31 +163,87 @@ pub(crate) fn prepare(f: &mut Frame, l: &LinesPrim, xform: [f32; 4]) -> Option<D
         n: n as u32,
         n_breaks,
         pattern_len,
-        closed: (l.closed && !l.segments) as u32,
+        closed: closed as u32,
         _p: [0; 2],
         breaks,
         cm,
     });
     let bind = f.device().create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some("line"),
-        layout: &f.pipes.line.layout,
+        layout: &f.layouts().line,
         entries: &[
             wgpu::BindGroupEntry { binding: 0, resource: f.uniform_binding::<LineU>() },
-            wgpu::BindGroupEntry { binding: 1, resource: pts.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 2, resource: cum.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 3, resource: col.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 4, resource: val.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&lut) },
+            wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(&lut) },
         ],
     });
+    // Streams a line doesn't have read the (large enough) point buffer; the shader ignores them.
+    let (c1, c2) = match col {
+        Some(b) => ((b.clone(), 0), (b, 4)),
+        None => ((pts.clone(), 0), (pts.clone(), 0)),
+    };
+    let cum = cum.map_or((pts.clone(), 0), |b| (b, 0));
     Some(DrawCmd {
-        pipeline: f.pipes.line.pipeline.clone(),
+        pipeline: f.pipes.line.clone(),
         bind,
         offset,
-        vb: None,
+        vbs: vec![prev, (pts.clone(), POINTS_OFFSET), (pts, 2 * POINTS_OFFSET), next, c1, c2, cum],
         vertices: 0..4,
-        instances: 0..nseg as u32,
+        instances: 0..(n - 1) as u32,
     })
+}
+
+/// Per segment `k` (points `k`, `k + 1`): the point before `k` and the point after `k + 1`,
+/// looking past up to [`MAX_SKIP`] exact duplicates and across the seam of `closed` loops, as the
+/// neighbouring drawn segments see them. NaN where the line starts or ends (or breaks).
+pub(crate) fn neighbours(p: &[[f32; 2]], closed: bool) -> (Vec<[f32; 2]>, Vec<[f32; 2]>) {
+    let n = p.len();
+    let finite = |q: [f32; 2]| q[0].is_finite() && q[1].is_finite();
+    let none = [f32::NAN; 2];
+    let prev = (0..n)
+        .map(|i1| {
+            let mut j = i1;
+            for _ in 0..MAX_SKIP {
+                if j == 0 {
+                    if !closed {
+                        break;
+                    }
+                    j = n - 1; // continue with the last segment (its end repeats point 0)
+                }
+                let q = p[j - 1];
+                if !finite(q) {
+                    break;
+                }
+                if q != p[j] {
+                    return q;
+                }
+                j -= 1;
+            }
+            none
+        })
+        .collect();
+    let next = (0..n)
+        .map(|i1| {
+            let mut j = i1 + 1;
+            for _ in 0..MAX_SKIP {
+                if j + 1 >= n {
+                    if !closed {
+                        break;
+                    }
+                    j = 0;
+                }
+                let q = p[j + 1];
+                if !finite(q) {
+                    break;
+                }
+                if q != p[j] {
+                    return q;
+                }
+                j += 1;
+            }
+            none
+        })
+        .collect();
+    (prev, next)
 }
 
 /// Makie's `gl_miter_limit = cos(pi - miter_limit)`: joints whose direction cosine is below it are
@@ -171,29 +266,6 @@ fn valid_pattern(p: &[f32]) -> Option<&[f32]> {
     Some(&p[..p.len().min(MAX_BREAKS)])
 }
 
-/// Uploads line points. Append-only buffers (`append`) whose GPU copy is an older revision of the
-/// same generation only upload the new tail.
-fn upload_points(f: &mut Frame, b: &Buf<[f32; 2]>, append: bool) -> wgpu::Buffer {
-    if let (true, Some(k)) = (append && !b.data.is_empty(), b.key) {
-        let bytes: &[u8] = bytemuck::cast_slice(b.data.as_slice());
-        let frame = f.res.frame;
-        if let Some(c) = f.res.cache.get_mut(&(k.uid, k.part)) {
-            let (g0, n0) = split_append_rev(c.rev);
-            let (g1, n1) = split_append_rev(k.rev);
-            let fits = c.buf.size() >= bytes.len() as u64 && c.buf.usage().contains(wgpu::BufferUsages::STORAGE);
-            if c.rev != k.rev && g0 == g1 && n0 < n1 && n1 == b.data.len() && fits {
-                let off = n0 * std::mem::size_of::<[f32; 2]>();
-                f.res.gpu.queue.write_buffer(&c.buf, off as u64, &bytes[off..]);
-                f.res.stats.data_bytes += (bytes.len() - off) as u64;
-                c.rev = k.rev;
-                c.frame = frame;
-                return c.buf.clone();
-            }
-        }
-    }
-    f.storage(b)
-}
-
 /// Screen-space arc length (device px) at each point modulo the dash period, restarting at NaN
 /// breaks (GLMakie's `sumlengths`). Computed in f64 whenever the points or the view change.
 fn dash_arc_lengths(f: &mut Frame, pts: &Buf<[f32; 2]>, xform: [f32; 4], period: f64) -> wgpu::Buffer {
@@ -201,12 +273,17 @@ fn dash_arc_lengths(f: &mut Frame, pts: &Buf<[f32; 2]>, xform: [f32; 4], period:
     let bytes: &[u8] = bytemuck::cast_slice(&cum);
     match pts.key {
         Some(k) => {
-            let mut h = std::collections::hash_map::DefaultHasher::new();
-            (k.rev, xform.map(f32::to_bits), period.to_bits()).hash(&mut h);
-            f.cached((k.uid, k.part ^ 0x80), h.finish(), bytes, wgpu::BufferUsages::STORAGE)
+            let rev = hash((k.rev, xform.map(f32::to_bits), period.to_bits()));
+            f.cached((k.uid, k.part, tag::DASH), rev, bytes, wgpu::BufferUsages::VERTEX)
         }
-        None => f.transient(bytes, wgpu::BufferUsages::STORAGE),
+        None => f.transient(bytes, wgpu::BufferUsages::VERTEX),
     }
+}
+
+fn hash(v: impl Hash) -> u64 {
+    let mut h = std::collections::hash_map::DefaultHasher::new();
+    v.hash(&mut h);
+    h.finish()
 }
 
 pub(crate) fn arc_lengths(pts: &[[f32; 2]], xform: [f32; 4], period: f64) -> Vec<f32> {
