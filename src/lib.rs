@@ -66,6 +66,9 @@ pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normal
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
 pub use theme::{Theme, current_theme, reset_theme, set_theme, theme_minimal, with_theme};
 pub use transform::Scale;
+pub use ticks::{LabelFn, MinorSpec, TickFn, TickFormat, TickSpec, Wilkinson, format_ticks_auto, format_with};
+#[doc(hidden)]
+pub use ticks::testing as __ticks;
 #[cfg(feature = "window")]
 pub use window::show_all;
 
