@@ -4,9 +4,12 @@
 pub(crate) mod band;
 pub(crate) mod barplot;
 pub(crate) mod bars;
+pub(crate) mod contour;
+pub(crate) mod contourf;
 pub(crate) mod heatmap;
 pub(crate) mod hist;
 pub(crate) mod legend_elements;
+pub(crate) mod marching;
 pub(crate) mod pick;
 pub(crate) mod reflines;
 pub(crate) mod scatter;
@@ -14,6 +17,8 @@ pub(crate) mod textplot;
 
 pub use band::Band;
 pub use barplot::{BarPlot, BarX};
+pub use contour::{Contour, Levels};
+pub use contourf::{Contourf, ContourfMode, Extend};
 pub use heatmap::Heatmap;
 pub use hist::{Bins, Hist};
 pub use legend_elements::LegendElement;
@@ -231,6 +236,8 @@ plot_kinds! {
     Lines(lines::LinesState),
     ScatterLines(scatterlines::ScatterLinesState),
     RefLines(reflines::RefLinesState),
+    Contour(contour::ContourState),
+    Contourf(contourf::ContourfState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

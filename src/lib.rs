@@ -76,6 +76,8 @@ pub use plots::Heatmap;
 pub use plots::LegendElement;
 pub use plots::band::{BandTheme, band};
 pub use plots::barplot::{BarPlotTheme, barplot};
+pub use plots::contour::{ContourTheme, contour, contour_xy};
+pub use plots::contourf::{ContourfTheme, contourf, contourf_xy};
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
 pub use plots::hist::{HistTheme, hist};
 pub use plots::lines::{LinesTheme, lines, lines_points};
@@ -85,6 +87,7 @@ pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_poin
 pub use plots::{ABLines, HLines, RefLines, RefValues, VLines};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
 pub use plots::{ColorMapped, ResolvedColormap};
+pub use plots::{Contour, Contourf, ContourfMode, Extend, Levels};
 pub use plots::{Lines, ScatterLines};
 #[doc(hidden)]
 pub use scene::axis::AxisGeometry;
@@ -135,6 +138,8 @@ const _: () = {
     ok::<ScatterLines>();
     ok::<GridPosition>();
     ok::<Colorbar>();
+    ok::<Contour>();
+    ok::<Contourf>();
     #[cfg(feature = "window")]
     ok_send_sync::<Live>();
 };
