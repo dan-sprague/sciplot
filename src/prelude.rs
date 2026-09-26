@@ -11,3 +11,4 @@ pub use crate::{
     Scatter, Side, Theme, VAlign, WONG, band, barplot, hist, iter, kw, linkaxes, linkxaxes, linkyaxes, linspace,
     logspace, scatter, set_theme, subscript, superscript, theme_minimal, with_theme,
 };
+pub use crate::{MinorSpec, TickFormat, TickSpec, Wilkinson};
