@@ -38,40 +38,24 @@ impl<'a, T: Scalar> Field<'a, T> {
             data.len(),
             nx * ny
         );
-        Field {
-            data,
-            nx,
-            ny,
-            x_fastest: true,
-        }
+        Field { data, nx, ny, x_fastest: true }
     }
 
     #[track_caller]
     pub fn y_fastest(data: &'a [T], nx: usize, ny: usize) -> Self {
-        Field {
-            x_fastest: false,
-            ..Field::new(data, nx, ny)
-        }
+        Field { x_fastest: false, ..Field::new(data, nx, ny) }
     }
 
     #[inline]
     fn at(&self, i: usize, j: usize) -> f64 {
-        let idx = if self.x_fastest {
-            j * self.nx + i
-        } else {
-            i * self.ny + j
-        };
+        let idx = if self.x_fastest { j * self.nx + i } else { i * self.ny + j };
         self.data[idx].to_f64()
     }
 }
 
 fn conv(v: f64, off: f64, k: f64) -> f32 {
     let r = (v - off) * k;
-    if r.is_nan() {
-        f32::NAN
-    } else {
-        r.clamp(f32::MIN as f64, f32::MAX as f64) as f32
-    }
+    if r.is_nan() { f32::NAN } else { r.clamp(f32::MIN as f64, f32::MAX as f64) as f32 }
 }
 
 impl<T: Scalar> Data2D for Field<'_, T> {
@@ -129,10 +113,7 @@ impl<T: Scalar> Data2D for &Vec<Vec<T>> {
     fn write_f32(&self, out: &mut Vec<f32>, off: f64, k: f64) {
         let (nx, ny) = self.dims();
         if let Some(r) = self.iter().position(|c| c.len() != ny) {
-            panic!(
-                "ragged 2D data: v[{r}] has {} values, v[0] has {ny}",
-                self[r].len()
-            );
+            panic!("ragged 2D data: v[{r}] has {} values, v[0] has {ny}", self[r].len());
         }
         out.clear();
         out.reserve(nx * ny);

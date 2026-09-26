@@ -25,9 +25,7 @@ pub(crate) fn major_ticks(lo: f64, hi: f64, scale: Scale) -> Ticks {
     }
     let values = if scale.is_log() {
         let (a, b) = (scale.forward(lo), scale.forward(hi));
-        let vals: Vec<f64> = (a.ceil() as i64..=b.floor() as i64)
-            .map(|e| scale.inverse(e as f64))
-            .collect();
+        let vals: Vec<f64> = (a.ceil() as i64..=b.floor() as i64).map(|e| scale.inverse(e as f64)).collect();
         if vals.len() >= 2 { vals } else { nice(lo, hi) }
     } else {
         nice(lo, hi)
@@ -40,11 +38,7 @@ fn nice(lo: f64, hi: f64) -> Vec<f64> {
     let span = hi - lo;
     let raw = span / 5.0;
     let mag = 10f64.powf(raw.log10().floor());
-    let step = [1.0, 2.0, 2.5, 5.0, 10.0]
-        .iter()
-        .map(|m| m * mag)
-        .find(|s| span / s <= 7.0)
-        .unwrap_or(10.0 * mag);
+    let step = [1.0, 2.0, 2.5, 5.0, 10.0].iter().map(|m| m * mag).find(|s| span / s <= 7.0).unwrap_or(10.0 * mag);
     let first = (lo / step).ceil() as i64;
     let last = (hi / step).floor() as i64;
     (first..=last).map(|i| i as f64 * step).collect()
@@ -55,9 +49,10 @@ pub(crate) fn format_ticks(values: &[f64]) -> Vec<RichText> {
     let mut dec = 0;
     while dec < 10 {
         let s: Vec<String> = values.iter().map(|v| format!("{:.*}", dec, v)).collect();
-        let exact = values.iter().zip(&s).all(|(v, t)| {
-            (t.parse::<f64>().unwrap_or(f64::NAN) - v).abs() <= 1e-9 * v.abs().max(1e-300)
-        });
+        let exact = values
+            .iter()
+            .zip(&s)
+            .all(|(v, t)| (t.parse::<f64>().unwrap_or(f64::NAN) - v).abs() <= 1e-9 * v.abs().max(1e-300));
         if exact {
             break;
         }
@@ -82,10 +77,7 @@ pub(crate) fn minor_ticks(major: &[f64], lo: f64, hi: f64, scale: Scale, n: usiz
     let (lo, hi) = if lo <= hi { (lo, hi) } else { (hi, lo) };
     let mut out = Vec::new();
     if scale.is_log() {
-        let (a, b) = (
-            scale.forward(lo).floor() as i64,
-            scale.forward(hi).ceil() as i64,
-        );
+        let (a, b) = (scale.forward(lo).floor() as i64, scale.forward(hi).ceil() as i64);
         for e in a..b {
             let base = scale.inverse(e as f64);
             for k in 2..10 {

@@ -42,9 +42,7 @@ pub(crate) fn faces() -> &'static Faces {
     static F: OnceLock<Faces> = OnceLock::new();
     F.get_or_init(|| {
         let load = |b: &'static [u8]| FontRef::try_from_slice(b).expect("bundled font is valid");
-        Faces {
-            faces: [load(REGULAR), load(BOLD), load(ITALIC), load(BOLD_ITALIC)],
-        }
+        Faces { faces: [load(REGULAR), load(BOLD), load(ITALIC), load(BOLD_ITALIC)] }
     })
 }
 
@@ -52,10 +50,7 @@ pub(crate) fn faces() -> &'static Faces {
 pub(crate) fn metrics(f: Font) -> (f64, f64) {
     let face = faces().get(f);
     let upem = face.units_per_em().unwrap_or(1000.0) as f64;
-    (
-        face.ascent_unscaled() as f64 / upem,
-        -face.descent_unscaled() as f64 / upem,
-    )
+    (face.ascent_unscaled() as f64 / upem, -face.descent_unscaled() as f64 / upem)
 }
 
 /// Height of one line at `size` (ascender − descender).
@@ -94,10 +89,7 @@ pub(crate) struct Extent {
 
 pub(crate) fn measure(rt: &RichText, size: f64, font: Font) -> Extent {
     let l = layout(rt, size, font, Color::rgb(0.0, 0.0, 0.0));
-    Extent {
-        width: l.width,
-        height: l.height(),
-    }
+    Extent { width: l.width, height: l.height() }
 }
 
 /// Lays out rich text like Makie: glyph advances only, spans may scale and shift the baseline.
@@ -139,25 +131,13 @@ pub(crate) fn layout(rt: &RichText, size: f64, font: Font, color: Color) -> Text
         }
     }
     width = width.max(x);
-    TextLayout {
-        glyphs,
-        width,
-        ascent: asc * size,
-        descent: desc * size,
-        lines,
-        size,
-    }
+    TextLayout { glyphs, width, ascent: asc * size, descent: desc * size, lines, size }
 }
 
 /// Places a layout: the point of its box at fractions `align = (h, v)` (h: 0 left..1 right,
 /// v: 0 bottom..1 top) goes to `anchor` (figure units, y down), then the text is rotated by
 /// `angle` radians counter-clockwise about the anchor.
-pub(crate) fn place(
-    l: &TextLayout,
-    anchor: [f64; 2],
-    align: (f64, f64),
-    angle: f64,
-) -> Vec<GlyphInst> {
+pub(crate) fn place(l: &TextLayout, anchor: [f64; 2], align: (f64, f64), angle: f64) -> Vec<GlyphInst> {
     let top = -l.ascent;
     let bottom = l.descent + (l.lines.max(1) - 1) as f64 * line_height(l.size);
     let ox = -align.0 * l.width;
@@ -170,11 +150,7 @@ pub(crate) fn place(
             let py = g.pos[1] as f64 + oy;
             let rx = px * c + py * s;
             let ry = -px * s + py * c;
-            GlyphInst {
-                pos: [(anchor[0] + rx) as f32, (anchor[1] + ry) as f32],
-                angle: angle as f32,
-                ..*g
-            }
+            GlyphInst { pos: [(anchor[0] + rx) as f32, (anchor[1] + ry) as f32], angle: angle as f32, ..*g }
         })
         .collect()
 }

@@ -1,10 +1,12 @@
 //! `scatter`: markers at points.
 
-use super::{ColorSpec, PlotKind, add_to_axis, plot_common, zip_xy};
+use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, point_bounds, zip_xy};
 use crate::attrs::attributes;
 use crate::color::Color;
 use crate::data::Data1D;
 use crate::figure::{Dirty, FigShared, PlotId};
+use crate::scene::PlotCtx;
+use crate::scene::drawlist::{MarkersPrim, Prim, PrimColor};
 use crate::style::Marker;
 use std::sync::Arc;
 
@@ -39,6 +41,44 @@ attributes! {
 
 plot_common!(Scatter);
 
+impl PlotImpl for ScatterState {
+    fn cycle_group(&self) -> &'static str {
+        "scatter"
+    }
+
+    fn color_is_auto(&self, theme: &crate::theme::Theme) -> bool {
+        is_auto(self.attrs.color.as_ref(), theme.scatter.color.as_ref())
+    }
+
+    fn data_bounds(&self, xs: crate::transform::Scale, ys: crate::transform::Scale) -> Option<[f64; 4]> {
+        point_bounds(&self.pos, xs, ys)
+    }
+
+    fn emit(&self, ctx: &mut PlotCtx<'_>) {
+        let r = self.attrs.resolve(&ctx.theme.scatter, ctx.g);
+        let alpha = r.alpha as f32;
+        let pos = ctx.local_points(0, &self.pos);
+        let color = match ctx.solid_color(&r.color, false) {
+            Some(c) => PrimColor::Uniform(c.with_alpha(c.a * alpha)),
+            None => match &r.color {
+                ColorSpec::PerPoint(cs) => ctx.per_point(1, cs, alpha),
+                // Values mapped through a colormap: M5.
+                _ => PrimColor::Uniform(ctx.g.palette[0]),
+            },
+        };
+        ctx.push_data(Prim::Markers(MarkersPrim {
+            pos,
+            color,
+            size: r.markersize as f32,
+            sizes: None,
+            marker: r.marker,
+            stroke_color: r.strokecolor.with_alpha(r.strokecolor.a * alpha),
+            stroke_width: r.strokewidth as f32,
+            rotation: r.rotation as f32,
+        }));
+    }
+}
+
 impl Scatter {
     fn with_attrs(&self, f: impl FnOnce(&mut ScatterAttrs), dirty: u8) {
         self.with_slot(dirty, |p| {
@@ -49,15 +89,9 @@ impl Scatter {
     }
 
     pub(crate) fn create(ax: &crate::Axis, pos: Vec<[f64; 2]>) -> Scatter {
-        let st = ScatterState {
-            pos: Arc::new(pos),
-            attrs: ScatterAttrs::default(),
-        };
+        let st = ScatterState { pos: Arc::new(pos), attrs: ScatterAttrs::default() };
         let id = add_to_axis(ax, PlotKind::Scatter(st));
-        Scatter {
-            sh: ax.sh.clone(),
-            id,
-        }
+        Scatter { sh: ax.sh.clone(), id }
     }
 
     /// Replaces the points (the lengths of x and y must match).

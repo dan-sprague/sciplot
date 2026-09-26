@@ -169,19 +169,14 @@ pub fn linspace(a: f64, b: f64, n: usize) -> Vec<f64> {
         1 => vec![a],
         _ => {
             let d = (b - a) / (n - 1) as f64;
-            (0..n)
-                .map(|i| if i == n - 1 { b } else { a + d * i as f64 })
-                .collect()
+            (0..n).map(|i| if i == n - 1 { b } else { a + d * i as f64 }).collect()
         }
     }
 }
 
 /// `n` log-spaced values from `10^a` to `10^b`.
 pub fn logspace(a: f64, b: f64, n: usize) -> Vec<f64> {
-    linspace(a, b, n)
-        .into_iter()
-        .map(|e| 10f64.powf(e))
-        .collect()
+    linspace(a, b, n).into_iter().map(|e| 10f64.powf(e)).collect()
 }
 
 /// Minimum and maximum of the finite values, or `None` if there are none.

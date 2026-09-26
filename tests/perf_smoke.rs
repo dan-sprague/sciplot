@@ -19,10 +19,7 @@ fn pan_1m_scatter_without_reupload() {
         Err(e) => panic!("{e}"),
     };
     let first = off.frame(&fig).unwrap();
-    assert!(
-        first.data_bytes >= (n * 8) as u64,
-        "first frame uploads the points"
-    );
+    assert!(first.data_bytes >= (n * 8) as u64, "first frame uploads the points");
 
     let mut times = Vec::new();
     for k in 0..20 {
@@ -34,8 +31,5 @@ fn pan_1m_scatter_without_reupload() {
         assert_eq!(s.data_bytes, 0, "pan frame {k} re-uploaded plot data");
     }
     times.sort_by(f64::total_cmp);
-    eprintln!(
-        "1M scatter pan frame (offscreen incl. readback): median {:.1} ms, max {:.1} ms",
-        times[10], times[19]
-    );
+    eprintln!("1M scatter pan frame (offscreen incl. readback): median {:.1} ms, max {:.1} ms", times[10], times[19]);
 }

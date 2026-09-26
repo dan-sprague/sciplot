@@ -44,28 +44,18 @@ impl Color {
         if let Some(h) = t.strip_prefix('#') {
             let v = u32::from_str_radix(h, 16).map_err(|_| bad(s))?;
             return match h.len() {
-                3 => Ok(Color::rgb8(
-                    ((v >> 8) & 0xF) as u8 * 17,
-                    ((v >> 4) & 0xF) as u8 * 17,
-                    (v & 0xF) as u8 * 17,
-                )),
+                3 => Ok(Color::rgb8(((v >> 8) & 0xF) as u8 * 17, ((v >> 4) & 0xF) as u8 * 17, (v & 0xF) as u8 * 17)),
                 6 => Ok(Color::hex(v)),
                 8 => Ok(Color::hex(v >> 8).with_alpha((v & 0xFF) as f32 / 255.0)),
                 _ => Err(bad(s)),
             };
         }
-        let key: String = t
-            .chars()
-            .filter(|c| !c.is_whitespace() && *c != '_')
-            .collect::<String>()
-            .to_ascii_lowercase();
+        let key: String =
+            t.chars().filter(|c| !c.is_whitespace() && *c != '_').collect::<String>().to_ascii_lowercase();
         if key == "transparent" {
             return Ok(Color::TRANSPARENT);
         }
-        if let Some(rest) = key
-            .strip_prefix("gray")
-            .or_else(|| key.strip_prefix("grey"))
-        {
+        if let Some(rest) = key.strip_prefix("gray").or_else(|| key.strip_prefix("grey")) {
             if let Ok(n) = rest.parse::<u32>() {
                 if n <= 100 {
                     return Ok(Color::gray(n as f32 / 100.0));
@@ -100,9 +90,7 @@ impl Color {
 }
 
 fn bad(s: &str) -> Error {
-    Error::Parse(format!(
-        "unknown color {s:?}; use a CSS name like \"red\", \"gray50\", or hex \"#0072B2\""
-    ))
+    Error::Parse(format!("unknown color {s:?}; use a CSS name like \"red\", \"gray50\", or hex \"#0072B2\""))
 }
 
 /// Named colors (CSS / Colors.jl names).
@@ -200,9 +188,6 @@ mod tests {
 
     #[test]
     fn premul_packing() {
-        assert_eq!(
-            Color::rgba(1.0, 0.0, 0.0, 0.5).to_premul_u32(),
-            0x80_00_00_80
-        );
+        assert_eq!(Color::rgba(1.0, 0.0, 0.0, 0.5).to_premul_u32(), 0x80_00_00_80);
     }
 }

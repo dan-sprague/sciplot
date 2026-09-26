@@ -47,9 +47,7 @@ fn with_event_loop<R>(f: impl FnOnce(&mut EventLoop<UserEvent>) -> Result<R>) ->
     EVENT_LOOP.with(|cell| {
         let mut slot = cell.try_borrow_mut().map_err(|_| Error::Reentrant)?;
         if slot.is_none() {
-            let el = EventLoop::<UserEvent>::with_user_event()
-                .build()
-                .map_err(|e| Error::EventLoop(e.to_string()))?;
+            let el = EventLoop::<UserEvent>::with_user_event().build().map_err(|e| Error::EventLoop(e.to_string()))?;
             *slot = Some(el);
         }
         f(slot.as_mut().unwrap())
@@ -96,28 +94,14 @@ impl App {
     fn open(&mut self, el: &ActiveEventLoop, fig: Figure) -> Result<()> {
         let (size, title) = {
             let st = fig.sh.state.lock();
-            (
-                st.theme.globals().size,
-                st.window_title.clone().unwrap_or_else(|| "ezviz".into()),
-            )
+            (st.theme.globals().size, st.window_title.clone().unwrap_or_else(|| "ezviz".into()))
         };
-        let attrs = Window::default_attributes()
-            .with_title(title)
-            .with_inner_size(LogicalSize::new(size[0], size[1]));
-        let window = Arc::new(
-            el.create_window(attrs)
-                .map_err(|e| Error::EventLoop(e.to_string()))?,
-        );
-        let surface = self
-            .gpu
-            .instance
-            .create_surface(window.clone())
-            .map_err(|e| Error::Gpu(e.to_string()))?;
+        let attrs = Window::default_attributes().with_title(title).with_inner_size(LogicalSize::new(size[0], size[1]));
+        let window = Arc::new(el.create_window(attrs).map_err(|e| Error::EventLoop(e.to_string()))?);
+        let surface = self.gpu.instance.create_surface(window.clone()).map_err(|e| Error::Gpu(e.to_string()))?;
         let caps = surface.get_capabilities(&self.gpu.adapter);
         if !caps.formats.contains(&TARGET_FORMAT) {
-            return Err(Error::Gpu(format!(
-                "surface does not support {TARGET_FORMAT:?}"
-            )));
+            return Err(Error::Gpu(format!("surface does not support {TARGET_FORMAT:?}")));
         }
         let phys = window.inner_size();
         let alpha_mode = if caps.alpha_modes.contains(&wgpu::CompositeAlphaMode::Opaque) {
@@ -148,19 +132,8 @@ impl App {
         );
         window.request_redraw();
         let renderer = Renderer::new(self.gpu.clone());
-        self.screens.insert(
-            window.id(),
-            Screen {
-                surface,
-                window,
-                config,
-                fig,
-                renderer,
-                wake_id,
-                last: None,
-                dumped: false,
-            },
-        );
+        self.screens
+            .insert(window.id(), Screen { surface, window, config, fig, renderer, wake_id, last: None, dumped: false });
         Ok(())
     }
 
@@ -196,12 +169,8 @@ impl App {
                 return;
             }
         };
-        let view = frame
-            .texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
-        let cmd = s
-            .renderer
-            .render(&dl, &view, [s.config.width, s.config.height], ppu);
+        let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let cmd = s.renderer.render(&dl, &view, [s.config.width, s.config.height], ppu);
         gpu.queue.submit([cmd]);
         s.window.pre_present_notify();
         gpu.queue.present(frame);
@@ -211,14 +180,8 @@ impl App {
                 s.dumped = true;
                 match s.renderer.render_rgba(&dl, ppu) {
                     Ok((width, height, data)) => {
-                        let img = crate::figure::RgbaImage {
-                            width,
-                            height,
-                            data,
-                        };
-                        if let Err(e) =
-                            crate::figure::write_png(std::path::Path::new(&path), &img, ppu)
-                        {
+                        let img = crate::figure::RgbaImage { width, height, data };
+                        if let Err(e) = crate::figure::write_png(std::path::Path::new(&path), &img, ppu) {
                             log::error!("ezviz: window dump failed: {e}");
                         }
                     }
@@ -316,9 +279,7 @@ pub fn show_all(figs: &[&Figure]) -> Result<()> {
             autoclose,
         };
         el.set_control_flow(ControlFlow::Wait);
-        let r = el
-            .run_app_on_demand(&mut app)
-            .map_err(|e| Error::EventLoop(e.to_string()));
+        let r = el.run_app_on_demand(&mut app).map_err(|e| Error::EventLoop(e.to_string()));
         app.screens.clear();
         if let Some(e) = app.error.take() {
             return Err(e);

@@ -22,6 +22,8 @@
 //! indexes your own data (hover readouts, `Field`) is 0-based like Rust.
 
 #![deny(unsafe_code)]
+// Scaffolding for later milestones; removed at M10.
+#![allow(dead_code, irrefutable_let_patterns)]
 
 pub(crate) mod attrs;
 pub(crate) mod blocks;

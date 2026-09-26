@@ -82,18 +82,10 @@ pub(crate) fn solve(
             }
         }
     }
-    let avail_w = size[0]
-        - pl
-        - pr
-        - colgap * (ncols as f64 - 1.0)
-        - left.iter().sum::<f64>()
-        - right.iter().sum::<f64>();
-    let avail_h = size[1]
-        - pt
-        - pb
-        - rowgap * (nrows as f64 - 1.0)
-        - top.iter().sum::<f64>()
-        - bottom.iter().sum::<f64>();
+    let avail_w =
+        size[0] - pl - pr - colgap * (ncols as f64 - 1.0) - left.iter().sum::<f64>() - right.iter().sum::<f64>();
+    let avail_h =
+        size[1] - pt - pb - rowgap * (nrows as f64 - 1.0) - top.iter().sum::<f64>() - bottom.iter().sum::<f64>();
     let widths = distribute(&colw, &spec.colsizes, avail_w);
     let heights = distribute(&rowh, &spec.rowsizes, avail_h);
 

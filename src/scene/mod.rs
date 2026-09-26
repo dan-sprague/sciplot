@@ -7,6 +7,8 @@ pub(crate) mod axis;
 pub(crate) mod drawlist;
 mod plots;
 
+pub(crate) use plots::PlotCtx;
+
 use crate::blocks::Block;
 use crate::blocks::axis::AxisResolved;
 use crate::figure::{BlockId, FigState};
@@ -79,28 +81,17 @@ pub(crate) struct AxisFrame {
 }
 
 /// Builds a frame. `size` overrides the figure size (window size).
-pub(crate) fn build(
-    st: &FigState,
-    size: Option<[f64; 2]>,
-    cache: &mut SceneCache,
-) -> (DrawList, Vec<AxisFrame>) {
+pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCache) -> (DrawList, Vec<AxisFrame>) {
     let g: Globals = st.theme.globals();
     let size = size.unwrap_or(g.size);
 
     // 1. Axes: resolve attributes and limits.
     let mut axes: Vec<AxisFrame> = Vec::new();
     let mut items: Vec<LayoutItem> = Vec::new();
-    let axis_ids: Vec<BlockId> = st
-        .iter_blocks()
-        .filter(|(_, s)| matches!(s.block, Block::Axis(_)))
-        .map(|(id, _)| id)
-        .collect();
+    let axis_ids: Vec<BlockId> =
+        st.iter_blocks().filter(|(_, s)| matches!(s.block, Block::Axis(_))).map(|(id, _)| id).collect();
     let limits = axis::compute_limits(st, &axis_ids, &g);
-    for (slot, (id, bslot)) in st
-        .iter_blocks()
-        .filter(|(_, s)| matches!(s.block, Block::Axis(_)))
-        .enumerate()
-    {
+    for (slot, (id, bslot)) in st.iter_blocks().filter(|(_, s)| matches!(s.block, Block::Axis(_))).enumerate() {
         let Block::Axis(ax) = &bslot.block;
         let attrs = ax.attrs.resolve(&st.theme.axis, &g);
         let lim = limits[slot];
@@ -161,12 +152,7 @@ pub(crate) fn build(
         plots::emit_plots(&mut em, st, a, &g, cache);
     }
 
-    let mut dl = DrawList {
-        size,
-        background: g.backgroundcolor,
-        axes: xforms,
-        items: em.items,
-    };
+    let mut dl = DrawList { size, background: g.backgroundcolor, axes: xforms, items: em.items };
     dl.sort();
     (dl, axes)
 }

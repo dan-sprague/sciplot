@@ -13,10 +13,7 @@ pub struct Offscreen {
 
 impl Offscreen {
     pub fn new(ppu: f64) -> Result<Offscreen> {
-        Ok(Offscreen {
-            r: Renderer::new(gpu()?),
-            ppu,
-        })
+        Ok(Offscreen { r: Renderer::new(gpu()?), ppu })
     }
 
     /// Renders one frame of `fig` and waits for the GPU. Returns the frame's upload stats.

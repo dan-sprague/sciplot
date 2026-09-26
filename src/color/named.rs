@@ -1,10 +1,7 @@
 //! CSS color names (lowercase, no separators) -> 0xRRGGBB.
 
 pub(crate) fn lookup(name: &str) -> Option<u32> {
-    NAMED
-        .binary_search_by(|(n, _)| n.cmp(&name))
-        .ok()
-        .map(|i| NAMED[i].1)
+    NAMED.binary_search_by(|(n, _)| n.cmp(&name)).ok().map(|i| NAMED[i].1)
 }
 
 // Sorted by name for binary search.

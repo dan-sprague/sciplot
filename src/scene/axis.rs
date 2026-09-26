@@ -39,10 +39,7 @@ pub(crate) fn expand(b: (f64, f64), margin: [f64; 2], scale: Scale) -> (f64, f64
         if zd == 0.0 {
             return match scale {
                 Scale::Identity | Scale::Sqrt => (
-                    scale
-                        .inverse(-1.0)
-                        .min(0.0)
-                        .max(if scale == Scale::Sqrt { 0.0 } else { -1.0 }),
+                    scale.inverse(-1.0).min(0.0).max(if scale == Scale::Sqrt { 0.0 } else { -1.0 }),
                     scale.inverse(1.0),
                 ),
                 // log of 1: widen a decade each way (Makie leaves this singular).
@@ -67,13 +64,7 @@ pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec
     // Per-axis resolved attributes and raw data bounds in scaled space.
     let resolved: Vec<AxisResolved> = ids
         .iter()
-        .map(|id| {
-            st.block(*id)
-                .and_then(|b| b.as_axis())
-                .unwrap()
-                .attrs
-                .resolve(&st.theme.axis, g)
-        })
+        .map(|id| st.block(*id).and_then(|b| b.as_axis()).unwrap().attrs.resolve(&st.theme.axis, g))
         .collect();
     let raw: Vec<(Bounds, Bounds, bool)> = ids
         .iter()
@@ -88,8 +79,8 @@ pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec
                     if !p.common.visible {
                         continue;
                     }
-                    tight |= p.kind.tight_limits();
-                    if let Some([x0, x1, y0, y1]) = p.kind.data_bounds(r.xscale, r.yscale) {
+                    tight |= p.kind.imp().tight_limits();
+                    if let Some([x0, x1, y0, y1]) = p.kind.imp().data_bounds(r.xscale, r.yscale) {
                         if p.common.xautolimits && x0.is_finite() {
                             bx = union(bx, Some((x0, x1)));
                         }
@@ -128,11 +119,7 @@ pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec
                     tight |= raw[j].2;
                 }
             }
-            let (mx, my) = if tight {
-                ([0.0; 2], [0.0; 2])
-            } else {
-                (r.xautolimitmargin, r.yautolimitmargin)
-            };
+            let (mx, my) = if tight { ([0.0; 2], [0.0; 2]) } else { (r.xautolimitmargin, r.yautolimitmargin) };
             let (mut x0, mut x1) = bx.map_or(default_limits(r.xscale), |b| expand(b, mx, r.xscale));
             let (mut y0, mut y1) = by.map_or(default_limits(r.yscale), |b| expand(b, my, r.yscale));
             // User limits (possibly partial) win; a linked axis' user x limits apply too.
@@ -169,18 +156,10 @@ pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec
                 std::mem::swap(&mut y0, &mut y1);
             }
             if x0 == x1 {
-                (x0, x1) = expand(
-                    (r.xscale.forward(x0), r.xscale.forward(x1)),
-                    [0.0; 2],
-                    r.xscale,
-                );
+                (x0, x1) = expand((r.xscale.forward(x0), r.xscale.forward(x1)), [0.0; 2], r.xscale);
             }
             if y0 == y1 {
-                (y0, y1) = expand(
-                    (r.yscale.forward(y0), r.yscale.forward(y1)),
-                    [0.0; 2],
-                    r.yscale,
-                );
+                (y0, y1) = expand((r.yscale.forward(y0), r.yscale.forward(y1)), [0.0; 2], r.yscale);
             }
             [x0, x1, y0, y1]
         })
@@ -193,24 +172,13 @@ pub(crate) fn line_height(size: f64) -> f64 {
 }
 
 fn max_label_width(t: &Ticks, size: f64, font: crate::text::Font) -> f64 {
-    t.labels
-        .iter()
-        .map(|l| crate::text::measure(l, size, font).width)
-        .fold(0.0, f64::max)
+    t.labels.iter().map(|l| crate::text::measure(l, size, font).width).fold(0.0, f64::max)
 }
 
 /// Makie's Axis protrusions.
 pub(crate) fn protrusion(a: &AxisResolved, xt: &Ticks, yt: &Ticks) -> Protrusion {
-    let xtick_out = if a.xticksvisible {
-        a.xticksize * (1.0 - a.xtickalign)
-    } else {
-        0.0
-    };
-    let ytick_out = if a.yticksvisible {
-        a.yticksize * (1.0 - a.ytickalign)
-    } else {
-        0.0
-    };
+    let xtick_out = if a.xticksvisible { a.xticksize * (1.0 - a.xtickalign) } else { 0.0 };
+    let ytick_out = if a.yticksvisible { a.yticksize * (1.0 - a.ytickalign) } else { 0.0 };
     let xticklabel_h = match a.xticklabelspace {
         Some(s) => s,
         None if a.xticklabelsvisible && !xt.labels.is_empty() => line_height(a.xticklabelsize),
@@ -221,23 +189,11 @@ pub(crate) fn protrusion(a: &AxisResolved, xt: &Ticks, yt: &Ticks) -> Protrusion
         None if a.yticklabelsvisible => max_label_width(yt, a.yticklabelsize, a.yticklabelfont),
         None => 0.0,
     };
-    let mut bottom = xtick_out
-        + xticklabel_h
-        + if xticklabel_h > 0.0 {
-            a.xticklabelpad
-        } else {
-            0.0
-        };
+    let mut bottom = xtick_out + xticklabel_h + if xticklabel_h > 0.0 { a.xticklabelpad } else { 0.0 };
     if a.xlabelvisible && !a.xlabel.is_empty() {
         bottom += a.xlabelpadding + line_height(a.xlabelsize);
     }
-    let mut left = ytick_out
-        + yticklabel_w
-        + if yticklabel_w > 0.0 {
-            a.yticklabelpad
-        } else {
-            0.0
-        };
+    let mut left = ytick_out + yticklabel_w + if yticklabel_w > 0.0 { a.yticklabelpad } else { 0.0 };
     if a.ylabelvisible && !a.ylabel.is_empty() {
         left += a.ylabelpadding + line_height(a.ylabelsize);
     }
@@ -248,12 +204,7 @@ pub(crate) fn protrusion(a: &AxisResolved, xt: &Ticks, yt: &Ticks) -> Protrusion
             top += a.subtitlegap + line_height(a.subtitlesize);
         }
     }
-    Protrusion {
-        left,
-        right: 0.0,
-        bottom,
-        top,
-    }
+    Protrusion { left, right: 0.0, bottom, top }
 }
 
 /// Unit x of a data x value.
@@ -284,27 +235,11 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
         z::BACKGROUND,
         None,
         Space::Figure,
-        rects(vec![RectPrim {
-            rect: r,
-            color: at.backgroundcolor,
-            snap: false,
-        }]),
+        rects(vec![RectPrim { rect: r, color: at.backgroundcolor, snap: false }]),
     );
 
-    let xs: Vec<f64> = a
-        .xticks
-        .values
-        .iter()
-        .copied()
-        .filter(|v| inside(*v, a.limits[0], a.limits[1]))
-        .collect();
-    let ys: Vec<f64> = a
-        .yticks
-        .values
-        .iter()
-        .copied()
-        .filter(|v| inside(*v, a.limits[2], a.limits[3]))
-        .collect();
+    let xs: Vec<f64> = a.xticks.values.iter().copied().filter(|v| inside(*v, a.limits[0], a.limits[1])).collect();
+    let ys: Vec<f64> = a.yticks.values.iter().copied().filter(|v| inside(*v, a.limits[2], a.limits[3])).collect();
     let xminor = if at.xminorticksvisible || at.xminorgridvisible {
         crate::ticks::minor_ticks(&a.xticks.values, a.limits[0], a.limits[1], at.xscale, 2)
     } else {
@@ -367,11 +302,7 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
     let xtick = |v: f64, size: f64, width: f64, color, out: &mut Vec<RectPrim>| {
         let x = ux(a, xf, v);
         let y0 = r.bottom() - size * at.xtickalign;
-        out.push(RectPrim {
-            rect: Rect::new(x - 0.5 * width, y0, width, size),
-            color,
-            snap: true,
-        });
+        out.push(RectPrim { rect: Rect::new(x - 0.5 * width, y0, width, size), color, snap: true });
     };
     if at.xticksvisible {
         for &v in &xs {
@@ -380,23 +311,13 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
     }
     if at.xminorticksvisible {
         for &v in &xminor {
-            xtick(
-                v,
-                at.xminorticksize,
-                at.xminortickwidth,
-                at.xminortickcolor,
-                &mut ticks,
-            );
+            xtick(v, at.xminorticksize, at.xminortickwidth, at.xminortickcolor, &mut ticks);
         }
     }
     let ytick = |v: f64, size: f64, width: f64, color, out: &mut Vec<RectPrim>| {
         let y = uy(a, xf, v);
         let x0 = r.x - size * (1.0 - at.ytickalign);
-        out.push(RectPrim {
-            rect: Rect::new(x0, y - 0.5 * width, size, width),
-            color,
-            snap: true,
-        });
+        out.push(RectPrim { rect: Rect::new(x0, y - 0.5 * width, size, width), color, snap: true });
     };
     if at.yticksvisible {
         for &v in &ys {
@@ -405,13 +326,7 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
     }
     if at.yminorticksvisible {
         for &v in &yminor {
-            ytick(
-                v,
-                at.yminorticksize,
-                at.yminortickwidth,
-                at.yminortickcolor,
-                &mut ticks,
-            );
+            ytick(v, at.yminorticksize, at.yminortickwidth, at.yminortickcolor, &mut ticks);
         }
     }
     if !ticks.is_empty() {
@@ -455,28 +370,15 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
 
     // Text: tick labels, axis labels, title.
     let mut glyphs = Vec::new();
-    let xtick_out = if at.xticksvisible {
-        at.xticksize * (1.0 - at.xtickalign)
-    } else {
-        0.0
-    };
-    let ytick_out = if at.yticksvisible {
-        at.yticksize * (1.0 - at.ytickalign)
-    } else {
-        0.0
-    };
+    let xtick_out = if at.xticksvisible { at.xticksize * (1.0 - at.xtickalign) } else { 0.0 };
+    let ytick_out = if at.yticksvisible { at.yticksize * (1.0 - at.ytickalign) } else { 0.0 };
     let mut xlabel_top = r.bottom() + xtick_out;
     if at.xticklabelsvisible {
         for (v, label) in a.xticks.values.iter().zip(&a.xticks.labels) {
             if !inside(*v, a.limits[0], a.limits[1]) {
                 continue;
             }
-            let l = crate::text::layout(
-                label,
-                at.xticklabelsize,
-                at.xticklabelfont,
-                at.xticklabelcolor,
-            );
+            let l = crate::text::layout(label, at.xticklabelsize, at.xticklabelfont, at.xticklabelcolor);
             glyphs.extend(crate::text::place(
                 &l,
                 [ux(a, xf, *v), r.bottom() + xtick_out + at.xticklabelpad],
@@ -484,44 +386,26 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
                 0.0,
             ));
         }
-        let h = at.xticklabelspace.unwrap_or(if a.xticks.labels.is_empty() {
-            0.0
-        } else {
-            line_height(at.xticklabelsize)
-        });
+        let h =
+            at.xticklabelspace.unwrap_or(if a.xticks.labels.is_empty() { 0.0 } else { line_height(at.xticklabelsize) });
         if h > 0.0 {
             xlabel_top += at.xticklabelpad + h;
         }
     }
     if at.xlabelvisible && !at.xlabel.is_empty() {
         let l = crate::text::layout(&at.xlabel, at.xlabelsize, at.xlabelfont, at.xlabelcolor);
-        glyphs.extend(crate::text::place(
-            &l,
-            [r.x + 0.5 * r.w, xlabel_top + at.xlabelpadding],
-            (0.5, 1.0),
-            0.0,
-        ));
+        glyphs.extend(crate::text::place(&l, [r.x + 0.5 * r.w, xlabel_top + at.xlabelpadding], (0.5, 1.0), 0.0));
     }
     let mut ylabel_right = r.x - ytick_out;
     if at.yticklabelsvisible {
         let mut maxw: f64 = 0.0;
         for (v, label) in a.yticks.values.iter().zip(&a.yticks.labels) {
-            let l = crate::text::layout(
-                label,
-                at.yticklabelsize,
-                at.yticklabelfont,
-                at.yticklabelcolor,
-            );
+            let l = crate::text::layout(label, at.yticklabelsize, at.yticklabelfont, at.yticklabelcolor);
             maxw = maxw.max(l.width);
             if !inside(*v, a.limits[2], a.limits[3]) {
                 continue;
             }
-            glyphs.extend(crate::text::place(
-                &l,
-                [r.x - ytick_out - at.yticklabelpad, uy(a, xf, *v)],
-                (1.0, 0.5),
-                0.0,
-            ));
+            glyphs.extend(crate::text::place(&l, [r.x - ytick_out - at.yticklabelpad, uy(a, xf, *v)], (1.0, 0.5), 0.0));
         }
         let w = at.yticklabelspace.unwrap_or(maxw);
         if w > 0.0 {
@@ -543,24 +427,14 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
         let f = at.titlealign.frac();
         let mut y = r.y - at.titlegap;
         if !at.subtitle.is_empty() {
-            let s = crate::text::layout(
-                &at.subtitle,
-                at.subtitlesize,
-                crate::text::Font::Regular,
-                at.subtitlecolor,
-            );
+            let s = crate::text::layout(&at.subtitle, at.subtitlesize, crate::text::Font::Regular, at.subtitlecolor);
             glyphs.extend(crate::text::place(&s, [r.x + f * r.w, y], (f, 0.0), 0.0));
             y -= line_height(at.subtitlesize) + at.subtitlegap;
         }
         glyphs.extend(crate::text::place(&l, [r.x + f * r.w, y], (f, 0.0), 0.0));
     }
     if !glyphs.is_empty() {
-        em.push(
-            z::TEXT,
-            None,
-            Space::Figure,
-            Prim::Glyphs(GlyphsPrim { glyphs }),
-        );
+        em.push(z::TEXT, None, Space::Figure, Prim::Glyphs(GlyphsPrim { glyphs }));
     }
 }
 

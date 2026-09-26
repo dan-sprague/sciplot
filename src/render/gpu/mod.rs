@@ -1,10 +1,11 @@
 //! wgpu backend: one shared device for every window and export, four pipelines
 //! (`mesh`, `sprite`, and later `line`, `field`), painter's order in a single 4x MSAA pass.
 
+mod frame;
 mod pipelines;
 mod renderer;
 
-pub use renderer::RenderStats;
+pub use frame::RenderStats;
 pub(crate) use renderer::Renderer;
 
 use crate::error::{Error, Result};
@@ -39,20 +40,11 @@ impl Gpu {
         }))
         .map_err(|e| e.to_string())?;
         device.on_uncaptured_error(Arc::new(|e| log::error!("wgpu: {e}")));
-        Ok(Gpu {
-            instance,
-            adapter,
-            device,
-            queue,
-            pipelines: Mutex::new(None),
-        })
+        Ok(Gpu { instance, adapter, device, queue, pipelines: Mutex::new(None) })
     }
 
     pub(crate) fn pipelines(&self) -> Arc<pipelines::Pipelines> {
-        self.pipelines
-            .lock()
-            .get_or_insert_with(|| Arc::new(pipelines::Pipelines::new(&self.device)))
-            .clone()
+        self.pipelines.lock().get_or_insert_with(|| Arc::new(pipelines::Pipelines::new(&self.device))).clone()
     }
 
     pub(crate) fn max_texture_size(&self) -> u32 {
@@ -63,7 +55,5 @@ impl Gpu {
 /// The shared GPU context (created on first use).
 pub(crate) fn gpu() -> Result<Arc<Gpu>> {
     static GPU: OnceLock<std::result::Result<Arc<Gpu>, String>> = OnceLock::new();
-    GPU.get_or_init(|| Gpu::new().map(Arc::new))
-        .clone()
-        .map_err(Error::NoGpuAdapter)
+    GPU.get_or_init(|| Gpu::new().map(Arc::new)).clone().map_err(Error::NoGpuAdapter)
 }

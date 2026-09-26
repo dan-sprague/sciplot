@@ -86,72 +86,57 @@ pub(crate) struct PlotCommon {
 
 impl Default for PlotCommon {
     fn default() -> Self {
-        PlotCommon {
-            label: None,
-            visible: true,
-            z: 0.0,
-            inspectable: true,
-            xautolimits: true,
-            yautolimits: true,
-        }
+        PlotCommon { label: None, visible: true, z: 0.0, inspectable: true, xautolimits: true, yautolimits: true }
     }
 }
 
-#[derive(Clone, Debug)]
-pub(crate) enum PlotKind {
+/// What every plot type implements. Adding a plot type = a module implementing this trait plus
+/// one line in `plot_kinds!` below.
+pub(crate) trait PlotImpl {
+    /// Name of the per-axis cycle counter this plot advances (Makie counts per plot function).
+    fn cycle_group(&self) -> &'static str;
+    /// Whether the cycled attribute (color) is automatic: set neither on the plot nor in the theme.
+    fn color_is_auto(&self, theme: &crate::theme::Theme) -> bool;
+    /// Finite data bounds in scaled space `[x0, x1, y0, y1]`.
+    fn data_bounds(&self, xs: crate::transform::Scale, ys: crate::transform::Scale) -> Option<[f64; 4]>;
+    /// Plot types that make the axis use tight limits (heatmaps).
+    fn tight_limits(&self) -> bool {
+        false
+    }
+    /// Lowers the plot to draw-list primitives.
+    fn emit(&self, ctx: &mut crate::scene::PlotCtx<'_>);
+}
+
+/// Declares the plot-type registry: `PlotKind` and dispatch to each type's `PlotImpl`.
+macro_rules! plot_kinds {
+    ($($V:ident($T:ty)),* $(,)?) => {
+        #[derive(Clone, Debug)]
+        pub(crate) enum PlotKind { $($V($T)),* }
+
+        impl PlotKind {
+            pub(crate) fn imp(&self) -> &dyn PlotImpl {
+                match self { $(PlotKind::$V(s) => s),* }
+            }
+        }
+    };
+}
+
+plot_kinds! {
     Scatter(scatter::ScatterState),
 }
 
-impl PlotKind {
-    /// Which palette the plot cycles through, and its per-axis counter name.
-    pub(crate) fn cycle_group(&self) -> CycleGroup {
-        match self {
-            PlotKind::Scatter(_) => CycleGroup::Scatter,
-        }
-    }
-
-    /// Whether the cycled attribute (color) is automatic, i.e. set neither on the plot nor in the theme.
-    pub(crate) fn color_is_auto(&self, theme: &crate::theme::Theme) -> bool {
-        match self {
-            PlotKind::Scatter(s) => {
-                matches!(
-                    s.attrs.color.as_ref().or(theme.scatter.color.as_ref()),
-                    None | Some(ColorSpec::Auto)
-                )
-            }
-        }
-    }
-
-    /// Finite data bounds in scaled space `[x0, x1, y0, y1]`.
-    pub(crate) fn data_bounds(
-        &self,
-        xs: crate::transform::Scale,
-        ys: crate::transform::Scale,
-    ) -> Option<[f64; 4]> {
-        match self {
-            PlotKind::Scatter(s) => point_bounds(&s.pos, xs, ys),
-        }
-    }
-
-    /// Plot types that make the axis use tight limits (heatmaps).
-    pub(crate) fn tight_limits(&self) -> bool {
-        false
-    }
+/// `true` if a color spec (explicit or themed) is automatic.
+pub(crate) fn is_auto(explicit: Option<&ColorSpec>, theme: Option<&ColorSpec>) -> bool {
+    matches!(explicit.or(theme), None | Some(ColorSpec::Auto))
 }
 
-/// Finite bounds of points after applying the scales. Each dimension is independent: an axis
-/// with only valid x values still gets x bounds.
+/// Finite bounds of points after applying the scales.
 pub(crate) fn point_bounds(
     pts: &[[f64; 2]],
     xs: crate::transform::Scale,
     ys: crate::transform::Scale,
 ) -> Option<[f64; 4]> {
-    let mut b = [
-        f64::INFINITY,
-        f64::NEG_INFINITY,
-        f64::INFINITY,
-        f64::NEG_INFINITY,
-    ];
+    let mut b = [f64::INFINITY, f64::NEG_INFINITY, f64::INFINITY, f64::NEG_INFINITY];
     for p in pts {
         let (x, y) = (xs.forward(p[0]), ys.forward(p[1]));
         if x.is_finite() && y.is_finite() {
@@ -162,11 +147,6 @@ pub(crate) fn point_bounds(
         }
     }
     (b[0] <= b[1]).then_some(b)
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub(crate) enum CycleGroup {
-    Scatter,
 }
 
 #[derive(Clone, Debug)]
@@ -196,12 +176,7 @@ impl PlotSlot {
 /// Converts x/y data into point pairs, panicking with a helpful message on length mismatch.
 #[track_caller]
 pub(crate) fn zip_xy(what: &str, x: Vec<f64>, y: Vec<f64>) -> Vec<[f64; 2]> {
-    assert!(
-        x.len() == y.len(),
-        "{what}: x has {} values but y has {}",
-        x.len(),
-        y.len()
-    );
+    assert!(x.len() == y.len(), "{what}: x has {} values but y has {}", x.len(), y.len());
     x.into_iter().zip(y).map(|(a, b)| [a, b]).collect()
 }
 
@@ -216,11 +191,7 @@ macro_rules! plot_common {
             ) -> Option<R> {
                 let r = self.sh.update(dirty, |st| st.plot_mut(self.id).map(f));
                 if r.is_none() {
-                    $crate::warn_once(concat!(
-                        "setter called on a ",
-                        stringify!($Handle),
-                        " that no longer exists"
-                    ));
+                    $crate::warn_once(concat!("setter called on a ", stringify!($Handle), " that no longer exists"));
                 }
                 r
             }
@@ -258,23 +229,12 @@ macro_rules! plot_common {
             }
             /// The figure containing this plot.
             pub fn figure(&self) -> $crate::Figure {
-                $crate::Figure {
-                    sh: self.sh.clone(),
-                }
+                $crate::Figure { sh: self.sh.clone() }
             }
             /// The axis containing this plot.
             pub fn axis(&self) -> $crate::Axis {
-                let id = self
-                    .sh
-                    .state
-                    .lock()
-                    .plot(self.id)
-                    .map(|p| p.axis)
-                    .expect("plot was deleted");
-                $crate::Axis {
-                    sh: self.sh.clone(),
-                    id,
-                }
+                let id = self.sh.state.lock().plot(self.id).map(|p| p.axis).expect("plot was deleted");
+                $crate::Axis { sh: self.sh.clone(), id }
             }
             /// Makie's `fig, ax, plt = scatter(...)`.
             pub fn unpack(&self) -> ($crate::Figure, $crate::Axis, Self) {
@@ -295,11 +255,7 @@ macro_rules! plot_common {
                 self.figure().save(path)
             }
             /// Saves the whole figure with options.
-            pub fn save_with(
-                &self,
-                path: impl AsRef<std::path::Path>,
-                opts: $crate::Save,
-            ) -> $crate::Result<()> {
+            pub fn save_with(&self, path: impl AsRef<std::path::Path>, opts: $crate::Save) -> $crate::Result<()> {
                 self.figure().save_with(path, opts)
             }
             /// Opens the figure in a window and blocks until it is closed.

@@ -39,10 +39,7 @@ fn one(i: i64) -> Span {
 
 #[track_caller]
 fn range(a: i64, b: i64) -> Span {
-    assert!(
-        a >= 1 && b >= 1,
-        "grid positions are 1-based like Makie: got {a}..={b}"
-    );
+    assert!(a >= 1 && b >= 1, "grid positions are 1-based like Makie: got {a}..={b}");
     assert!(a <= b, "empty grid span {a}..={b}");
     Span::Range(a as i32, b as i32)
 }
@@ -109,20 +106,12 @@ pub struct GridPosition {
 
 impl GridPosition {
     pub(crate) fn new(fig: Figure, rows: Span, cols: Span) -> Self {
-        GridPosition {
-            fig,
-            rows,
-            cols,
-            side: Side::Inner,
-        }
+        GridPosition { fig, rows, cols, side: Side::Inner }
     }
 
     /// The side protrusion of this cell: `fig.at(1, 1).side(Side::TopLeft)` for panel labels.
     pub fn side(&self, s: Side) -> GridPosition {
-        GridPosition {
-            side: s,
-            ..self.clone()
-        }
+        GridPosition { side: s, ..self.clone() }
     }
 
     /// The figure this position belongs to.
@@ -157,10 +146,6 @@ impl GridPosition {
                 (1, 1)
             }
         };
-        Placement {
-            rows,
-            cols,
-            side: self.side,
-        }
+        Placement { rows, cols, side: self.side }
     }
 }

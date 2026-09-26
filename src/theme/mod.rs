@@ -39,10 +39,7 @@ impl Default for Globals {
             markersize: 9.0,
             palette: WONG.to_vec(),
             // Makie's patchcolor palette: 0.2 * background + 0.8 * color.
-            patchpalette: WONG
-                .iter()
-                .map(|c| Color::rgb(1.0, 1.0, 1.0).lerp(*c, 0.8))
-                .collect(),
+            patchpalette: WONG.iter().map(|c| Color::rgb(1.0, 1.0, 1.0).lerp(*c, 0.8)).collect(),
         }
     }
 }
@@ -157,11 +154,7 @@ impl Theme {
             Some(p) => g.patchpalette = p.clone(),
             None => {
                 if self.palette.is_some() || self.backgroundcolor.is_some() {
-                    g.patchpalette = g
-                        .palette
-                        .iter()
-                        .map(|c| g.backgroundcolor.lerp(*c, 0.8))
-                        .collect();
+                    g.patchpalette = g.palette.iter().map(|c| g.backgroundcolor.lerp(*c, 0.8)).collect();
                 }
             }
         }
@@ -208,10 +201,5 @@ pub fn current_theme() -> Theme {
 
 /// Makie's `theme_minimal()`: no grid, only left and bottom spines.
 pub fn theme_minimal() -> Theme {
-    Theme::new().axis(|a| {
-        a.xgridvisible(false)
-            .ygridvisible(false)
-            .topspinevisible(false)
-            .rightspinevisible(false)
-    })
+    Theme::new().axis(|a| a.xgridvisible(false).ygridvisible(false).topspinevisible(false).rightspinevisible(false))
 }

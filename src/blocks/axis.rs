@@ -160,14 +160,8 @@ impl Axis {
         Axis { sh, id }
     }
 
-    pub(crate) fn with_state<R>(
-        &self,
-        dirty: u8,
-        f: impl FnOnce(&mut AxisState) -> R,
-    ) -> Option<R> {
-        self.sh.update(dirty, |st| {
-            st.block_mut(self.id).and_then(|b| b.as_axis_mut()).map(f)
-        })
+    pub(crate) fn with_state<R>(&self, dirty: u8, f: impl FnOnce(&mut AxisState) -> R) -> Option<R> {
+        self.sh.update(dirty, |st| st.block_mut(self.id).and_then(|b| b.as_axis_mut()).map(f))
     }
 
     fn with_attrs(&self, f: impl FnOnce(&mut AxisAttrs), dirty: u8) {
@@ -178,17 +172,11 @@ impl Axis {
 
     /// The figure this axis belongs to.
     pub fn figure(&self) -> crate::Figure {
-        crate::Figure {
-            sh: self.sh.clone(),
-        }
+        crate::Figure { sh: self.sh.clone() }
     }
 
     /// Makie's `xlims!(ax, lo, hi)`. `None` leaves that side automatic; `lo > hi` reverses.
-    pub fn xlims(
-        &self,
-        lo: impl crate::attrs::Conv<Option<f64>>,
-        hi: impl crate::attrs::Conv<Option<f64>>,
-    ) -> Axis {
+    pub fn xlims(&self, lo: impl crate::attrs::Conv<Option<f64>>, hi: impl crate::attrs::Conv<Option<f64>>) -> Axis {
         let (lo, hi) = (lo.conv(), hi.conv());
         self.with_state(Dirty::LIMITS, |a| {
             a.xlims = (lo, hi);
@@ -198,11 +186,7 @@ impl Axis {
     }
 
     /// Makie's `ylims!(ax, lo, hi)`.
-    pub fn ylims(
-        &self,
-        lo: impl crate::attrs::Conv<Option<f64>>,
-        hi: impl crate::attrs::Conv<Option<f64>>,
-    ) -> Axis {
+    pub fn ylims(&self, lo: impl crate::attrs::Conv<Option<f64>>, hi: impl crate::attrs::Conv<Option<f64>>) -> Axis {
         let (lo, hi) = (lo.conv(), hi.conv());
         self.with_state(Dirty::LIMITS, |a| {
             a.ylims = (lo, hi);
@@ -245,10 +229,7 @@ impl Axis {
 
     /// Makie's `hidexdecorations!`: hides x ticks, tick labels and label (and grid if `grid`).
     pub fn hidexdecorations(&self, grid: bool) -> Axis {
-        self.xlabelvisible(false)
-            .xticklabelsvisible(false)
-            .xticksvisible(false)
-            .xminorticksvisible(false);
+        self.xlabelvisible(false).xticklabelsvisible(false).xticksvisible(false).xminorticksvisible(false);
         if grid {
             self.xgridvisible(false).xminorgridvisible(false);
         }
@@ -257,10 +238,7 @@ impl Axis {
 
     /// Makie's `hideydecorations!`.
     pub fn hideydecorations(&self, grid: bool) -> Axis {
-        self.ylabelvisible(false)
-            .yticklabelsvisible(false)
-            .yticksvisible(false)
-            .yminorticksvisible(false);
+        self.ylabelvisible(false).yticklabelsvisible(false).yticksvisible(false).yminorticksvisible(false);
         if grid {
             self.ygridvisible(false).yminorgridvisible(false);
         }
@@ -274,20 +252,14 @@ impl Axis {
 
     /// Makie's `hidespines!` (all four).
     pub fn hidespines(&self) -> Axis {
-        self.leftspinevisible(false)
-            .rightspinevisible(false)
-            .bottomspinevisible(false)
-            .topspinevisible(false)
+        self.leftspinevisible(false).rightspinevisible(false).bottomspinevisible(false).topspinevisible(false)
     }
 }
 
 fn link(axes: &[&Axis], x: bool, y: bool) {
     let Some(first) = axes.first() else { return };
     for a in axes {
-        assert!(
-            Arc::ptr_eq(&a.sh, &first.sh),
-            "linked axes must belong to the same figure"
-        );
+        assert!(Arc::ptr_eq(&a.sh, &first.sh), "linked axes must belong to the same figure");
     }
     let ids: Vec<BlockId> = axes.iter().map(|a| a.id).collect();
     first.sh.update(Dirty::LIMITS, |st| {

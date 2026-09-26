@@ -21,11 +21,7 @@ pub struct Save {
 
 impl Default for Save {
     fn default() -> Self {
-        Save {
-            px_per_unit: 2.0,
-            pt_per_unit: 0.75,
-            background: None,
-        }
+        Save { px_per_unit: 2.0, pt_per_unit: 0.75, background: None }
     }
 }
 
@@ -35,10 +31,7 @@ impl Save {
     }
     /// Bitmap resolution in dots per inch (`px_per_unit = dpi / 96`).
     pub fn dpi(dpi: impl crate::attrs::Conv<f64>) -> Save {
-        Save {
-            px_per_unit: dpi.conv() / 96.0,
-            ..Save::default()
-        }
+        Save { px_per_unit: dpi.conv() / 96.0, ..Save::default() }
     }
     /// Device pixels per figure unit for bitmaps (default 2).
     pub fn px_per_unit(mut self, v: impl crate::attrs::Conv<f64>) -> Save {
@@ -74,11 +67,7 @@ impl Figure {
     /// Saves with explicit options.
     pub fn save_with(&self, path: impl AsRef<Path>, opts: Save) -> Result<()> {
         let path = path.as_ref();
-        let ext = path
-            .extension()
-            .and_then(|e| e.to_str())
-            .map(|e| e.to_ascii_lowercase())
-            .unwrap_or_default();
+        let ext = path.extension().and_then(|e| e.to_str()).map(|e| e.to_ascii_lowercase()).unwrap_or_default();
         match ext.as_str() {
             "png" => {
                 let img = self.render_rgba(&opts)?;
@@ -103,11 +92,7 @@ impl Figure {
             dl.background = bg;
         }
         let (width, height, data) = r.render_rgba(&dl, opts.px_per_unit)?;
-        Ok(RgbaImage {
-            width,
-            height,
-            data,
-        })
+        Ok(RgbaImage { width, height, data })
     }
 
     /// The figure as an SVG document.
@@ -123,16 +108,9 @@ pub(crate) fn write_png(path: &Path, img: &RgbaImage, px_per_unit: f64) -> Resul
     enc.set_depth(png::BitDepth::Eight);
     enc.set_source_srgb(png::SrgbRenderingIntent::Perceptual);
     let ppm = (96.0 * px_per_unit / 0.0254).round() as u32;
-    enc.set_pixel_dims(Some(png::PixelDimensions {
-        xppu: ppm,
-        yppu: ppm,
-        unit: png::Unit::Meter,
-    }));
-    let mut w = enc
-        .write_header()
-        .map_err(|e| Error::Encode(e.to_string()))?;
-    w.write_image_data(&img.data)
-        .map_err(|e| Error::Encode(e.to_string()))?;
+    enc.set_pixel_dims(Some(png::PixelDimensions { xppu: ppm, yppu: ppm, unit: png::Unit::Meter }));
+    let mut w = enc.write_header().map_err(|e| Error::Encode(e.to_string()))?;
+    w.write_image_data(&img.data).map_err(|e| Error::Encode(e.to_string()))?;
     w.finish().map_err(|e| Error::Encode(e.to_string()))?;
     Ok(())
 }

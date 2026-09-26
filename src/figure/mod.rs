@@ -126,15 +126,8 @@ impl FigState {
 
     pub(crate) fn add_block(&mut self, place: Placement, block: Block) -> BlockId {
         let index = self.blocks.len() as u32;
-        self.blocks.push(Some(BlockSlot {
-            generation: 0,
-            place,
-            block,
-        }));
-        BlockId {
-            index,
-            generation: 0,
-        }
+        self.blocks.push(Some(BlockSlot { generation: 0, place, block }));
+        BlockId { index, generation: 0 }
     }
 
     pub(crate) fn add_plot(&mut self, slot: PlotSlot) -> PlotId {
@@ -146,39 +139,23 @@ impl FigState {
 
     /// Blocks with their ids, in insertion order.
     pub(crate) fn iter_blocks(&self) -> impl Iterator<Item = (BlockId, &BlockSlot)> {
-        self.blocks.iter().enumerate().filter_map(|(i, s)| {
-            s.as_ref().map(|s| {
-                (
-                    BlockId {
-                        index: i as u32,
-                        generation: s.generation,
-                    },
-                    s,
-                )
-            })
-        })
+        self.blocks
+            .iter()
+            .enumerate()
+            .filter_map(|(i, s)| s.as_ref().map(|s| (BlockId { index: i as u32, generation: s.generation }, s)))
     }
 
     /// Plots with their ids, in insertion order.
     pub(crate) fn iter_plots(&self) -> impl Iterator<Item = (PlotId, &PlotSlot)> {
-        self.plots.iter().enumerate().filter_map(|(i, s)| {
-            s.as_ref().map(|s| {
-                (
-                    PlotId {
-                        index: i as u32,
-                        generation: s.generation,
-                    },
-                    s,
-                )
-            })
-        })
+        self.plots
+            .iter()
+            .enumerate()
+            .filter_map(|(i, s)| s.as_ref().map(|s| (PlotId { index: i as u32, generation: s.generation }, s)))
     }
 
     /// Grid extent: (nrows, ncols) of the root layout.
     pub(crate) fn grid_extent(&self) -> (i32, i32) {
-        self.iter_blocks().fold((0, 0), |(r, c), (_, s)| {
-            (r.max(s.place.rows.1), c.max(s.place.cols.1))
-        })
+        self.iter_blocks().fold((0, 0), |(r, c), (_, s)| (r.max(s.place.rows.1), c.max(s.place.cols.1)))
     }
 }
 
@@ -192,10 +169,7 @@ pub(crate) struct Waker {
 
 impl Waker {
     fn new() -> Self {
-        Waker {
-            pending: AtomicBool::new(false),
-            sinks: Mutex::new(Vec::new()),
-        }
+        Waker { pending: AtomicBool::new(false), sinks: Mutex::new(Vec::new()) }
     }
     pub(crate) fn notify(&self) {
         if !self.pending.swap(true, Ordering::AcqRel) {
@@ -288,13 +262,7 @@ impl Figure {
             datainspector: true,
             window_title: None,
         };
-        Figure {
-            sh: Arc::new(FigShared {
-                state: Mutex::new(st),
-                wake: Waker::new(),
-                uid: next_uid(),
-            }),
-        }
+        Figure { sh: Arc::new(FigShared { state: Mutex::new(st), wake: Waker::new(), uid: next_uid() }) }
     }
 
     fn set_theme_field(&self, f: impl FnOnce(&mut Theme)) -> Figure {
@@ -378,10 +346,7 @@ impl Figure {
         let st = self.sh.state.lock();
         st.iter_blocks()
             .filter(|(_, s)| matches!(s.block, Block::Axis(_)))
-            .map(|(id, _)| crate::Axis {
-                sh: self.sh.clone(),
-                id,
-            })
+            .map(|(id, _)| crate::Axis { sh: self.sh.clone(), id })
             .collect()
     }
 
@@ -419,8 +384,5 @@ impl Figure {
 
 #[track_caller]
 pub(crate) fn check_index(i: i32, what: &str) {
-    assert!(
-        i >= 1,
-        "{what}: grid positions are 1-based like Makie (got {i})"
-    );
+    assert!(i >= 1, "{what}: grid positions are 1-based like Makie (got {i})");
 }

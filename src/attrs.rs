@@ -64,12 +64,7 @@ impl<N: Num> Conv<[f64; 4]> for N {
 }
 impl<A: Num, B: Num, C: Num, D: Num> Conv<[f64; 4]> for (A, B, C, D) {
     fn conv(self) -> [f64; 4] {
-        [
-            self.0.to_f64(),
-            self.1.to_f64(),
-            self.2.to_f64(),
-            self.3.to_f64(),
-        ]
+        [self.0.to_f64(), self.1.to_f64(), self.2.to_f64(), self.3.to_f64()]
     }
 }
 impl<N: Num> Conv<Option<f64>> for N {

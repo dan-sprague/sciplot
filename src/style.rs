@@ -132,13 +132,4 @@ pub enum Direction {
     Y,
 }
 
-conv_identity!(
-    Marker,
-    Linestyle,
-    LineCap,
-    JoinStyle,
-    HAlign,
-    VAlign,
-    Normalization,
-    Direction
-);
+conv_identity!(Marker, Linestyle, LineCap, JoinStyle, HAlign, VAlign, Normalization, Direction);

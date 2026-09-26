@@ -21,11 +21,7 @@ pub struct TextSpan {
 
 impl TextSpan {
     pub fn plain(text: impl Into<String>) -> TextSpan {
-        TextSpan {
-            text: text.into(),
-            size_scale: 1.0,
-            ..Default::default()
-        }
+        TextSpan { text: text.into(), size_scale: 1.0, ..Default::default() }
     }
 }
 
@@ -42,24 +38,12 @@ impl From<String> for TextSpan {
 
 /// Makie's `superscript("2")`: 0.66× size, raised 0.4 em.
 pub fn superscript(s: impl Into<String>) -> TextSpan {
-    TextSpan {
-        text: s.into(),
-        size_scale: 0.66,
-        baseline_shift: 0.4,
-        x_offset: 0.1,
-        ..Default::default()
-    }
+    TextSpan { text: s.into(), size_scale: 0.66, baseline_shift: 0.4, x_offset: 0.1, ..Default::default() }
 }
 
 /// Makie's `subscript("2")`: 0.66× size, lowered 0.25 em.
 pub fn subscript(s: impl Into<String>) -> TextSpan {
-    TextSpan {
-        text: s.into(),
-        size_scale: 0.66,
-        baseline_shift: -0.25,
-        x_offset: 0.1,
-        ..Default::default()
-    }
+    TextSpan { text: s.into(), size_scale: 0.66, baseline_shift: -0.25, x_offset: 0.1, ..Default::default() }
 }
 
 /// A string of styled spans. Plain strings convert into a single span and are never parsed.
@@ -70,9 +54,7 @@ pub struct RichText {
 
 impl RichText {
     pub fn from_spans(spans: impl IntoIterator<Item = TextSpan>) -> RichText {
-        RichText {
-            spans: spans.into_iter().collect(),
-        }
+        RichText { spans: spans.into_iter().collect() }
     }
     pub fn is_empty(&self) -> bool {
         self.spans.iter().all(|s| s.text.is_empty())
@@ -85,23 +67,17 @@ impl RichText {
 
 impl From<&str> for RichText {
     fn from(s: &str) -> Self {
-        RichText {
-            spans: vec![TextSpan::plain(s)],
-        }
+        RichText { spans: vec![TextSpan::plain(s)] }
     }
 }
 impl From<String> for RichText {
     fn from(s: String) -> Self {
-        RichText {
-            spans: vec![TextSpan::plain(s)],
-        }
+        RichText { spans: vec![TextSpan::plain(s)] }
     }
 }
 impl From<&String> for RichText {
     fn from(s: &String) -> Self {
-        RichText {
-            spans: vec![TextSpan::plain(s.clone())],
-        }
+        RichText { spans: vec![TextSpan::plain(s.clone())] }
     }
 }
 impl From<TextSpan> for RichText {

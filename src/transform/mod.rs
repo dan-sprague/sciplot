@@ -91,11 +91,7 @@ impl Rebase {
     pub fn for_view(view: [f64; 4], epoch: u64) -> Rebase {
         let k = |a: f64, b: f64| {
             let w = (b - a).abs();
-            if w.is_finite() && w > 0.0 {
-                2.0 / w
-            } else {
-                1.0
-            }
+            if w.is_finite() && w > 0.0 { 2.0 / w } else { 1.0 }
         };
         Rebase {
             origin: [0.5 * (view[0] + view[1]), 0.5 * (view[2] + view[3])],
@@ -106,10 +102,7 @@ impl Rebase {
 
     #[inline]
     pub fn to_local(&self, sx: f64, sy: f64) -> [f32; 2] {
-        [
-            ((sx - self.origin[0]) * self.k[0]) as f32,
-            ((sy - self.origin[1]) * self.k[1]) as f32,
-        ]
+        [((sx - self.origin[0]) * self.k[0]) as f32, ((sy - self.origin[1]) * self.k[1]) as f32]
     }
 
     /// The view in local coordinates.

@@ -51,10 +51,7 @@ pub(crate) struct Buf<T> {
 
 impl<T> Buf<T> {
     pub fn transient(data: Vec<T>) -> Buf<T> {
-        Buf {
-            key: None,
-            data: Arc::new(data),
-        }
+        Buf { key: None, data: Arc::new(data) }
     }
     pub fn len(&self) -> usize {
         self.data.len()
@@ -244,8 +241,7 @@ pub(crate) struct DrawList {
 impl DrawList {
     /// Stable-sorts items by `(z, seq)` (painter's order).
     pub fn sort(&mut self) {
-        self.items
-            .sort_by(|a, b| a.z.total_cmp(&b.z).then(a.seq.cmp(&b.seq)));
+        self.items.sort_by(|a, b| a.z.total_cmp(&b.z).then(a.seq.cmp(&b.seq)));
     }
 }
 
@@ -257,19 +253,10 @@ pub(crate) struct Emitter {
 
 impl Emitter {
     pub fn new() -> Self {
-        Emitter {
-            items: Vec::new(),
-            seq: 0,
-        }
+        Emitter { items: Vec::new(), seq: 0 }
     }
     pub fn push(&mut self, z: f32, clip: Option<Rect>, space: Space, prim: Prim) {
-        self.items.push(Item {
-            z,
-            seq: self.seq,
-            clip,
-            space,
-            prim,
-        });
+        self.items.push(Item { z, seq: self.seq, clip, space, prim });
         self.seq += 1;
     }
 }
