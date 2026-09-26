@@ -100,6 +100,18 @@ impl PlotImpl for ScatterState {
             rotation: r.rotation as f32,
         }));
     }
+
+    fn pick(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
+        let (i, dist, anchor) = ctx.nearest_point(0, &self.pos)?;
+        let r = self.attrs.resolve(&ctx.theme.scatter, ctx.g);
+        let [x, y] = self.pos[i];
+        Some(super::pick::Hover {
+            dist,
+            anchor,
+            text: super::pick::point_text(x, y),
+            ring: Some(r.markersize + 2.0 * r.strokewidth + 4.0),
+        })
+    }
 }
 
 impl Scatter {

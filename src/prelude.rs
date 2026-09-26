@@ -4,6 +4,8 @@
 pub use crate::color::colors::*;
 #[cfg(feature = "window")]
 pub use crate::show_all;
+#[cfg(feature = "window")]
+pub use crate::{Live, Screen};
 pub use crate::units::*;
 pub use crate::{
     Axis, Band, BarPlot, Bins, Color, ColorSpec, Cycled, Data1D, Data2D, Direction, Field, Figure, Font, GridPosition,
