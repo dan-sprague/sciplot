@@ -60,6 +60,19 @@ affine `AxisXform::affine(ppu)` computed in f64, so pan/zoom never re-uploads pl
    `GridPosition` (new Axis + plot); a `#[must_use]` free function (new Figure); a `name!` macro in
    `src/macros.rs`; re-exports in `src/lib.rs` and `src/prelude.rs`.
 
+**A new block type** (`src/blocks/<name>.rs`, e.g. Label, Legend, Colorbar):
+1. State struct + `<Name>Attrs` via `attributes!`; handle `{ sh, id: BlockId }` + `block_common!(Handle,
+   Variant, State)`; constructor `Handle::new(pos: GridPosition, ...)` that resolves the placement under
+   the lock (`pos.resolve(st)`) and calls `st.add_block(place, Block::Variant(Box::new(state)))`.
+2. `impl BlockImpl for State` (`src/blocks/mod.rs`): `layout(&BlockCtx) -> BlockLayout` (protrusions,
+   `BlockSize` width/height, autosize, tellwidth/tellheight, halign/valign) and
+   `emit(&BlockCtx, &mut Emitter, rect)`. `BlockCtx` gives the figure snapshot, globals, and (in emit)
+   every `AxisFrame` (final rects, limits, ticks). Blocks drawn over an axis (axislegend) return
+   `Some(axis_id)` from `inside_axis()` and get the axis rect in `emit`.
+3. Register: one line in `block_kinds!{..}`; theme field + `Theme::<name>(|t| ..)` builder + merge line;
+   a `Name!` macro in `src/macros.rs`; re-exports.
+The layout port (src/layout) is GridLayoutBase-exact: see `LayoutItem`, `BlockSize`, `AlignMode`.
+
 **A new GPU pipeline** (`src/render/gpu/pipelines/<name>.rs` + `<name>.wgsl`):
 `create(device, globals_layout) -> <Name>Pipeline` and `prepare(&mut Frame, &Prim..., xform) ->
 Option<DrawCmd>`. `Frame` (src/render/gpu/frame.rs) provides `storage(&Buf)` / `buffer(&Buf, usage)`
