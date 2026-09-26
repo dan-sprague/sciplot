@@ -7,6 +7,7 @@ pub(crate) mod bars;
 pub(crate) mod heatmap;
 pub(crate) mod hist;
 pub(crate) mod pick;
+pub(crate) mod reflines;
 pub(crate) mod scatter;
 pub(crate) mod textplot;
 
@@ -14,6 +15,7 @@ pub use band::Band;
 pub use barplot::{BarPlot, BarX};
 pub use heatmap::Heatmap;
 pub use hist::{Bins, Hist};
+pub use reflines::{ABLines, HLines, RefLines, RefValues, VLines};
 pub use scatter::Scatter;
 pub use textplot::{IntoTexts, TextPlot};
 pub(crate) mod lines;
@@ -155,6 +157,7 @@ plot_kinds! {
     Heatmap(heatmap::HeatmapState),
     Lines(lines::LinesState),
     ScatterLines(scatterlines::ScatterLinesState),
+    RefLines(reflines::RefLinesState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

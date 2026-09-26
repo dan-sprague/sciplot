@@ -9,6 +9,7 @@ use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
 use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
 use crate::plots::hist::{HistAttrs, HistTheme};
 use crate::plots::lines::{LinesAttrs, LinesTheme};
+use crate::plots::reflines::{RefLinesAttrs, RefLinesTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
 use crate::plots::scatterlines::{ScatterLinesAttrs, ScatterLinesTheme};
 use crate::plots::textplot::TextAttrs;
@@ -76,6 +77,7 @@ pub struct Theme {
     pub(crate) heatmap: HeatmapAttrs,
     pub(crate) lines: LinesAttrs,
     pub(crate) scatterlines: ScatterLinesAttrs,
+    pub(crate) reflines: RefLinesAttrs,
 }
 
 macro_rules! theme_setters {
@@ -166,6 +168,12 @@ impl Theme {
         self
     }
 
+    /// `hlines`/`vlines`/`ablines` defaults: `Theme::new().reflines(|r| r.linestyle(Linestyle::Dash))`.
+    pub fn reflines(mut self, f: impl FnOnce(RefLinesTheme) -> RefLinesTheme) -> Self {
+        self.reflines = f(RefLinesTheme(self.reflines)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -195,6 +203,7 @@ impl Theme {
         out.heatmap.merge_from(&self.heatmap);
         out.lines.merge_from(&self.lines);
         out.scatterlines.merge_from(&self.scatterlines);
+        out.reflines.merge_from(&self.reflines);
         out
     }
 
@@ -265,7 +274,5 @@ pub fn current_theme() -> Theme {
     SCOPED.with_borrow(|s| s.iter().fold(base, |acc, t| t.clone().merge(acc)))
 }
 
-/// Makie's `theme_minimal()`: no grid, only left and bottom spines.
-pub fn theme_minimal() -> Theme {
-    Theme::new().axis(|a| a.xgridvisible(false).ygridvisible(false).topspinevisible(false).rightspinevisible(false))
-}
+mod presets;
+pub use presets::{theme_dark, theme_light, theme_minimal};

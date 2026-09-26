@@ -55,6 +55,7 @@ pub use macros::{__as_axis, AsAxis};
 
 pub use attrs::Conv;
 pub use blocks::axis::AxisTheme;
+pub use blocks::axis::{Aspect, AxisAspect, DataAspect};
 pub use blocks::label::LabelTheme;
 pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
 pub use color::{Color, IntoColor, WONG, colors};
@@ -70,14 +71,19 @@ pub use plots::barplot::{BarPlotTheme, barplot};
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
 pub use plots::hist::{HistTheme, hist};
 pub use plots::lines::{LinesTheme, lines, lines_points};
+pub use plots::reflines::RefLinesTheme;
 pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
+pub use plots::{ABLines, HLines, RefLines, RefValues, VLines};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
 pub use plots::{Lines, ScatterLines};
+#[doc(hidden)]
+pub use scene::axis::AxisGeometry;
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
 pub use text::{colored, tex};
 pub use theme::{Theme, current_theme, reset_theme, set_theme, theme_minimal, with_theme};
+pub use theme::{theme_dark, theme_light};
 #[doc(hidden)]
 pub use ticks::testing as __ticks;
 pub use ticks::{LabelFn, MinorSpec, TickFn, TickFormat, TickSpec, Wilkinson, format_ticks_auto, format_with};

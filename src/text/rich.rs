@@ -20,8 +20,18 @@ pub struct TextSpan {
 }
 
 impl TextSpan {
+    /// Unstyled text.
     pub fn plain(text: impl Into<String>) -> TextSpan {
         TextSpan { text: text.into(), size_scale: 1.0, ..Default::default() }
+    }
+
+    /// Makie's `offset` rich-text attribute: shifts the span by `(dx, dy)` in units of the span's
+    /// own font size (`dy` up). Makie's log and scientific tick labels use
+    /// `superscript(e).offset(0.1, 0.0)`.
+    pub fn offset(mut self, dx: f32, dy: f32) -> TextSpan {
+        self.x_offset += dx;
+        self.baseline_shift += dy * self.size_scale;
+        self
     }
 }
 
@@ -36,14 +46,15 @@ impl From<String> for TextSpan {
     }
 }
 
-/// Makie's `superscript("2")`: 0.66× size, raised 0.4 em.
+/// Makie's `superscript("2")`: 0.66× size, raised 0.4 em, no horizontal offset (add one with
+/// [`TextSpan::offset`]).
 pub fn superscript(s: impl Into<String>) -> TextSpan {
-    TextSpan { text: s.into(), size_scale: 0.66, baseline_shift: 0.4, x_offset: 0.1, ..Default::default() }
+    TextSpan { text: s.into(), size_scale: 0.66, baseline_shift: 0.4, ..Default::default() }
 }
 
-/// Makie's `subscript("2")`: 0.66× size, lowered 0.25 em.
+/// Makie's `subscript("2")`: 0.66× size, lowered 0.25 em, no horizontal offset.
 pub fn subscript(s: impl Into<String>) -> TextSpan {
-    TextSpan { text: s.into(), size_scale: 0.66, baseline_shift: -0.25, x_offset: 0.1, ..Default::default() }
+    TextSpan { text: s.into(), size_scale: 0.66, baseline_shift: -0.25, ..Default::default() }
 }
 
 /// A string of styled spans. Plain strings convert into a single span and are never parsed.

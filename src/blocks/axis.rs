@@ -64,6 +64,8 @@ attributes! {
         subtitlesize: f64 = |g| g.fontsize, LAYOUT;
         subtitlegap: f64 = |_| 0.0, LAYOUT;
         subtitlecolor: Color = |g| g.textcolor, STYLE;
+        subtitlefont: Font = |_| Font::Regular, LAYOUT;
+        subtitlevisible: bool = |_| true, LAYOUT;
         xlabel: RichText = |_| RichText::default(), LAYOUT;
         ylabel: RichText = |_| RichText::default(), LAYOUT;
         xlabelsize: f64 = |g| g.fontsize, LAYOUT;
@@ -118,6 +120,9 @@ attributes! {
         yminorticksvisible: bool = |_| false, STYLE;
         xminorticksize: f64 = |_| 3.0, STYLE;
         yminorticksize: f64 = |_| 3.0, STYLE;
+        /// 0 = outward, 1 = inward.
+        xminortickalign: f64 = |_| 0.0, STYLE;
+        yminortickalign: f64 = |_| 0.0, STYLE;
         xminortickwidth: f64 = |_| 1.0, STYLE;
         yminortickwidth: f64 = |_| 1.0, STYLE;
         xminortickcolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
@@ -155,6 +160,57 @@ attributes! {
         width: Option<f64> = |_| None, LAYOUT;
         /// Fixed height of the axis area in units (None = fill the cell).
         height: Option<f64> = |_| None, LAYOUT;
+        /// Makie's `aspect`: `None` fills the cell; [`DataAspect`] makes one data unit as long on
+        /// x as on y; [`AxisAspect(r)`](AxisAspect) (or a bare number) fixes width / height = r.
+        /// The axis shrinks inside its cell, centred; the layout is unchanged.
+        aspect: Option<Aspect> = |_| None, LAYOUT;
+        /// Makie's `autolimitaspect`: widen the x or y limits (instead of shrinking the axis) so
+        /// that one data unit on x is this many times as long as on y. `None` = off.
+        autolimitaspect: Option<f64> = |_| None, LIMITS;
+    }
+}
+
+/// An Axis `aspect` (Makie's `DataAspect()` / `AxisAspect(r)`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Aspect {
+    /// The axis' width / height equals the width / height of its limits (data space).
+    Data,
+    /// The axis' width / height is this ratio.
+    Axis(f64),
+}
+
+/// Makie's `DataAspect()`: `ax.aspect(DataAspect)`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct DataAspect;
+
+/// Makie's `AxisAspect(r)`: `ax.aspect(AxisAspect(1.0))` makes a square axis.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct AxisAspect(pub f64);
+
+impl crate::attrs::Conv<Option<Aspect>> for Aspect {
+    fn conv(self) -> Option<Aspect> {
+        Some(self)
+    }
+}
+impl crate::attrs::Conv<Option<Aspect>> for Option<Aspect> {
+    fn conv(self) -> Option<Aspect> {
+        self
+    }
+}
+impl crate::attrs::Conv<Option<Aspect>> for DataAspect {
+    fn conv(self) -> Option<Aspect> {
+        Some(Aspect::Data)
+    }
+}
+impl crate::attrs::Conv<Option<Aspect>> for AxisAspect {
+    fn conv(self) -> Option<Aspect> {
+        Some(Aspect::Axis(self.0))
+    }
+}
+/// A bare number is an axis aspect (Makie: `aspect = 1`).
+impl<N: crate::data::Num> crate::attrs::Conv<Option<Aspect>> for N {
+    fn conv(self) -> Option<Aspect> {
+        Some(Aspect::Axis(crate::data::Scalar::to_f64(self)))
     }
 }
 
@@ -258,6 +314,16 @@ impl Axis {
     /// Makie's `hidedecorations!`.
     pub fn hidedecorations(&self, grid: bool) -> Axis {
         self.hidexdecorations(grid).hideydecorations(grid)
+    }
+
+    /// The axis as laid out right now: viewport, final limits and the boxes of its texts (figure
+    /// units, y down). For fidelity checks against Makie; `None` if the axis was deleted.
+    #[doc(hidden)]
+    pub fn geometry(&self) -> Option<crate::scene::axis::AxisGeometry> {
+        let st = self.sh.snapshot();
+        let (dl, axes) = crate::scene::build(&st, None, &mut crate::scene::SceneCache::new());
+        let a = axes.iter().find(|a| a.id == self.id)?;
+        Some(crate::scene::axis::geometry(a, dl.axes.get(a.slot as usize)?))
     }
 
     /// Makie's `hidespines!` (all four).
