@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ezviz wasm probe</title>
+  <style>
+    html, body { margin: 0; background: #fff; }
+    /* The canvas MUST have a CSS size: wgpu sets canvas.width/height (device px) on configure. */
+    #ezviz { width: 640px; height: 400px; display: block; touch-action: none; outline: none; }
+  </style>
+</head>
+<body>
+  <canvas id="ezviz"></canvas>
+  <script type="module">
+    import init from './pkg/probe.js';
+    await init(); // instantiates probe_bg.wasm and runs the #[wasm_bindgen(start)] fn
+  </script>
+</body>
+</html>
