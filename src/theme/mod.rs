@@ -2,6 +2,7 @@
 //! thread-scoped `with_theme`.
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
+use crate::blocks::colorbar::{ColorbarAttrs, ColorbarTheme};
 use crate::blocks::label::{LabelAttrs, LabelTheme};
 use crate::blocks::legend::{LegendAttrs, LegendTheme};
 use crate::color::{Color, WONG};
@@ -71,6 +72,7 @@ pub struct Theme {
     pub(crate) axis: AxisAttrs,
     pub(crate) label: LabelAttrs,
     pub(crate) legend: LegendAttrs,
+    pub(crate) colorbar: ColorbarAttrs,
     pub(crate) scatter: ScatterAttrs,
     pub(crate) barplot: BarPlotAttrs,
     pub(crate) hist: HistAttrs,
@@ -131,6 +133,12 @@ impl Theme {
     /// Legend defaults: `Theme::new().legend(|l| l.framevisible(false))`.
     pub fn legend(mut self, f: impl FnOnce(LegendTheme) -> LegendTheme) -> Self {
         self.legend = f(LegendTheme(self.legend)).0;
+        self
+    }
+
+    /// Colorbar defaults: `Theme::new().colorbar(|c| c.size(20))`.
+    pub fn colorbar(mut self, f: impl FnOnce(ColorbarTheme) -> ColorbarTheme) -> Self {
+        self.colorbar = f(ColorbarTheme(self.colorbar)).0;
         self
     }
 
@@ -204,6 +212,7 @@ impl Theme {
         out.axis.merge_from(&self.axis);
         out.label.merge_from(&self.label);
         out.legend.merge_from(&self.legend);
+        out.colorbar.merge_from(&self.colorbar);
         out.scatter.merge_from(&self.scatter);
         out.barplot.merge_from(&self.barplot);
         out.hist.merge_from(&self.hist);

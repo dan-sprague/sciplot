@@ -64,6 +64,9 @@ pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
 pub use blocks::legend::LegendTheme;
 pub use blocks::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
 pub use plots::LegendElement;
+pub use blocks::colorbar::ColorbarTheme;
+pub use blocks::Colorbar;
+pub use plots::{ColorMapped, ResolvedColormap};
 pub use color::{Color, IntoColor, WONG, colors};
 pub use color::{Colormap, IntoColormap};
 pub use data::PointData;
@@ -128,6 +131,7 @@ const _: () = {
     ok::<Lines>();
     ok::<ScatterLines>();
     ok::<GridPosition>();
+    ok::<Colorbar>();
     #[cfg(feature = "window")]
     ok_send_sync::<Live>();
 };

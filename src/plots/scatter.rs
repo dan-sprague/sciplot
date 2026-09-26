@@ -50,6 +50,7 @@ attributes! {
 }
 
 plot_common!(Scatter);
+super::color_mapped!(Scatter);
 
 impl PlotImpl for ScatterState {
     fn cycle_group(&self) -> &'static str {
@@ -110,6 +111,22 @@ impl PlotImpl for ScatterState {
             stroke_width: r.strokewidth as f32,
             rotation: r.rotation as f32,
         }));
+    }
+
+    fn colormapping(&self, theme: &crate::theme::Theme, g: &crate::theme::Globals) -> Option<super::ResolvedColormap> {
+        let r = self.attrs.resolve(&theme.scatter, g);
+        let ColorSpec::Values(v) = &r.color else {
+            return Some(super::ResolvedColormap::unmapped(r.colormap, r.alpha));
+        };
+        let [lo, hi] = r.colorrange.unwrap_or_else(|| encoded_values(v).enc.auto_range());
+        Some(super::ResolvedColormap {
+            colormap: r.colormap,
+            colorrange: (lo, hi),
+            lowclip: r.lowclip,
+            highclip: r.highclip,
+            alpha: r.alpha,
+            mapped: true,
+        })
     }
 
     fn pick(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
