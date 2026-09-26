@@ -48,6 +48,41 @@ macro_rules! scatter {
     };
 }
 
+/// Makie's `barplot!(ax, x, heights; kw...)` or `barplot!(ax, heights; kw...)`.
+#[macro_export]
+macro_rules! barplot {
+    ($ax:expr, $x:expr, $h:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).barplot($x, $h) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $h:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).barplot_heights($h) $(; $($k = $v),*)?)
+    };
+}
+
+/// Makie's `hist!(ax, values; kw...)`.
+#[macro_export]
+macro_rules! hist {
+    ($ax:expr, $v:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).hist($v) $(; $($k = $val),*)?)
+    };
+}
+
+/// Makie's `band!(ax, x, lower, upper; kw...)`.
+#[macro_export]
+macro_rules! band {
+    ($ax:expr, $x:expr, $lo:expr, $hi:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).band($x, $lo, $hi) $(; $($k = $v),*)?)
+    };
+}
+
+/// Makie's `text!(ax, x, y, texts; kw...)`.
+#[macro_export]
+macro_rules! text {
+    ($ax:expr, $x:expr, $y:expr, $t:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).text($x, $y, $t) $(; $($k = $v),*)?)
+    };
+}
+
 /// Accepts `Axis` or `&Axis` in the plotting macros.
 #[doc(hidden)]
 pub trait AsAxis {

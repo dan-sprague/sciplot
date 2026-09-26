@@ -1,9 +1,18 @@
 //! Plot types. Each plot lives in an Axis; its handle is `Clone + Send + Sync` and updates the
 //! plot in place.
 
+pub(crate) mod band;
+pub(crate) mod barplot;
+pub(crate) mod bars;
+pub(crate) mod hist;
 pub(crate) mod scatter;
+pub(crate) mod textplot;
 
+pub use band::Band;
+pub use barplot::{BarPlot, BarX};
+pub use hist::{Bins, Hist};
 pub use scatter::Scatter;
+pub use textplot::{IntoTexts, TextPlot};
 
 use crate::attrs::Conv;
 use crate::color::{Color, IntoColor};
@@ -103,6 +112,10 @@ pub(crate) trait PlotImpl {
     fn tight_limits(&self) -> bool {
         false
     }
+    /// Category names for tick labels, and whether they are on the x axis (categorical barplots).
+    fn categories(&self) -> Option<(bool, Arc<Vec<String>>)> {
+        None
+    }
     /// Lowers the plot to draw-list primitives.
     fn emit(&self, ctx: &mut crate::scene::PlotCtx<'_>);
 }
@@ -123,6 +136,10 @@ macro_rules! plot_kinds {
 
 plot_kinds! {
     Scatter(scatter::ScatterState),
+    BarPlot(barplot::BarPlotState),
+    Hist(hist::HistState),
+    Band(band::BandState),
+    Text(textplot::TextState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

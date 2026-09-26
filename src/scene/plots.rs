@@ -61,6 +61,16 @@ impl PlotCtx<'_> {
         h.finish()
     }
 
+    /// A GPU buffer cached under `(uid, part)` that changes with `key`.
+    pub fn keyed_buf<T>(&self, part: u8, key: u64, data: Arc<Vec<T>>) -> Buf<T> {
+        Buf { key: Some(BufKey { uid: self.uid, part, rev: key }), data }
+    }
+
+    /// Data -> figure units (y down), or `None` outside the scale domain.
+    pub fn to_units(&self, x: f64, y: f64) -> Option<[f64; 2]> {
+        self.axis.to_units(x, y)
+    }
+
     /// A GPU buffer that changes only with the plot's data.
     pub fn data_buf<T>(&self, part: u8, data: Arc<Vec<T>>) -> Buf<T> {
         Buf { key: Some(BufKey { uid: self.uid, part, rev: self.data_rev }), data }

@@ -3,7 +3,11 @@
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
 use crate::color::{Color, WONG};
+use crate::plots::band::{BandAttrs, BandTheme};
+use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
+use crate::plots::hist::{HistAttrs, HistTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
+use crate::plots::textplot::TextAttrs;
 use parking_lot::RwLock;
 use std::cell::RefCell;
 
@@ -60,6 +64,10 @@ pub struct Theme {
     pub(crate) patchpalette: Option<Vec<Color>>,
     pub(crate) axis: AxisAttrs,
     pub(crate) scatter: ScatterAttrs,
+    pub(crate) barplot: BarPlotAttrs,
+    pub(crate) hist: HistAttrs,
+    pub(crate) band: BandAttrs,
+    pub(crate) text: TextAttrs,
 }
 
 macro_rules! theme_setters {
@@ -108,6 +116,24 @@ impl Theme {
         self
     }
 
+    /// Barplot defaults.
+    pub fn barplot(mut self, f: impl FnOnce(BarPlotTheme) -> BarPlotTheme) -> Self {
+        self.barplot = f(BarPlotTheme(self.barplot)).0;
+        self
+    }
+
+    /// Histogram defaults.
+    pub fn hist(mut self, f: impl FnOnce(HistTheme) -> HistTheme) -> Self {
+        self.hist = f(HistTheme(self.hist)).0;
+        self
+    }
+
+    /// Band defaults.
+    pub fn band(mut self, f: impl FnOnce(BandTheme) -> BandTheme) -> Self {
+        self.band = f(BandTheme(self.band)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -129,6 +155,10 @@ impl Theme {
         );
         out.axis.merge_from(&self.axis);
         out.scatter.merge_from(&self.scatter);
+        out.barplot.merge_from(&self.barplot);
+        out.hist.merge_from(&self.hist);
+        out.band.merge_from(&self.band);
+        out.text.merge_from(&self.text);
         out
     }
 

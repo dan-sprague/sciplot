@@ -26,6 +26,8 @@ pub(crate) struct SceneCache {
     epoch: u64,
     /// (plot uid, part) -> (conversion key, converted data)
     pub(crate) conv: HashMap<(u64, u8), (u64, Arc<Vec<[f32; 2]>>)>,
+    /// (plot uid, part) -> (key, any derived data), for `memo`.
+    memos: HashMap<(u64, u8), (u64, Arc<dyn std::any::Any + Send + Sync>)>,
 }
 
 impl SceneCache {
@@ -63,6 +65,26 @@ impl SceneCache {
         self.conv.insert((uid, part), (key, d.clone()));
         d
     }
+
+    /// Computes derived per-plot data once per `key` (e.g. histogram bins, band triangles).
+    pub(crate) fn memo<T: Send + Sync + 'static>(
+        &mut self,
+        uid: u64,
+        part: u8,
+        key: u64,
+        f: impl FnOnce() -> Vec<T>,
+    ) -> Arc<Vec<T>> {
+        if let Some((k, d)) = self.memos.get(&(uid, part)) {
+            if *k == key {
+                if let Ok(v) = d.clone().downcast::<Vec<T>>() {
+                    return v;
+                }
+            }
+        }
+        let d = Arc::new(f());
+        self.memos.insert((uid, part), (key, d.clone()));
+        d
+    }
 }
 
 /// One axis during a build.
@@ -78,6 +100,25 @@ pub(crate) struct AxisFrame {
     pub xticks: crate::ticks::Ticks,
     pub yticks: crate::ticks::Ticks,
     pub rect: Rect,
+}
+
+impl AxisFrame {
+    /// Data -> figure units (y down), or `None` outside the scale domain.
+    pub(crate) fn to_units(&self, x: f64, y: f64) -> Option<[f64; 2]> {
+        let (sx, sy) = (self.attrs.xscale.forward(x), self.attrs.yscale.forward(y));
+        if !(sx.is_finite() && sy.is_finite()) {
+            return None;
+        }
+        let mut fx = (sx - self.view[0]) / (self.view[1] - self.view[0]);
+        let mut fy = (sy - self.view[2]) / (self.view[3] - self.view[2]);
+        if self.attrs.xreversed {
+            fx = 1.0 - fx;
+        }
+        if self.attrs.yreversed {
+            fy = 1.0 - fy;
+        }
+        Some([self.rect.x + fx * self.rect.w, self.rect.bottom() - fy * self.rect.h])
+    }
 }
 
 /// Builds a frame. `size` overrides the figure size (window size).
@@ -102,8 +143,18 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
             attrs.yscale.forward(lim[3]),
         ];
         let rebase = cache.rebase_for(id, view);
-        let xticks = crate::ticks::major_ticks(lim[0], lim[1], attrs.xscale);
-        let yticks = crate::ticks::major_ticks(lim[2], lim[3], attrs.yscale);
+        let mut xticks = crate::ticks::major_ticks(lim[0], lim[1], attrs.xscale);
+        let mut yticks = crate::ticks::major_ticks(lim[2], lim[3], attrs.yscale);
+        // Categorical plots (e.g. barplot with names) label their axis with the categories.
+        for pid in &ax.plots {
+            if let Some((on_x, cats)) = st.plot(*pid).and_then(|p| p.kind.imp().categories()) {
+                let t = crate::ticks::Ticks {
+                    values: (1..=cats.len()).map(|i| i as f64).collect(),
+                    labels: cats.iter().map(|c| crate::text::RichText::from(c.as_str())).collect(),
+                };
+                if on_x { xticks = t } else { yticks = t }
+            }
+        }
         let protrusion = axis::protrusion(&attrs, &xticks, &yticks);
         items.push(LayoutItem {
             rows: bslot.place.rows,
