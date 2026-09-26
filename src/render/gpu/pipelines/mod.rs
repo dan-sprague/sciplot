@@ -5,6 +5,7 @@
 //! Adding a pipeline = a new module, one field in [`Pipelines`], one line in `Pipelines::new`,
 //! and one match arm in `Renderer::render`.
 
+pub(crate) mod field;
 pub(crate) mod mesh;
 pub(crate) mod sprite;
 
@@ -16,6 +17,7 @@ pub(crate) struct Pipelines {
     pub sampler: wgpu::Sampler,
     pub nearest: wgpu::Sampler,
     pub mesh: mesh::MeshPipeline,
+    pub field: field::FieldPipeline,
     pub sprite: sprite::SpritePipeline,
 }
 
@@ -51,6 +53,7 @@ impl Pipelines {
         });
         Pipelines {
             mesh: mesh::create(device, &globals_layout),
+            field: field::create(device, &globals_layout),
             sprite: sprite::create(device, &globals_layout),
             globals_layout,
             sampler,

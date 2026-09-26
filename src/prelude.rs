@@ -11,3 +11,4 @@ pub use crate::{
     WONG, iter, kw, linkaxes, linkxaxes, linkyaxes, linspace, logspace, scatter, set_theme, subscript, superscript,
     theme_minimal, with_theme,
 };
+pub use crate::{CellCoords, Colormap, Edges, Heatmap, IntoColormap, heatmap, heatmap_xy};

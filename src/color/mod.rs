@@ -1,6 +1,11 @@
 //! Colors, the Wong palette, named colors and colormaps.
 
+mod cmap_data;
+mod colormap;
 mod named;
+
+pub use colormap::{Colormap, IntoColormap, LUT_SIZE};
+pub(crate) use colormap::{MappingAttrs, ValueEncoding, encoded_values};
 
 use crate::error::{Error, Result};
 

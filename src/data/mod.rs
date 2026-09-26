@@ -4,8 +4,11 @@
 //! adapters (so `t.iter().map(|t| t.sin())` needs no `.collect()`), and anything wrapped in
 //! [`iter`]. Every numeric type converts through [`Scalar`].
 
+mod cells;
 mod data2d;
 
+pub use cells::{CellCoords, CellSpec, Edges};
+pub(crate) use cells::{CellEdges, Spec as CellSpecKind};
 pub use data2d::{Data2D, Field};
 
 mod sealed {

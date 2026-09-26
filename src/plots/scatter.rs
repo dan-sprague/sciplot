@@ -2,11 +2,11 @@
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, point_bounds, zip_xy};
 use crate::attrs::attributes;
-use crate::color::Color;
+use crate::color::{Color, Colormap, MappingAttrs, encoded_values};
 use crate::data::Data1D;
 use crate::figure::{Dirty, FigShared, PlotId};
 use crate::scene::PlotCtx;
-use crate::scene::drawlist::{MarkersPrim, Prim, PrimColor};
+use crate::scene::drawlist::{Buf, BufKey, MarkersPrim, Prim, PrimColor};
 use crate::style::Marker;
 use std::sync::Arc;
 
@@ -36,6 +36,16 @@ attributes! {
         alpha: f64 = |_| 1.0, STYLE;
         /// Marker rotation in radians.
         rotation: f64 = |_| 0.0, STYLE;
+        /// Colormap for `color = values` (default viridis).
+        colormap: Colormap = |_| Colormap::VIRIDIS, STYLE;
+        /// `(lo, hi)` mapped to the colormap ends; default: the finite extrema of the values.
+        colorrange: Option<[f64; 2]> = |_| None, STYLE;
+        /// Color for values below the colorrange (default: the first colormap color).
+        lowclip: Option<Color> = |_| None, STYLE;
+        /// Color for values above the colorrange (default: the last colormap color).
+        highclip: Option<Color> = |_| None, STYLE;
+        /// Color for NaN values (default transparent).
+        nan_color: Color = |_| Color::TRANSPARENT, STYLE;
     }
 }
 
@@ -62,7 +72,20 @@ impl PlotImpl for ScatterState {
             Some(c) => PrimColor::Uniform(c.with_alpha(c.a * alpha)),
             None => match &r.color {
                 ColorSpec::PerPoint(cs) => ctx.per_point(1, cs, alpha),
-                // Values mapped through a colormap: M5.
+                ColorSpec::Values(v) => {
+                    let e = encoded_values(v);
+                    let map = MappingAttrs {
+                        colormap: &r.colormap,
+                        colorrange: r.colorrange,
+                        lowclip: r.lowclip,
+                        highclip: r.highclip,
+                        nan_color: r.nan_color,
+                        alpha: r.alpha,
+                    }
+                    .mapping(&e.enc);
+                    let key = Some(BufKey { uid: ctx.uid, part: 2, rev: e.rev });
+                    PrimColor::Values(Buf { key, data: e.data }, map)
+                }
                 _ => PrimColor::Uniform(ctx.g.palette[0]),
             },
         };

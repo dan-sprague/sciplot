@@ -1,8 +1,10 @@
 //! Plot types. Each plot lives in an Axis; its handle is `Clone + Send + Sync` and updates the
 //! plot in place.
 
+pub(crate) mod heatmap;
 pub(crate) mod scatter;
 
+pub use heatmap::Heatmap;
 pub use scatter::Scatter;
 
 use crate::attrs::Conv;
@@ -123,6 +125,7 @@ macro_rules! plot_kinds {
 
 plot_kinds! {
     Scatter(scatter::ScatterState),
+    Heatmap(heatmap::HeatmapState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

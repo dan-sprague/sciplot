@@ -3,6 +3,7 @@
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
 use crate::color::{Color, WONG};
+use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
 use parking_lot::RwLock;
 use std::cell::RefCell;
@@ -60,6 +61,7 @@ pub struct Theme {
     pub(crate) patchpalette: Option<Vec<Color>>,
     pub(crate) axis: AxisAttrs,
     pub(crate) scatter: ScatterAttrs,
+    pub(crate) heatmap: HeatmapAttrs,
 }
 
 macro_rules! theme_setters {
@@ -108,6 +110,12 @@ impl Theme {
         self
     }
 
+    /// Heatmap defaults: `Theme::new().heatmap(|h| h.colormap(Colormap::MAGMA))`.
+    pub fn heatmap(mut self, f: impl FnOnce(HeatmapTheme) -> HeatmapTheme) -> Self {
+        self.heatmap = f(HeatmapTheme(self.heatmap)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -129,6 +137,7 @@ impl Theme {
         );
         out.axis.merge_from(&self.axis);
         out.scatter.merge_from(&self.scatter);
+        out.heatmap.merge_from(&self.heatmap);
         out
     }
 

@@ -48,6 +48,21 @@ macro_rules! scatter {
     };
 }
 
+/// Makie's `heatmap!(ax, z)` / `heatmap!(ax, x, y, z)` with keywords after `;`:
+/// `heatmap!(ax, Edges(0.0, 1.0), Edges(0.0, 1.0), Field::new(&v, nx, ny); colormap = Colormap::MAGMA)`.
+#[macro_export]
+macro_rules! heatmap {
+    ($ax:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).heatmap($z) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $x:expr, $y:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).heatmap_xy($x, $y, $z) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $($rest:tt)*) => {
+        compile_error!("heatmap! takes (ax, z) or (ax, x, y, z), then `;` before keyword arguments: heatmap!(ax, z; colormap = Colormap::MAGMA)")
+    };
+}
+
 /// Accepts `Axis` or `&Axis` in the plotting macros.
 #[doc(hidden)]
 pub trait AsAxis {
