@@ -1,0 +1,46 @@
+[package]
+name = "ezviz"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "Makie-style plotting for Rust: Figure/Axis layouts, GPU (wgpu) windows with live updates, PNG and SVG export"
+license = "MIT AND LPPL-1.3c"
+publish = false
+include = ["src/**", "assets/fonts/**", "LICENSE-MIT", "README.md"]
+
+[features]
+default = ["window", "cpu-png"]
+window = ["dep:winit", "dep:objc2", "dep:objc2-quartz-core", "dep:objc2-core-graphics", "dep:objc2-foundation"]
+cpu-png = ["dep:resvg"]
+ndarray = ["dep:ndarray"]
+testing = ["window"]
+
+[dependencies]
+wgpu = { version = "30.0.1", default-features = false, features = ["std", "parking_lot", "wgsl", "metal", "vulkan", "dx12"] }
+winit = { version = "0.30.13", optional = true }
+pollster = "1.0.1"
+bytemuck = { version = "1.25.2", features = ["derive"] }
+parking_lot = "0.12.5"
+png = "0.18.1"
+ab_glyph = { version = "0.2.32", default-features = false, features = ["std"] }
+base64 = "0.23.1"
+log = "0.4.34"
+ndarray = { version = "0.17.2", optional = true }
+resvg = { version = "0.48.1", optional = true, default-features = false }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = { version = "0.6", optional = true }
+objc2-foundation = { version = "0.3", optional = true }
+objc2-quartz-core = { version = "0.3", optional = true }
+objc2-core-graphics = { version = "0.3", optional = true }
+
+[dev-dependencies]
+rand = "0.9"
+serde_json = "1"
+trybuild = "1"
+
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.release]
+debug = 1
