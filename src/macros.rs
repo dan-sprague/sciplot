@@ -48,6 +48,49 @@ macro_rules! scatter {
     };
 }
 
+/// Makie's `lines!(ax, x, y; kw...)` or `lines!(ax, points_or_y; kw...)`: draws into `ax` (an
+/// `Axis` or `&Axis`).
+///
+/// ```no_run
+/// use ezviz::prelude::*;
+/// let fig = Figure::new();
+/// let ax = Axis::new(fig.at(1, 1));
+/// lines!(ax, [0.0, 1.0, 2.0], [1.0, 0.0, 1.0]; color = RED, linewidth = 3);
+/// lines!(ax, &[[0.0, 0.5], [2.0, 0.5]]; linestyle = Linestyle::Dash);
+/// ```
+#[macro_export]
+macro_rules! lines {
+    ($ax:expr, $x:expr, $k:ident = $($rest:tt)*) => {
+        compile_error!("use `;` before keyword arguments: lines!(ax, x, y; color = RED)")
+    };
+    ($ax:expr, $x:expr, $y:expr, $($rest:tt)*) => {
+        compile_error!("use `;` before keyword arguments: lines!(ax, x, y; color = RED)")
+    };
+    ($ax:expr, $x:expr, $y:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).lines($x, $y) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $p:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).lines_points($p) $(; $($k = $v),*)?)
+    };
+}
+
+/// Makie's `scatterlines!(ax, x, y; kw...)` or `scatterlines!(ax, points_or_y; kw...)`.
+#[macro_export]
+macro_rules! scatterlines {
+    ($ax:expr, $x:expr, $k:ident = $($rest:tt)*) => {
+        compile_error!("use `;` before keyword arguments: scatterlines!(ax, x, y; color = RED)")
+    };
+    ($ax:expr, $x:expr, $y:expr, $($rest:tt)*) => {
+        compile_error!("use `;` before keyword arguments: scatterlines!(ax, x, y; color = RED)")
+    };
+    ($ax:expr, $x:expr, $y:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).scatterlines($x, $y) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $p:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).scatterlines_points($p) $(; $($k = $v),*)?)
+    };
+}
+
 /// Accepts `Axis` or `&Axis` in the plotting macros.
 #[doc(hidden)]
 pub trait AsAxis {

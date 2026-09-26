@@ -61,6 +61,10 @@ pub use data::{Data1D, Data2D, Field, Iter, Num, Scalar, iter, linspace, logspac
 pub use error::{Error, Result};
 pub use figure::{Figure, GridPosition, GridSize, IntoSpan, Prepend, RgbaImage, Save, Side, Span};
 pub use plots::scatter::{ScatterTheme, scatter};
+pub use data::PointData;
+pub use plots::lines::{LinesTheme, lines, lines_points};
+pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
+pub use plots::{Lines, ScatterLines};
 pub use plots::{ColorSpec, Cycled, Scatter};
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
@@ -86,5 +90,7 @@ const _: () = {
     ok::<Figure>();
     ok::<Axis>();
     ok::<Scatter>();
+    ok::<Lines>();
+    ok::<ScatterLines>();
     ok::<GridPosition>();
 };

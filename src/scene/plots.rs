@@ -54,6 +54,22 @@ impl PlotCtx<'_> {
         Buf { key: Some(BufKey { uid: self.uid, part, rev: key }), data }
     }
 
+    /// Like [`local_points`](Self::local_points) for append-only point storage: after a `push`,
+    /// only the new points are converted, and the buffer's revision
+    /// ([`append_rev`](crate::data::points::append_rev)) lets the GPU upload only the tail.
+    pub fn local_points_append(&mut self, part: u8, pts: &crate::data::points::Points) -> Buf<[f32; 2]> {
+        let mut h = std::collections::hash_map::DefaultHasher::new();
+        (pts.epoch(), part, self.axis.rebase.epoch, self.axis.attrs.xscale, self.axis.attrs.yscale).hash(&mut h);
+        let a = self.axis;
+        let (xs, ys) = (a.attrs.xscale, a.attrs.yscale);
+        let conv = |p: &[f64; 2]| {
+            let (sx, sy) = (xs.forward(p[0]), ys.forward(p[1]));
+            if sx.is_finite() && sy.is_finite() { a.rebase.to_local(sx, sy) } else { [f32::NAN, f32::NAN] }
+        };
+        let (data, rev) = self.cache.append.entry((self.uid, part)).or_default().update(h.finish(), pts, conv);
+        Buf { key: Some(BufKey { uid: self.uid, part, rev }), data }
+    }
+
     /// A cache key combining the data revision, the axis rebase and the scales.
     pub fn conv_key(&self, part: u8) -> u64 {
         let mut h = std::collections::hash_map::DefaultHasher::new();

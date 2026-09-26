@@ -5,8 +5,10 @@
 //! [`iter`]. Every numeric type converts through [`Scalar`].
 
 mod data2d;
+pub(crate) mod points;
 
 pub use data2d::{Data2D, Field};
+pub use points::PointData;
 
 mod sealed {
     pub trait Sealed {}

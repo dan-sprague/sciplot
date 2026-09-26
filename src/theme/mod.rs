@@ -3,7 +3,9 @@
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
 use crate::color::{Color, WONG};
+use crate::plots::lines::{LinesAttrs, LinesTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
+use crate::plots::scatterlines::{ScatterLinesAttrs, ScatterLinesTheme};
 use parking_lot::RwLock;
 use std::cell::RefCell;
 
@@ -60,6 +62,8 @@ pub struct Theme {
     pub(crate) patchpalette: Option<Vec<Color>>,
     pub(crate) axis: AxisAttrs,
     pub(crate) scatter: ScatterAttrs,
+    pub(crate) lines: LinesAttrs,
+    pub(crate) scatterlines: ScatterLinesAttrs,
 }
 
 macro_rules! theme_setters {
@@ -108,6 +112,18 @@ impl Theme {
         self
     }
 
+    /// Lines defaults: `Theme::new().lines(|l| l.linewidth(3))`.
+    pub fn lines(mut self, f: impl FnOnce(LinesTheme) -> LinesTheme) -> Self {
+        self.lines = f(LinesTheme(self.lines)).0;
+        self
+    }
+
+    /// ScatterLines defaults.
+    pub fn scatterlines(mut self, f: impl FnOnce(ScatterLinesTheme) -> ScatterLinesTheme) -> Self {
+        self.scatterlines = f(ScatterLinesTheme(self.scatterlines)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -129,6 +145,8 @@ impl Theme {
         );
         out.axis.merge_from(&self.axis);
         out.scatter.merge_from(&self.scatter);
+        out.lines.merge_from(&self.lines);
+        out.scatterlines.merge_from(&self.scatterlines);
         out
     }
 

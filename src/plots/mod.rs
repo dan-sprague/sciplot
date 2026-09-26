@@ -1,9 +1,13 @@
 //! Plot types. Each plot lives in an Axis; its handle is `Clone + Send + Sync` and updates the
 //! plot in place.
 
+pub(crate) mod lines;
 pub(crate) mod scatter;
+pub(crate) mod scatterlines;
 
+pub use lines::Lines;
 pub use scatter::Scatter;
+pub use scatterlines::ScatterLines;
 
 use crate::attrs::Conv;
 use crate::color::{Color, IntoColor};
@@ -123,6 +127,8 @@ macro_rules! plot_kinds {
 
 plot_kinds! {
     Scatter(scatter::ScatterState),
+    Lines(lines::LinesState),
+    ScatterLines(scatterlines::ScatterLinesState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

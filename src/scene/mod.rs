@@ -26,6 +26,8 @@ pub(crate) struct SceneCache {
     epoch: u64,
     /// (plot uid, part) -> (conversion key, converted data)
     pub(crate) conv: HashMap<(u64, u8), (u64, Arc<Vec<[f32; 2]>>)>,
+    /// (plot uid, part) -> append-aware conversion of live, append-only point data
+    pub(crate) append: HashMap<(u64, u8), crate::data::points::LocalCache>,
 }
 
 impl SceneCache {
