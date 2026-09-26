@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="450pt" height="337.5pt" viewBox="0 0 600 450">
+<defs>
+<clipPath id="c1"><rect x="44" y="16" width="540" height="395"/></clipPath>
+<circle id="m2" r="3.173"/>
+<path id="g3" d="M0.507 -0.341C0.507 -0.108 0.425 0.015 0.275 0.015C0.123 0.015 0.043 -0.108 0.043 -0.347C0.043 -0.585 0.122 -0.709 0.275 -0.709C0.429 -0.709 0.507 -0.587 0.507 -0.341ZM0.417 -0.349C0.417 -0.539 0.37 -0.631 0.275 -0.631C0.18 -0.631 0.133 -0.54 0.133 -0.346C0.133 -0.152 0.18 -0.058 0.273 -0.058C0.371 -0.058 0.417 -0.148 0.417 -0.349Z"/>
+<path id="g4" d="M0.191 0L0.087 0L0.087 -0.104L0.191 -0.104Z"/>
+<path id="g5" d="M0.513 -0.235C0.513 -0.085 0.413 0.015 0.27 0.015C0.144 0.015 0.064 -0.041 0.035 -0.182L0.123 -0.182C0.144 -0.102 0.191 -0.063 0.268 -0.063C0.364 -0.063 0.423 -0.121 0.423 -0.223C0.423 -0.328 0.363 -0.389 0.268 -0.389C0.213 -0.389 0.179 -0.372 0.138 -0.323L0.057 -0.323L0.11 -0.694L0.476 -0.694L0.476 -0.607L0.181 -0.607L0.153 -0.424C0.194 -0.454 0.234 -0.467 0.284 -0.467C0.42 -0.467 0.513 -0.375 0.513 -0.235Z"/>
+<path id="g6" d="M0.347 0L0.259 0L0.259 -0.505L0.102 -0.505L0.102 -0.568C0.238 -0.585 0.258 -0.6 0.289 -0.709L0.347 -0.709Z"/>
+</defs>
+<rect width="600" height="450" fill="#ffffff"/>
+<rect x="44" y="16" width="540" height="395" fill="#ffffff"/>
+<g clip-path="url(#c1)">
+<g fill="#000000" fill-opacity="0.12">
+<rect x="55.39" y="16" width="1" height="395"/>
+<rect x="308.16" y="16" width="1" height="395"/>
+<rect x="560.931" y="16" width="1" height="395"/>
+<rect x="44" y="393.396" width="540" height="1"/>
+<rect x="44" y="212.812" width="540" height="1"/>
+<rect x="44" y="32.229" width="540" height="1"/>
+</g>
+<g fill="#0072b2">
+<use xlink:href="#m2" x="307.52" y="366.541"/>
+<use xlink:href="#m2" x="507.009" y="94.021"/>
+<use xlink:href="#m2" x="160.732" y="110.867"/>
+<use xlink:href="#m2" x="251.007" y="230.33"/>
+<use xlink:href="#m2" x="522.95" y="372.528"/>
+<use xlink:href="#m2" x="81.508" y="158.455"/>
+<use xlink:href="#m2" x="87.728" y="33.955"/>
+<use xlink:href="#m2" x="118.778" y="140.691"/>
+<use xlink:href="#m2" x="323.627" y="197.628"/>
+<use xlink:href="#m2" x="164.086" y="393.045"/>
+<use xlink:href="#m2" x="160.029" y="225.255"/>
+<use xlink:href="#m2" x="160.369" y="38.097"/>
+<use xlink:href="#m2" x="368.244" y="229.488"/>
+<use xlink:href="#m2" x="275.618" y="122.491"/>
+<use xlink:href="#m2" x="116.701" y="286.993"/>
+<use xlink:href="#m2" x="434.628" y="222.027"/>
+<use xlink:href="#m2" x="363.338" y="236.141"/>
+<use xlink:href="#m2" x="530.252" y="346.183"/>
+<use xlink:href="#m2" x="192.616" y="60.37"/>
+<use xlink:href="#m2" x="102.164" y="313.139"/>
+<use xlink:href="#m2" x="231.531" y="374.798"/>
+<use xlink:href="#m2" x="438.2" y="366.294"/>
+<use xlink:href="#m2" x="481.113" y="303.44"/>
+<use xlink:href="#m2" x="448.017" y="334.212"/>
+<use xlink:href="#m2" x="384.632" y="283.646"/>
+<use xlink:href="#m2" x="378.375" y="271.588"/>
+<use xlink:href="#m2" x="127.582" y="358.927"/>
+<use xlink:href="#m2" x="276.482" y="369.703"/>
+<use xlink:href="#m2" x="172.207" y="109.631"/>
+<use xlink:href="#m2" x="411.285" y="147.3"/>
+<use xlink:href="#m2" x="499.679" y="331.031"/>
+<use xlink:href="#m2" x="145.039" y="265.636"/>
+<use xlink:href="#m2" x="84.063" y="141.08"/>
+<use xlink:href="#m2" x="86.284" y="109.99"/>
+<use xlink:href="#m2" x="439.533" y="129.541"/>
+<use xlink:href="#m2" x="482.038" y="57.737"/>
+<use xlink:href="#m2" x="223.366" y="170.944"/>
+<use xlink:href="#m2" x="559.209" y="37.343"/>
+<use xlink:href="#m2" x="280.416" y="93.93"/>
+<use xlink:href="#m2" x="262.222" y="276.755"/>
+<use xlink:href="#m2" x="225.201" y="93.717"/>
+<use xlink:href="#m2" x="545.548" y="288.703"/>
+<use xlink:href="#m2" x="370.208" y="94.225"/>
+<use xlink:href="#m2" x="555.137" y="132.306"/>
+<use xlink:href="#m2" x="262.13" y="129.875"/>
+<use xlink:href="#m2" x="318.08" y="330.694"/>
+<use xlink:href="#m2" x="527.746" y="44.957"/>
+<use xlink:href="#m2" x="212.373" y="375.489"/>
+<use xlink:href="#m2" x="74.187" y="220.832"/>
+<use xlink:href="#m2" x="278.385" y="188.897"/>
+<use xlink:href="#m2" x="359.709" y="224.449"/>
+<use xlink:href="#m2" x="512.792" y="232.839"/>
+<use xlink:href="#m2" x="446.13" y="215.586"/>
+<use xlink:href="#m2" x="272.536" y="118.698"/>
+<use xlink:href="#m2" x="334.598" y="148.748"/>
+<use xlink:href="#m2" x="458.916" y="120.663"/>
+<use xlink:href="#m2" x="235.101" y="227.331"/>
+<use xlink:href="#m2" x="499.363" y="124.935"/>
+<use xlink:href="#m2" x="175.28" y="139.597"/>
+<use xlink:href="#m2" x="178.712" y="302.553"/>
+<use xlink:href="#m2" x="181.259" y="295.278"/>
+<use xlink:href="#m2" x="321.475" y="160.7"/>
+<use xlink:href="#m2" x="163.37" y="319.712"/>
+<use xlink:href="#m2" x="510.141" y="60.3"/>
+<use xlink:href="#m2" x="160.793" y="377.765"/>
+<use xlink:href="#m2" x="559.455" y="261.645"/>
+<use xlink:href="#m2" x="331.439" y="324.393"/>
+<use xlink:href="#m2" x="73.947" y="40.672"/>
+<use xlink:href="#m2" x="75.244" y="137.439"/>
+<use xlink:href="#m2" x="83.169" y="266.607"/>
+<use xlink:href="#m2" x="181.301" y="329.848"/>
+<use xlink:href="#m2" x="443.552" y="205.228"/>
+<use xlink:href="#m2" x="418.87" y="131.923"/>
+<use xlink:href="#m2" x="231.783" y="149.276"/>
+<use xlink:href="#m2" x="216.281" y="203.966"/>
+<use xlink:href="#m2" x="210.314" y="244.766"/>
+<use xlink:href="#m2" x="122.752" y="217.263"/>
+<use xlink:href="#m2" x="86.98" y="278.007"/>
+<use xlink:href="#m2" x="141.39" y="366.085"/>
+<use xlink:href="#m2" x="443.394" y="156.666"/>
+<use xlink:href="#m2" x="178.105" y="93.353"/>
+<use xlink:href="#m2" x="161.32" y="274.77"/>
+<use xlink:href="#m2" x="544.365" y="249.879"/>
+<use xlink:href="#m2" x="388.145" y="248.074"/>
+<use xlink:href="#m2" x="68.545" y="380.003"/>
+<use xlink:href="#m2" x="379.357" y="100.375"/>
+<use xlink:href="#m2" x="538.583" y="115.411"/>
+<use xlink:href="#m2" x="270.662" y="385.854"/>
+<use xlink:href="#m2" x="135.103" y="321.591"/>
+<use xlink:href="#m2" x="292.277" y="197.365"/>
+<use xlink:href="#m2" x="520.412" y="199.515"/>
+<use xlink:href="#m2" x="387.574" y="38.996"/>
+<use xlink:href="#m2" x="303.227" y="294.461"/>
+<use xlink:href="#m2" x="270.255" y="378.886"/>
+<use xlink:href="#m2" x="265.189" y="184.984"/>
+<use xlink:href="#m2" x="385.579" y="222.316"/>
+<use xlink:href="#m2" x="231.194" y="60.615"/>
+<use xlink:href="#m2" x="495.606" y="113.908"/>
+<use xlink:href="#m2" x="335.681" y="52.172"/>
+<use xlink:href="#m2" x="366.257" y="109.969"/>
+</g>
+</g>
+<g fill="#000000">
+<rect x="55.39" y="411" width="1" height="5"/>
+<rect x="308.16" y="411" width="1" height="5"/>
+<rect x="560.931" y="411" width="1" height="5"/>
+<rect x="39" y="393.396" width="5" height="1"/>
+<rect x="39" y="212.812" width="5" height="1"/>
+<rect x="39" y="32.229" width="5" height="1"/>
+</g>
+<g fill="#000000">
+<rect x="43.5" y="15.5" width="1" height="396"/>
+<rect x="583.5" y="15.5" width="1" height="396"/>
+<rect x="43.5" y="410.5" width="541" height="1"/>
+<rect x="43.5" y="15.5" width="541" height="1"/>
+</g>
+<g fill="#000000">
+<use xlink:href="#g3" transform="translate(46.16 431.258) scale(14)"/>
+<use xlink:href="#g4" transform="translate(53.944 431.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(57.836 431.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(298.93 431.258) scale(14)"/>
+<use xlink:href="#g4" transform="translate(306.714 431.258) scale(14)"/>
+<use xlink:href="#g5" transform="translate(310.606 431.258) scale(14)"/>
+<use xlink:href="#g6" transform="translate(551.701 431.258) scale(14)"/>
+<use xlink:href="#g4" transform="translate(559.484 431.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(563.377 431.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(15.54 398.999) scale(14)"/>
+<use xlink:href="#g4" transform="translate(23.324 398.999) scale(14)"/>
+<use xlink:href="#g3" transform="translate(27.216 398.999) scale(14)"/>
+<use xlink:href="#g3" transform="translate(15.54 218.415) scale(14)"/>
+<use xlink:href="#g4" transform="translate(23.324 218.415) scale(14)"/>
+<use xlink:href="#g5" transform="translate(27.216 218.415) scale(14)"/>
+<use xlink:href="#g6" transform="translate(15.54 37.832) scale(14)"/>
+<use xlink:href="#g4" transform="translate(23.324 37.832) scale(14)"/>
+<use xlink:href="#g3" transform="translate(27.216 37.832) scale(14)"/>
+</g>
+</svg>

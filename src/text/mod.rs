@@ -2,6 +2,7 @@
 //! (advance-only, no kerning; line box = ascender − descender = 1.165 em).
 
 pub(crate) mod atlas;
+pub(crate) mod outline;
 mod rich;
 mod tex;
 
