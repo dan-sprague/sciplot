@@ -123,12 +123,12 @@
 </g>
 </g>
 <g fill="#000000">
-<rect x="55.39" y="411" width="1" height="5"/>
-<rect x="308.16" y="411" width="1" height="5"/>
-<rect x="560.931" y="411" width="1" height="5"/>
-<rect x="39" y="393.396" width="5" height="1"/>
-<rect x="39" y="212.812" width="5" height="1"/>
-<rect x="39" y="32.229" width="5" height="1"/>
+<rect x="55.39" y="411.5" width="1" height="5"/>
+<rect x="308.16" y="411.5" width="1" height="5"/>
+<rect x="560.931" y="411.5" width="1" height="5"/>
+<rect x="38.5" y="393.396" width="5" height="1"/>
+<rect x="38.5" y="212.812" width="5" height="1"/>
+<rect x="38.5" y="32.229" width="5" height="1"/>
 </g>
 <g fill="#000000">
 <rect x="43.5" y="15.5" width="1" height="396"/>
@@ -137,23 +137,23 @@
 <rect x="43.5" y="15.5" width="541" height="1"/>
 </g>
 <g fill="#000000">
-<use xlink:href="#g3" transform="translate(46.16 431.258) scale(14)"/>
-<use xlink:href="#g4" transform="translate(53.944 431.258) scale(14)"/>
-<use xlink:href="#g3" transform="translate(57.836 431.258) scale(14)"/>
-<use xlink:href="#g3" transform="translate(298.93 431.258) scale(14)"/>
-<use xlink:href="#g4" transform="translate(306.714 431.258) scale(14)"/>
-<use xlink:href="#g5" transform="translate(310.606 431.258) scale(14)"/>
-<use xlink:href="#g6" transform="translate(551.701 431.258) scale(14)"/>
-<use xlink:href="#g4" transform="translate(559.484 431.258) scale(14)"/>
-<use xlink:href="#g3" transform="translate(563.377 431.258) scale(14)"/>
-<use xlink:href="#g3" transform="translate(15.54 398.999) scale(14)"/>
-<use xlink:href="#g4" transform="translate(23.324 398.999) scale(14)"/>
-<use xlink:href="#g3" transform="translate(27.216 398.999) scale(14)"/>
-<use xlink:href="#g3" transform="translate(15.54 218.415) scale(14)"/>
-<use xlink:href="#g4" transform="translate(23.324 218.415) scale(14)"/>
-<use xlink:href="#g5" transform="translate(27.216 218.415) scale(14)"/>
-<use xlink:href="#g6" transform="translate(15.54 37.832) scale(14)"/>
-<use xlink:href="#g4" transform="translate(23.324 37.832) scale(14)"/>
-<use xlink:href="#g3" transform="translate(27.216 37.832) scale(14)"/>
+<use xlink:href="#g3" transform="translate(46.16 432.258) scale(14)"/>
+<use xlink:href="#g4" transform="translate(53.944 432.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(57.836 432.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(298.93 432.258) scale(14)"/>
+<use xlink:href="#g4" transform="translate(306.714 432.258) scale(14)"/>
+<use xlink:href="#g5" transform="translate(310.606 432.258) scale(14)"/>
+<use xlink:href="#g6" transform="translate(551.701 432.258) scale(14)"/>
+<use xlink:href="#g4" transform="translate(559.484 432.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(563.377 432.258) scale(14)"/>
+<use xlink:href="#g3" transform="translate(14.54 398.999) scale(14)"/>
+<use xlink:href="#g4" transform="translate(22.324 398.999) scale(14)"/>
+<use xlink:href="#g3" transform="translate(26.216 398.999) scale(14)"/>
+<use xlink:href="#g3" transform="translate(14.54 218.415) scale(14)"/>
+<use xlink:href="#g4" transform="translate(22.324 218.415) scale(14)"/>
+<use xlink:href="#g5" transform="translate(26.216 218.415) scale(14)"/>
+<use xlink:href="#g6" transform="translate(14.54 37.832) scale(14)"/>
+<use xlink:href="#g4" transform="translate(22.324 37.832) scale(14)"/>
+<use xlink:href="#g3" transform="translate(26.216 37.832) scale(14)"/>
 </g>
 </svg>

@@ -143,6 +143,63 @@ impl PlotImpl for HeatmapState {
             interpolate: r.interpolate,
         }));
     }
+
+    fn pick(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
+        self.pick_cell(ctx)
+    }
+}
+
+/// The cell of `e` containing `v` (data space), for monotone edges in either direction.
+fn cell_index(e: &CellEdges, v: f64) -> Option<usize> {
+    let n = e.n();
+    if n == 0 || !v.is_finite() {
+        return None;
+    }
+    let (first, last) = (e.first(), e.last());
+    let (lo, hi) = (first.min(last), first.max(last));
+    if !(v >= lo && v <= hi) {
+        return None;
+    }
+    let up = last >= first;
+    // Binary search for the last edge at or before v (in the direction of the edges).
+    let before = |i: usize| if up { e.edge(i) <= v } else { e.edge(i) >= v };
+    let (mut a, mut b) = (0usize, n); // before(a) holds; find the largest such index < n
+    while b - a > 1 {
+        let m = (a + b) / 2;
+        if before(m) { a = m } else { b = m }
+    }
+    Some(a.min(n - 1))
+}
+
+impl HeatmapState {
+    /// Makie's heatmap inspection: the cell under the cursor, as `x = …, y = …` (cursor, data
+    /// space) and `[i, j] = v` (0-based indices, decoded value), with the cell outlined in red.
+    fn pick_cell(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
+        let [x, y] = ctx.cursor_data()?;
+        let i = cell_index(&self.x, x)?;
+        let j = cell_index(&self.y, y)?;
+        let raw = *self.values.get(j * self.nx + i)?;
+        let v = if raw.is_nan() { f64::NAN } else { raw as f64 / self.enc.k + self.enc.off };
+        let r = self.attrs.resolve(&ctx.theme.heatmap, ctx.g);
+        if v.is_nan() && r.nan_color.a <= 0.0 {
+            return None;
+        }
+        let a = ctx.axis.to_units(self.x.edge(i), self.y.edge(j));
+        let b = ctx.axis.to_units(self.x.edge(i + 1), self.y.edge(j + 1));
+        let outline = a.zip(b).map(|(a, b)| {
+            let (x0, y0) = (a[0].min(b[0]), a[1].min(b[1]));
+            [x0, y0, (a[0] - b[0]).abs(), (a[1] - b[1]).abs()]
+        });
+        use super::pick::sig6;
+        Some(super::pick::Hover {
+            // Anything else within the pick radius (drawn over the heatmap) wins.
+            dist: ctx.radius,
+            anchor: ctx.cursor,
+            text: format!("x = {}, y = {}\n[{i}, {j}] = {}", sig6(x), sig6(y), sig6(v)),
+            ring: None,
+            outline,
+        })
+    }
 }
 
 /// Converts `z` (off-lock) into an encoded buffer, reusing `buf`'s allocation.
@@ -357,6 +414,42 @@ mod tests {
         assert!(close(limits(&hm.figure()), [0.5, 4.5, 0.5, 3.5]));
         let hm = heatmap_xy(Edges(0, 2), [0.0, 1.0, 3.0, 4.0], Field::new(&z, 4, 3));
         assert!(close(limits(&hm.figure()), [0.0, 2.0, 0.0, 4.0]));
+    }
+
+    #[test]
+    fn pick_reports_the_cell_under_the_cursor() {
+        // 3 × 2 cells on Edges(0, 3) × Edges(0, 2); z[i, j] = 1e6 + 10 i + j.
+        let z: Vec<f64> = (0..6).map(|k| 1e6 + 10.0 * (k % 3) as f64 + (k / 3) as f64).collect();
+        let mut hm = heatmap_xy(Edges(0.0, 3.0), Edges(0.0, 2.0), Field::new(&z, 3, 2));
+        hm = hm.nan_color(RED);
+        let st = hm.sh.snapshot();
+        let (_, axes) = crate::scene::build(&st, None, &mut SceneCache::new());
+        let a = &axes[0];
+        let g = st.theme.globals();
+        let mut cache = crate::plots::pick::PickCache::default();
+        let p = st.plots[0].as_ref().unwrap();
+        let mut at = |x: f64, y: f64| {
+            let mut ctx = crate::plots::pick::PickCtx {
+                axis: a,
+                cursor: a.to_units(x, y).unwrap(),
+                radius: 10.0,
+                uid: p.uid,
+                data_rev: p.data_rev,
+                theme: &st.theme,
+                g: &g,
+                cache: &mut cache,
+            };
+            p.kind.imp().pick(&mut ctx)
+        };
+        let h = at(2.5, 0.25).expect("on the heatmap");
+        assert_eq!(h.text, "x = 2.5, y = 0.25\n[2, 0] = 1.00002e+06");
+        let [x0, y0] = a.to_units(2.0, 1.0).unwrap();
+        let [x1, y1] = a.to_units(3.0, 0.0).unwrap();
+        let o = h.outline.unwrap();
+        assert!((o[0] - x0).abs() < 1e-9 && (o[1] - y0).abs() < 1e-9);
+        assert!((o[2] - (x1 - x0)).abs() < 1e-9 && (o[3] - (y1 - y0)).abs() < 1e-9);
+        assert!(at(0.5, 1.5).unwrap().text.ends_with("[0, 1] = 1e+06"));
+        drop(hm);
     }
 
     #[test]

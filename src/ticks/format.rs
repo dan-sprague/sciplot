@@ -110,10 +110,10 @@ fn has_only_zero_fraction(base: &str) -> bool {
     }
 }
 
-/// `rich(base, "×10", superscript(exp))`.
+/// `rich(base, "×10", superscript(exp, offset = (0.1, 0)))`.
 fn scientific_rich(base: String, exponent: i64) -> RichText {
     let e = if exponent < 0 { format!("{MINUS}{}", -exponent) } else { exponent.to_string() };
-    RichText::from_spans([TextSpan::plain(base), TextSpan::plain("×10"), superscript(e)])
+    RichText::from_spans([TextSpan::plain(base), TextSpan::plain("×10"), superscript(e).offset(0.1, 0.0)])
 }
 
 /// Whether Makie would label `xs` in scientific notation (`_pick_label_style`): the tick
@@ -150,9 +150,9 @@ pub fn format_ticks_auto(xs: &[f64]) -> Vec<RichText> {
         .collect()
 }
 
-/// Log-axis label: `rich(base, superscript(exponent))`, e.g. "10" + "−2".
+/// Log-axis label: `rich(base, superscript(exponent, offset = (0.1, 0)))`, e.g. "10" + "−2".
 pub(crate) fn log_label(base: &str, exponent: &str) -> RichText {
-    RichText::from_spans([TextSpan::plain(base), superscript(exponent)])
+    RichText::from_spans([TextSpan::plain(base), superscript(exponent).offset(0.1, 0.0)])
 }
 
 // ---------------------------------------------------------------------------------------------

@@ -19,6 +19,8 @@ pub(crate) struct Hover {
     pub text: String,
     /// Diameter (units) of a highlight ring drawn around `anchor`, if any.
     pub ring: Option<f64>,
+    /// A highlighted rectangle `[x, y, w, h]` in figure units (a heatmap cell), if any.
+    pub outline: Option<[f64; 4]>,
 }
 
 /// Lazily built pick structures, kept per window across frames.
@@ -96,6 +98,74 @@ impl PickCtx<'_> {
                 best = Some((i, d, u));
             }
         });
+        best
+    }
+}
+
+impl PickCtx<'_> {
+    /// The cursor in data space, or `None` outside the axis or the scales' domains.
+    pub fn cursor_data(&self) -> Option<[f64; 2]> {
+        let a = self.axis;
+        let r = a.rect;
+        if r.w <= 0.0 || r.h <= 0.0 || !r.contains(self.cursor) {
+            return None;
+        }
+        let mut fx = (self.cursor[0] - r.x) / r.w;
+        let mut fy = (r.bottom() - self.cursor[1]) / r.h;
+        if a.attrs.xreversed {
+            fx = 1.0 - fx;
+        }
+        if a.attrs.yreversed {
+            fy = 1.0 - fy;
+        }
+        let [v0, v1, v2, v3] = a.view;
+        let (x, y) = (a.attrs.xscale.inverse(v0 + fx * (v1 - v0)), a.attrs.yscale.inverse(v2 + fy * (v3 - v2)));
+        (x.is_finite() && y.is_finite()).then_some([x, y])
+    }
+
+    /// Makie's line inspection: the point of the polyline `pts` (data space, NaN breaks it)
+    /// closest to the cursor, measured on screen, within the radius and inside the axis:
+    /// `(distance, position in figure units, position in data space)`.
+    pub fn nearest_on_polyline<'p>(
+        &self,
+        pts: impl Iterator<Item = &'p [f64; 2]>,
+    ) -> Option<(f64, [f64; 2], [f64; 2])> {
+        let a = self.axis;
+        let (xs, ys) = (a.attrs.xscale, a.attrs.yscale);
+        let [cx, cy] = self.cursor;
+        let rad = self.radius;
+        let mut best: Option<(f64, [f64; 2], [f64; 2])> = None;
+        let mut prev: Option<([f64; 2], [f64; 2])> = None; // (units, scaled)
+        for p in pts {
+            let s = [xs.forward(p[0]), ys.forward(p[1])];
+            let cur = a.to_units(p[0], p[1]).map(|u| (u, s));
+            if let (Some((u0, s0)), Some((u1, s1))) = (prev, cur) {
+                // Cheap reject: the segment's box is farther than the radius.
+                let far = u0[0].max(u1[0]) < cx - rad
+                    || u0[0].min(u1[0]) > cx + rad
+                    || u0[1].max(u1[1]) < cy - rad
+                    || u0[1].min(u1[1]) > cy + rad;
+                if !far {
+                    let (dx, dy) = (u1[0] - u0[0], u1[1] - u0[1]);
+                    let len2 = dx * dx + dy * dy;
+                    let t =
+                        if len2 > 0.0 { (((cx - u0[0]) * dx + (cy - u0[1]) * dy) / len2).clamp(0.0, 1.0) } else { 0.0 };
+                    let q = [u0[0] + t * dx, u0[1] + t * dy];
+                    let d = (q[0] - cx).hypot(q[1] - cy);
+                    if d <= rad && a.rect.contains(q) && best.is_none_or(|b| d < b.0) {
+                        let data = [xs.inverse(s0[0] + t * (s1[0] - s0[0])), ys.inverse(s0[1] + t * (s1[1] - s0[1]))];
+                        best = Some((d, q, data));
+                    }
+                }
+            } else if let Some((u, s)) = cur {
+                // An isolated point (start of a run) can be hovered too.
+                let d = (u[0] - cx).hypot(u[1] - cy);
+                if d <= rad && a.rect.contains(u) && best.is_none_or(|b| d < b.0) {
+                    best = Some((d, u, [xs.inverse(s[0]), ys.inverse(s[1])]));
+                }
+            }
+            prev = cur;
+        }
         best
     }
 }

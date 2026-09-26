@@ -110,6 +110,7 @@ impl PlotImpl for ScatterState {
             anchor,
             text: super::pick::point_text(x, y),
             ring: Some(r.markersize + 2.0 * r.strokewidth + 4.0),
+            outline: None,
         })
     }
 }

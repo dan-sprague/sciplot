@@ -2,15 +2,15 @@
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, zip_xy};
 use crate::attrs::attributes;
-use crate::color::Color;
+use crate::color::{Color, Colormap, MappingAttrs, encoded_values};
 use crate::data::points::Points;
 use crate::data::{Data1D, PointData};
 use crate::figure::{FigShared, PlotId};
 use crate::scene::PlotCtx;
-use crate::scene::drawlist::{Buf, BufKey, ColorMapping, LinesPrim, Prim, PrimColor};
+use crate::scene::drawlist::{Buf, BufKey, LinesPrim, Prim, PrimColor};
 use crate::style::{JoinStyle, LineCap, Linestyle};
 use std::hash::{Hash, Hasher};
-use std::sync::{Arc, OnceLock};
+use std::sync::Arc;
 
 /// A line plot handle (Makie's `Lines`). Besides styling, it supports live data: [`set_data`],
 /// [`push`] and [`extend`] append in O(1) amortized time under the figure lock and upload only the
@@ -60,6 +60,16 @@ attributes! {
         miter_limit: f64 = |_| std::f64::consts::FRAC_PI_3, STYLE;
         /// Opacity multiplier.
         alpha: f64 = |_| 1.0, STYLE;
+        /// Colormap for `color = values` (default viridis).
+        colormap: Colormap = |_| Colormap::VIRIDIS, STYLE;
+        /// `(lo, hi)` mapped to the colormap ends; default: the finite extrema of the values.
+        colorrange: Option<[f64; 2]> = |_| None, STYLE;
+        /// Color for values below the colorrange (default: the first colormap color).
+        lowclip: Option<Color> = |_| None, STYLE;
+        /// Color for values above the colorrange (default: the last colormap color).
+        highclip: Option<Color> = |_| None, STYLE;
+        /// Color for NaN values (default transparent).
+        nan_color: Color = |_| Color::TRANSPARENT, STYLE;
     }
 }
 
@@ -98,11 +108,23 @@ pub(crate) fn emit_line(
     s: &LineStyle<'_>,
     style_rev: u64,
 ) -> Option<(Buf<[f32; 2]>, PrimColor)> {
+    emit_line_mapped(ctx, pts, s, style_rev, None)
+}
+
+/// [`emit_line`] with explicit colormapping attributes for `color = values` (`None`: viridis over
+/// the finite extrema).
+pub(crate) fn emit_line_mapped(
+    ctx: &mut PlotCtx<'_>,
+    pts: &Points,
+    s: &LineStyle<'_>,
+    style_rev: u64,
+    map: Option<&MappingAttrs<'_>>,
+) -> Option<(Buf<[f32; 2]>, PrimColor)> {
     if pts.is_empty() {
         return None;
     }
     let buf = ctx.local_points_append(0, pts);
-    let color = prim_color(ctx, s.color, s.alpha as f32, pts.len(), 1, style_rev);
+    let color = prim_color_mapped(ctx, s.color, s.alpha as f32, pts.len(), 1, style_rev, map);
     if pts.len() >= 2 {
         ctx.push_data(Prim::Lines(LinesPrim {
             pts: buf.clone(),
@@ -121,8 +143,8 @@ pub(crate) fn emit_line(
 }
 
 /// Lowers a color spec for `n` points: a uniform color, premultiplied per-point colors, or values
-/// normalized to their extrema and mapped through the colormap. Per-point buffers are cached on
-/// the GPU under `part` until the data or the style changes.
+/// mapped through viridis over their finite extrema. Per-point buffers are cached on the GPU
+/// under `part` until the data or the style changes.
 pub(crate) fn prim_color(
     ctx: &PlotCtx<'_>,
     spec: &ColorSpec,
@@ -130,6 +152,20 @@ pub(crate) fn prim_color(
     n: usize,
     part: u8,
     style_rev: u64,
+) -> PrimColor {
+    prim_color_mapped(ctx, spec, alpha, n, part, style_rev, None)
+}
+
+/// [`prim_color`] with explicit colormapping attributes (colormap, colorrange, lowclip, highclip,
+/// nan_color) for `ColorSpec::Values`; `None` uses viridis over the finite extrema.
+pub(crate) fn prim_color_mapped(
+    ctx: &PlotCtx<'_>,
+    spec: &ColorSpec,
+    alpha: f32,
+    n: usize,
+    part: u8,
+    style_rev: u64,
+    map: Option<&MappingAttrs<'_>>,
 ) -> PrimColor {
     if let Some(c) = ctx.solid_color(spec, false) {
         return PrimColor::Uniform(c.with_alpha(c.a * alpha));
@@ -143,19 +179,19 @@ pub(crate) fn prim_color(
             PrimColor::PerElement(Buf { key, data: Arc::new(data) })
         }
         ColorSpec::Values(v) if v.len() == n => {
-            // Makie's automatic colorrange: the finite extrema.
-            let (lo, hi) = crate::data::finite_extrema(v.iter().copied()).unwrap_or((0.0, 1.0));
-            let span = if hi > lo { hi - lo } else { 1.0 };
-            let data = v.iter().map(|x| ((x - lo) / span) as f32).collect();
-            let map = ColorMapping {
-                lut: default_colormap(),
-                range: [0.0, ((hi - lo) / span) as f32],
+            let e = encoded_values(v);
+            let viridis = Colormap::VIRIDIS;
+            let default = MappingAttrs {
+                colormap: &viridis,
+                colorrange: None,
                 lowclip: None,
                 highclip: None,
                 nan_color: Color::TRANSPARENT,
-                alpha,
+                alpha: 1.0,
             };
-            PrimColor::Values(Buf { key, data: Arc::new(data) }, map)
+            let m = map.unwrap_or(&default);
+            let mapping = MappingAttrs { alpha: alpha as f64, ..*m }.mapping(&e.enc);
+            PrimColor::Values(Buf { key: Some(BufKey { uid: ctx.uid, part, rev: e.rev }), data: e.data }, mapping)
         }
         _ => {
             crate::warn_once("per-point line/marker colors must have one entry per point; using the palette color");
@@ -163,17 +199,6 @@ pub(crate) fn prim_color(
             PrimColor::Uniform(c.with_alpha(c.a * alpha))
         }
     }
-}
-
-/// Makie's default colormap (viridis, sampled at 33 points; the GPU interpolates linearly).
-pub(crate) fn default_colormap() -> Arc<Vec<Color>> {
-    const VIRIDIS: [u32; 33] = [
-        0x440154, 0x470D60, 0x48186A, 0x482374, 0x472D7B, 0x453681, 0x424086, 0x3F4989, 0x3B528B, 0x375A8D, 0x33638D,
-        0x2F6A8E, 0x2C728E, 0x297A8E, 0x26818E, 0x23898E, 0x21908C, 0x1F988B, 0x1F9F88, 0x21A685, 0x28AE80, 0x31B57B,
-        0x3EBC74, 0x4CC26C, 0x5DC963, 0x6ECE58, 0x82D34C, 0x96D83F, 0xABDC32, 0xC0DF24, 0xD5E21A, 0xEAE51A, 0xFDE725,
-    ];
-    static LUT: OnceLock<Arc<Vec<Color>>> = OnceLock::new();
-    LUT.get_or_init(|| Arc::new(VIRIDIS.iter().map(|&h| Color::hex(h)).collect())).clone()
 }
 
 impl PlotImpl for LinesState {
@@ -191,7 +216,20 @@ impl PlotImpl for LinesState {
 
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.lines, ctx.g);
-        emit_line(ctx, &self.pts, &r.style(), self.style_rev);
+        let map = MappingAttrs {
+            colormap: &r.colormap,
+            colorrange: r.colorrange,
+            lowclip: r.lowclip,
+            highclip: r.highclip,
+            nan_color: r.nan_color,
+            alpha: r.alpha,
+        };
+        emit_line_mapped(ctx, &self.pts, &r.style(), self.style_rev, Some(&map));
+    }
+
+    fn pick(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
+        let (dist, anchor, [x, y]) = ctx.nearest_on_polyline(self.pts.iter())?;
+        Some(super::pick::Hover { dist, anchor, text: super::pick::point_text(x, y), ring: None, outline: None })
     }
 }
 
@@ -327,4 +365,77 @@ pub fn lines(x: impl Data1D, y: impl Data1D) -> Lines {
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]
 pub fn lines_points(p: impl PointData) -> Lines {
     crate::Figure::new().at(1, 1).lines_points(p)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+    use crate::scene::drawlist::{Prim, PrimColor};
+    use crate::scene::{SceneCache, build};
+
+    /// The `color = values` mapping of the figure's first line.
+    fn line_mapping(fig: &Figure) -> crate::scene::drawlist::ColorMapping {
+        let (dl, _) = build(&fig.sh.snapshot(), None, &mut SceneCache::new());
+        dl.items
+            .iter()
+            .find_map(|i| match &i.prim {
+                Prim::Lines(l) => match &l.color {
+                    PrimColor::Values(_, m) => Some(m.clone()),
+                    _ => None,
+                },
+                _ => None,
+            })
+            .expect("a value-colored line")
+    }
+
+    #[test]
+    fn colormap_attributes() {
+        let fig = Figure::new();
+        let ax = Axis::new(fig.at(1, 1));
+        let l = ax.lines([0.0, 1.0, 2.0], [0.0, 1.0, 0.0]).color(vec![0.0, 5.0, 10.0]);
+        // Default: viridis over the extrema; encoded values span -1..1.
+        let m = line_mapping(&fig);
+        assert_eq!(m.lut.first(), Colormap::VIRIDIS.lut().first());
+        assert!((m.range[0] + 1.0).abs() < 1e-6 && (m.range[1] - 1.0).abs() < 1e-6, "{:?}", m.range);
+        l.colormap(Colormap::MAGMA).colorrange((0, 20)).lowclip(RED).highclip(BLUE).nan_color(GREEN).alpha(0.5);
+        let m = line_mapping(&fig);
+        assert_eq!(m.lut.last(), Colormap::MAGMA.lut().last());
+        // 0 -> -1, 10 -> 1, so 20 -> 3.
+        assert!((m.range[0] + 1.0).abs() < 1e-6 && (m.range[1] - 3.0).abs() < 1e-6, "{:?}", m.range);
+        assert_eq!((m.lowclip, m.highclip, m.nan_color), (Some(RED), Some(BLUE), GREEN));
+        assert_eq!(m.alpha, 0.5);
+    }
+
+    #[test]
+    fn pick_closest_point_on_polyline() {
+        let l = lines([0.0, 10.0, 10.0], [0.0, 0.0, 10.0]);
+        l.axis().limits(0.0, 10.0, 0.0, 10.0);
+        let st = l.sh.snapshot();
+        let (_, axes) = build(&st, None, &mut SceneCache::new());
+        let a = &axes[0];
+        let g = st.theme.globals();
+        let mut cache = crate::plots::pick::PickCache::default();
+        let p = st.plots[0].as_ref().unwrap();
+        let mut at = |cursor: [f64; 2]| {
+            let mut ctx = crate::plots::pick::PickCtx {
+                axis: a,
+                cursor,
+                radius: 10.0,
+                uid: p.uid,
+                data_rev: p.data_rev,
+                theme: &st.theme,
+                g: &g,
+                cache: &mut cache,
+            };
+            p.kind.imp().pick(&mut ctx)
+        };
+        // 4 units above the middle of the first (bottom) segment, at x = 5.
+        let on = a.to_units(5.0, 0.0).unwrap();
+        let h = at([on[0], on[1] - 4.0]).expect("hovered");
+        assert!(
+            (h.dist - 4.0).abs() < 1e-9 && (h.anchor[0] - on[0]).abs() < 1e-9 && (h.anchor[1] - on[1]).abs() < 1e-9
+        );
+        assert_eq!(h.text, "x: 5\ny: 0");
+        assert!(at([on[0], on[1] - 20.0]).is_none(), "outside the radius");
+    }
 }

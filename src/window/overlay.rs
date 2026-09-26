@@ -110,6 +110,13 @@ pub(crate) fn compose<'a>(
             });
             extra.push((z::RING, clip, ring(h.anchor, d)));
         }
+        if let Some(o) = h.outline {
+            let clip = views.iter().rev().find(|v| v.contains(h.anchor)).map(|v| {
+                let [x, y, w, hh] = v.rect;
+                Rect::new(x, y, w, hh)
+            });
+            extra.push((z::RING, clip, outline(o)));
+        }
         for p in tooltip(h, dl.size, g.fontsize, g.textcolor) {
             extra.push((z::TOOLTIP, None, p));
         }
@@ -173,6 +180,19 @@ fn ring(at: [f64; 2], diameter: f64) -> Prim {
         stroke_width: INDICATOR_WIDTH as f32,
         rotation: 0.0,
     })
+}
+
+/// A red rectangle outline (Makie's heatmap cell indicator, linewidth 2) centred on `[x, y, w, h]`.
+fn outline([x, y, w, h]: [f64; 4]) -> Prim {
+    let t = INDICATOR_WIDTH;
+    let r =
+        |x, y, w, h| crate::scene::drawlist::RectPrim { rect: Rect::new(x, y, w, h), color: INDICATOR, snap: false };
+    Prim::Rects(vec![
+        r(x - 0.5 * t, y - 0.5 * t, w + t, t),
+        r(x - 0.5 * t, y + h - 0.5 * t, w + t, t),
+        r(x - 0.5 * t, y + 0.5 * t, t, (h - t).max(0.0)),
+        r(x + w - 0.5 * t, y + 0.5 * t, t, (h - t).max(0.0)),
+    ])
 }
 
 /// Where the tooltip sits relative to the point (Makie's `update_tooltip_alignment!`).

@@ -149,6 +149,30 @@ macro_rules! scatterlines {
     };
 }
 
+/// Makie's `hlines!(ax, ys; kw...)`: horizontal lines spanning `xmin..xmax` of the axis width.
+#[macro_export]
+macro_rules! hlines {
+    ($ax:expr, $v:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).hlines($v) $(; $($k = $val),*)?)
+    };
+}
+
+/// Makie's `vlines!(ax, xs; kw...)`: vertical lines spanning `ymin..ymax` of the axis height.
+#[macro_export]
+macro_rules! vlines {
+    ($ax:expr, $v:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).vlines($v) $(; $($k = $val),*)?)
+    };
+}
+
+/// Makie's `ablines!(ax, intercepts, slopes; kw...)`: lines `y = a + b·x` across the axis.
+#[macro_export]
+macro_rules! ablines {
+    ($ax:expr, $a:expr, $b:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).ablines($a, $b) $(; $($k = $val),*)?)
+    };
+}
+
 /// Accepts `Axis` or `&Axis` in the plotting macros.
 #[doc(hidden)]
 pub trait AsAxis {

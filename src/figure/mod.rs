@@ -301,6 +301,20 @@ impl Figure {
         let v = p.conv();
         self.set_theme_field(|t| t.figure_padding = Some(v))
     }
+    /// Makie's `resize_to_layout!`: sets the figure size to what the layout needs, so fixed-size
+    /// or aspect-constrained columns and rows leave no empty margins.
+    ///
+    /// ```
+    /// # use ezviz::prelude::*;
+    /// let fig = Figure::new();
+    /// Axis::new(fig.at(1, 1)).width(300).height(200);
+    /// fig.resize_to_layout();
+    /// ```
+    pub fn resize_to_layout(&self) -> Figure {
+        let snap = self.sh.snapshot();
+        let s = crate::scene::tight_size(&snap);
+        self.set_theme_field(|t| t.size = Some(s))
+    }
     /// Replaces this figure's theme (attributes resolve against it at render time).
     pub fn theme(&self, t: Theme) -> Figure {
         self.set_theme_field(|th| *th = t)
