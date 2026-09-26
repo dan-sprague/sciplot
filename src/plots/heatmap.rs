@@ -59,6 +59,7 @@ attributes! {
 }
 
 plot_common!(Heatmap);
+super::color_mapped!(Heatmap);
 
 /// Finite bounds of the cell edges in scaled space.
 fn edge_bounds(e: &CellEdges, s: Scale) -> Option<(f64, f64)> {
@@ -114,6 +115,19 @@ impl PlotImpl for HeatmapState {
 
     fn tight_limits(&self) -> bool {
         true
+    }
+
+    fn colormapping(&self, theme: &crate::theme::Theme, g: &crate::theme::Globals) -> Option<super::ResolvedColormap> {
+        let r = self.attrs.resolve(&theme.heatmap, g);
+        let [lo, hi] = r.colorrange.unwrap_or_else(|| self.enc.auto_range());
+        Some(super::ResolvedColormap {
+            colormap: r.colormap,
+            colorrange: (lo, hi),
+            lowclip: r.lowclip,
+            highclip: r.highclip,
+            alpha: r.alpha,
+            mapped: true,
+        })
     }
 
     fn emit(&self, ctx: &mut PlotCtx<'_>) {

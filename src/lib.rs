@@ -55,8 +55,11 @@ pub use macros::{__as_axis, AsAxis};
 
 pub use attrs::Conv;
 pub use blocks::axis::AxisTheme;
+pub use blocks::colorbar::ColorbarTheme;
 pub use blocks::label::LabelTheme;
 pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
+pub use blocks::Colorbar;
+pub use plots::{ColorMapped, ResolvedColormap};
 pub use color::{Color, IntoColor, WONG, colors};
 pub use color::{Colormap, IntoColormap};
 pub use data::PointData;
@@ -116,6 +119,7 @@ const _: () = {
     ok::<Lines>();
     ok::<ScatterLines>();
     ok::<GridPosition>();
+    ok::<Colorbar>();
     #[cfg(feature = "window")]
     ok_send_sync::<Live>();
 };

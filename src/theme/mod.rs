@@ -2,6 +2,7 @@
 //! thread-scoped `with_theme`.
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
+use crate::blocks::colorbar::{ColorbarAttrs, ColorbarTheme};
 use crate::blocks::label::{LabelAttrs, LabelTheme};
 use crate::color::{Color, WONG};
 use crate::plots::band::{BandAttrs, BandTheme};
@@ -68,6 +69,7 @@ pub struct Theme {
     pub(crate) patchpalette: Option<Vec<Color>>,
     pub(crate) axis: AxisAttrs,
     pub(crate) label: LabelAttrs,
+    pub(crate) colorbar: ColorbarAttrs,
     pub(crate) scatter: ScatterAttrs,
     pub(crate) barplot: BarPlotAttrs,
     pub(crate) hist: HistAttrs,
@@ -121,6 +123,12 @@ impl Theme {
     /// Label defaults.
     pub fn label(mut self, f: impl FnOnce(LabelTheme) -> LabelTheme) -> Self {
         self.label = f(LabelTheme(self.label)).0;
+        self
+    }
+
+    /// Colorbar defaults: `Theme::new().colorbar(|c| c.size(20))`.
+    pub fn colorbar(mut self, f: impl FnOnce(ColorbarTheme) -> ColorbarTheme) -> Self {
+        self.colorbar = f(ColorbarTheme(self.colorbar)).0;
         self
     }
 
@@ -187,6 +195,7 @@ impl Theme {
         );
         out.axis.merge_from(&self.axis);
         out.label.merge_from(&self.label);
+        out.colorbar.merge_from(&self.colorbar);
         out.scatter.merge_from(&self.scatter);
         out.barplot.merge_from(&self.barplot);
         out.hist.merge_from(&self.hist);

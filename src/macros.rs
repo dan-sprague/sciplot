@@ -45,6 +45,18 @@ macro_rules! Label {
     };
 }
 
+/// Makie's `Colorbar(fig[r, c], plot; kw...)`: `Colorbar!(fig.at(1, 2), &hm; label = "z")`, or
+/// without a plot `Colorbar!(fig.at(1, 2); colormap = Colormap::MAGMA, limits = (0, 10))`.
+#[macro_export]
+macro_rules! Colorbar {
+    ($pos:expr, $plot:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::Colorbar::new($pos, $plot) $(; $($k = $v),*)?)
+    };
+    ($pos:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::Colorbar::standalone($pos) $(; $($k = $v),*)?)
+    };
+}
+
 /// Makie's `scatter!(ax, x, y; kw...)`: draws into `ax` (an `Axis` or `&Axis`).
 #[macro_export]
 macro_rules! scatter {

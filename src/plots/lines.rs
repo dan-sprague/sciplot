@@ -64,6 +64,7 @@ attributes! {
 }
 
 plot_common!(Lines);
+super::color_mapped!(Lines);
 
 /// Resolved line styling shared by `Lines` and `ScatterLines`.
 pub(crate) struct LineStyle<'a> {
@@ -192,6 +193,23 @@ impl PlotImpl for LinesState {
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.lines, ctx.g);
         emit_line(ctx, &self.pts, &r.style(), self.style_rev);
+    }
+
+    fn colormapping(&self, theme: &crate::theme::Theme, g: &crate::theme::Globals) -> Option<super::ResolvedColormap> {
+        let r = self.attrs.resolve(&theme.lines, g);
+        // Lines map values through viridis over their finite extrema (see `prim_color`).
+        let ColorSpec::Values(v) = &r.color else {
+            return Some(super::ResolvedColormap::unmapped(crate::color::Colormap::VIRIDIS, r.alpha));
+        };
+        let [lo, hi] = crate::color::ValueEncoding::new(crate::data::finite_extrema(v.iter().copied())).auto_range();
+        Some(super::ResolvedColormap {
+            colormap: crate::color::Colormap::VIRIDIS,
+            colorrange: (lo, hi),
+            lowclip: None,
+            highclip: None,
+            alpha: r.alpha,
+            mapped: true,
+        })
     }
 }
 

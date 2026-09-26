@@ -23,7 +23,7 @@ pub use lines::Lines;
 pub use scatterlines::ScatterLines;
 
 use crate::attrs::Conv;
-use crate::color::{Color, IntoColor};
+use crate::color::{Color, Colormap, IntoColor};
 use crate::data::Scalar;
 use crate::figure::BlockId;
 use crate::text::RichText;
@@ -130,7 +130,73 @@ pub(crate) trait PlotImpl {
     fn pick(&self, _ctx: &mut pick::PickCtx<'_>) -> Option<pick::Hover> {
         None
     }
+    /// The plot's resolved color mapping, for plot types that can map values through a colormap
+    /// (`None` for plot types without a colormap).
+    fn colormapping(&self, _theme: &crate::theme::Theme, _g: &crate::theme::Globals) -> Option<ResolvedColormap> {
+        None
+    }
 }
+
+/// A plot's color mapping as it is drawn right now (Makie's `ColorMapping`): what a
+/// [`Colorbar`](crate::Colorbar) linked to the plot shows.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ResolvedColormap {
+    pub colormap: Colormap,
+    /// The colorrange in effect: the explicit one, or the finite extrema of the values.
+    pub colorrange: (f64, f64),
+    /// Explicit color for values below the range (`None`: the first colormap color, no triangle).
+    pub lowclip: Option<Color>,
+    /// Explicit color for values above the range (`None`: the last colormap color, no triangle).
+    pub highclip: Option<Color>,
+    /// Opacity multiplier applied to the colormap.
+    pub alpha: f64,
+    /// `false` when the plot's colors are not values mapped through the colormap (a solid or
+    /// per-point color); `colorrange` is then `(0, 1)`.
+    pub mapped: bool,
+}
+
+impl ResolvedColormap {
+    /// The mapping of a plot that is not colored by values: its colormap over `(0, 1)`.
+    pub(crate) fn unmapped(colormap: Colormap, alpha: f64) -> ResolvedColormap {
+        ResolvedColormap { colormap, colorrange: (0.0, 1.0), lowclip: None, highclip: None, alpha, mapped: false }
+    }
+}
+
+/// Plot handles whose colors can come from a colormap (heatmaps; scatter and lines colored by
+/// values). A [`Colorbar`](crate::Colorbar) created from one follows its colormap, colorrange,
+/// clip colors and alpha on every frame.
+pub trait ColorMapped {
+    #[doc(hidden)]
+    fn plot_ref(&self) -> PlotRef;
+
+    /// The plot's current color mapping (`None` if the plot was deleted).
+    fn colormapping(&self) -> Option<ResolvedColormap> {
+        let r = self.plot_ref();
+        let st = r.sh.state.lock();
+        let g = st.theme.globals();
+        st.plot(r.id)?.kind.imp().colormapping(&st.theme, &g)
+    }
+}
+
+/// An opaque reference to a plot (see [`ColorMapped`]).
+#[doc(hidden)]
+#[derive(Clone)]
+pub struct PlotRef {
+    pub(crate) sh: Arc<crate::figure::FigShared>,
+    pub(crate) id: crate::figure::PlotId,
+}
+
+/// Implements [`ColorMapped`] for a plot handle.
+macro_rules! color_mapped {
+    ($Handle:ident) => {
+        impl $crate::plots::ColorMapped for $Handle {
+            fn plot_ref(&self) -> $crate::plots::PlotRef {
+                $crate::plots::PlotRef { sh: self.sh.clone(), id: self.id }
+            }
+        }
+    };
+}
+pub(crate) use color_mapped;
 
 /// Declares the plot-type registry: `PlotKind` and dispatch to each type's `PlotImpl`.
 macro_rules! plot_kinds {
