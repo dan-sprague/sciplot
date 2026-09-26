@@ -203,6 +203,44 @@ macro_rules! ablines {
     };
 }
 
+/// Makie's `arrows2d!(ax, x, y, u, v; kw...)` (quiver), `arrows2d!(ax, xs, ys, f; kw...)` on the
+/// grid `xs × ys`, or `arrows2d!(ax, points, directions; kw...)`.
+///
+/// ```no_run
+/// use ezviz::prelude::*;
+/// let fig = Figure::new();
+/// let ax = Axis::new(fig.at(1, 1));
+/// let g = linspace(-2.0, 2.0, 15);
+/// arrows!(ax, &g, &g, |x, y| (-y, x); color = Magnitude, normalize = true, lengthscale = 0.2);
+/// ```
+#[macro_export]
+macro_rules! arrows {
+    ($ax:expr, $x:expr, $y:expr, $u:expr, $v:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).arrows($x, $y, $u, $v) $(; $($k = $val),*)?)
+    };
+    ($ax:expr, $x:expr, $y:expr, $f:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).arrows_fn($x, $y, $f) $(; $($k = $val),*)?)
+    };
+    ($ax:expr, $p:expr, $d:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).arrows_points($p, $d) $(; $($k = $val),*)?)
+    };
+}
+
+/// Makie's `streamplot!(ax, f, xrange, yrange; kw...)`.
+///
+/// ```no_run
+/// use ezviz::prelude::*;
+/// let fig = Figure::new();
+/// let ax = Axis::new(fig.at(1, 1));
+/// streamplot!(ax, |x, y| (y, -x.sin()), -3.0..=3.0, -2.0..=2.0; colormap = Colormap::MAGMA);
+/// ```
+#[macro_export]
+macro_rules! streamplot {
+    ($ax:expr, $f:expr, $x:expr, $y:expr $(; $($k:ident = $val:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).streamplot($f, $x, $y) $(; $($k = $val),*)?)
+    };
+}
+
 /// Accepts `Axis` or `&Axis` in the plotting macros.
 #[doc(hidden)]
 pub trait AsAxis {

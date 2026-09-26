@@ -1,6 +1,7 @@
 //! Plot types. Each plot lives in an Axis; its handle is `Clone + Send + Sync` and updates the
 //! plot in place.
 
+pub(crate) mod arrows;
 pub(crate) mod band;
 pub(crate) mod barplot;
 pub(crate) mod bars;
@@ -10,8 +11,10 @@ pub(crate) mod legend_elements;
 pub(crate) mod pick;
 pub(crate) mod reflines;
 pub(crate) mod scatter;
+pub(crate) mod streamplot;
 pub(crate) mod textplot;
 
+pub use arrows::{ArrowAlign, Arrows, Magnitude, ScalarFn, VectorColor};
 pub use band::Band;
 pub use barplot::{BarPlot, BarX};
 pub use heatmap::Heatmap;
@@ -19,6 +22,7 @@ pub use hist::{Bins, Hist};
 pub use legend_elements::LegendElement;
 pub use reflines::{ABLines, HLines, RefLines, RefValues, VLines};
 pub use scatter::Scatter;
+pub use streamplot::{Interval, StreamPlot, VectorFieldFn};
 pub use textplot::{IntoTexts, TextPlot};
 pub(crate) mod lines;
 pub(crate) mod scatterlines;
@@ -231,6 +235,8 @@ plot_kinds! {
     Lines(lines::LinesState),
     ScatterLines(scatterlines::ScatterLinesState),
     RefLines(reflines::RefLinesState),
+    Arrows(arrows::ArrowsState),
+    StreamPlot(streamplot::StreamPlotState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.
