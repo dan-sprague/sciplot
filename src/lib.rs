@@ -71,6 +71,16 @@ pub use theme::{Theme, current_theme, reset_theme, set_theme, theme_minimal, wit
 pub use transform::Scale;
 #[cfg(feature = "window")]
 pub use window::show_all;
+#[cfg(feature = "window")]
+pub use window::{Live, Screen};
+/// Window interactions as a pure state machine (exposed for tests).
+#[cfg(feature = "window")]
+#[doc(hidden)]
+pub use window::interact;
+/// Scripted-window hooks (feature `testing`).
+#[cfg(feature = "testing")]
+#[doc(hidden)]
+pub use window::testing as window_testing;
 
 /// Logs a warning once per distinct message.
 pub(crate) fn warn_once(msg: &'static str) {
@@ -90,4 +100,8 @@ const _: () = {
     ok::<Axis>();
     ok::<Scatter>();
     ok::<GridPosition>();
+    #[cfg(feature = "window")]
+    ok_send_sync::<Live>();
 };
+
+const fn ok_send_sync<T: Send + Sync>() {}

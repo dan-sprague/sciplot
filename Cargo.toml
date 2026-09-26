@@ -38,6 +38,11 @@ rand = "0.9"
 serde_json = "1"
 trybuild = "1"
 
+[[test]]
+name = "window_smoke"
+harness = false
+required-features = ["testing"]
+
 [profile.dev.package."*"]
 opt-level = 2
 

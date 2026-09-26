@@ -5,6 +5,7 @@ pub(crate) mod band;
 pub(crate) mod barplot;
 pub(crate) mod bars;
 pub(crate) mod hist;
+pub(crate) mod pick;
 pub(crate) mod scatter;
 pub(crate) mod textplot;
 
@@ -118,6 +119,10 @@ pub(crate) trait PlotImpl {
     }
     /// Lowers the plot to draw-list primitives.
     fn emit(&self, ctx: &mut crate::scene::PlotCtx<'_>);
+    /// Hover inspection: the element nearest to the cursor within `ctx.radius`, if any.
+    fn pick(&self, _ctx: &mut pick::PickCtx<'_>) -> Option<pick::Hover> {
+        None
+    }
 }
 
 /// Declares the plot-type registry: `PlotKind` and dispatch to each type's `PlotImpl`.
