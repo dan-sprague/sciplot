@@ -71,6 +71,10 @@ pub enum GridSize {
     Relative(f64),
     /// Makie `Aspect(i, ratio)`: this column's width = ratio × height of row `i` (or vice versa).
     Aspect(i32, f64),
+    /// Makie `Auto(trydetermine, ratio)`. With `trydetermine = false` the column/row ignores
+    /// fixed-size content (e.g. a wide caption) and shares the leftover space like undetermined
+    /// Autos, by `ratio`. [`GridSize::Auto`] is `AutoWith { trydetermine: true, ratio: 1.0 }`.
+    AutoWith { trydetermine: bool, ratio: f64 },
 }
 
 /// The root grid layout's settings.
@@ -368,16 +372,44 @@ impl Figure {
         });
         self.clone()
     }
-    /// Gap between all columns.
+    /// Gap between all columns (replaces earlier [`Figure::colgap_at`] gaps, like Makie `colgap!`).
     pub fn colgap(&self, g: impl crate::attrs::Conv<f64>) -> Figure {
         let g = g.conv();
-        self.sh.update(Dirty::LAYOUT, |st| st.grid.colgap = Some(g));
+        self.sh.update(Dirty::LAYOUT, |st| {
+            st.grid.colgap = Some(g);
+            st.grid.colgaps.clear();
+        });
         self.clone()
     }
-    /// Gap between all rows.
+    /// Gap between all rows (replaces earlier [`Figure::rowgap_at`] gaps, like Makie `rowgap!`).
     pub fn rowgap(&self, g: impl crate::attrs::Conv<f64>) -> Figure {
         let g = g.conv();
-        self.sh.update(Dirty::LAYOUT, |st| st.grid.rowgap = Some(g));
+        self.sh.update(Dirty::LAYOUT, |st| {
+            st.grid.rowgap = Some(g);
+            st.grid.rowgaps.clear();
+        });
+        self.clone()
+    }
+    /// Gap between column `i` and column `i + 1` (Makie `colgap!(fig.layout, i, g)`).
+    #[track_caller]
+    pub fn colgap_at(&self, i: i32, g: impl crate::attrs::Conv<f64>) -> Figure {
+        check_index(i, "colgap_at");
+        let g = g.conv();
+        self.sh.update(Dirty::LAYOUT, |st| {
+            st.grid.colgaps.retain(|(c, _)| *c != i);
+            st.grid.colgaps.push((i, g));
+        });
+        self.clone()
+    }
+    /// Gap between row `i` and row `i + 1` (Makie `rowgap!(fig.layout, i, g)`).
+    #[track_caller]
+    pub fn rowgap_at(&self, i: i32, g: impl crate::attrs::Conv<f64>) -> Figure {
+        check_index(i, "rowgap_at");
+        let g = g.conv();
+        self.sh.update(Dirty::LAYOUT, |st| {
+            st.grid.rowgaps.retain(|(r, _)| *r != i);
+            st.grid.rowgaps.push((i, g));
+        });
         self.clone()
     }
 }

@@ -1,0 +1,8506 @@
+{
+ "figures": [
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       73.94599914550781,
+       58.6199951171875,
+       510.05401611328125,
+       355.07000732421875
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       57.94600296020508,
+       0.0,
+       42.619998931884766,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        57.94600296020508,
+        0.0,
+        42.619998931884766,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       73.94599914550781,
+       58.6199951171875,
+       510.05401611328125,
+       355.07000732421875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       74.0,
+       59.0,
+       510.0,
+       355.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 1,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "single_axis",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    -3.814697265625e-6,
+    -3.814697265625e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     800.0,
+     600.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       48.35199737548828,
+       332.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       32.35199737548828,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        32.35199737548828,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       48.35199737548828,
+       332.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       48.0,
+       332.0,
+       343.0,
+       232.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       441.35198974609375,
+       332.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       32.35199737548828,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        32.35199737548828,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       441.35198974609375,
+       332.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       441.0,
+       332.0,
+       343.0,
+       232.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       48.35199737548828,
+       39.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       32.35199737548828,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        32.35199737548828,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       48.35199737548828,
+       39.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       48.0,
+       39.0,
+       343.0,
+       232.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       441.35198974609375,
+       39.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       32.35199737548828,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        32.35199737548828,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       441.35198974609375,
+       39.30999755859375,
+       342.64801025390625,
+       231.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       441.0,
+       39.0,
+       343.0,
+       232.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     800.0,
+     600.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "grid_2x2",
+   "resized_size": [
+    800.0,
+    600.0
+   ],
+   "size": [
+    800.0,
+    600.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    800.0,
+    600.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     },
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       61.87799835205078,
+       256.80999755859375,
+       333.89202880859375,
+       156.8800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       42.619998931884766,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        42.619998931884766,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       61.87799835205078,
+       256.80999755859375,
+       333.89202880859375,
+       156.8800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       62.0,
+       257.0,
+       334.0,
+       157.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       61.87799835205078,
+       39.30999755859375,
+       145.66201782226562,
+       156.8800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       45.87799835205078,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        45.87799835205078,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       61.87799835205078,
+       39.30999755859375,
+       145.66201782226562,
+       156.8800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       62.0,
+       39.0,
+       146.0,
+       157.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       250.10800170898438,
+       39.30999755859375,
+       145.66201782226562,
+       156.8800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       250.10800170898438,
+       39.30999755859375,
+       145.66201782226562,
+       156.8800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       250.0,
+       39.0,
+       146.0,
+       157.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       438.3380126953125,
+       39.30999755859375,
+       145.6619873046875,
+       374.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        1,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       438.3380126953125,
+       39.30999755859375,
+       145.6619873046875,
+       374.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       438.0,
+       39.0,
+       146.0,
+       375.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 3,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "spans",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     },
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "type": "Relative",
+      "x": 0.5
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       198.413330078125,
+       229.14801025390625,
+       235.586669921875
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       198.413330078125,
+       229.14801025390625,
+       235.586669921875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       198.0,
+       229.0,
+       236.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       312.28399658203125,
+       198.413330078125,
+       114.57400512695312,
+       235.586669921875
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       312.28399658203125,
+       198.413330078125,
+       114.57400512695312,
+       235.586669921875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       312.0,
+       198.0,
+       115.0,
+       236.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       469.426025390625,
+       198.413330078125,
+       114.573974609375,
+       235.586669921875
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       469.426025390625,
+       198.413330078125,
+       114.573974609375,
+       235.586669921875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       469.0,
+       198.0,
+       115.0,
+       236.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       229.14801025390625,
+       117.7933349609375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       229.14801025390625,
+       117.7933349609375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       229.0,
+       118.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       312.28399658203125,
+       39.30999755859375,
+       114.57400512695312,
+       117.7933349609375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       312.28399658203125,
+       39.30999755859375,
+       114.57400512695312,
+       117.7933349609375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       312.0,
+       39.0,
+       115.0,
+       118.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       469.426025390625,
+       39.30999755859375,
+       114.573974609375,
+       117.7933349609375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       469.426025390625,
+       39.30999755859375,
+       114.573974609375,
+       117.7933349609375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       469.0,
+       39.0,
+       115.0,
+       118.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 3,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "type": "Relative",
+      "x": 0.33333334
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "relative_sizes",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "type": "Fixed",
+      "x": 150.0
+     },
+     {
+      "type": "Fixed",
+      "x": 200.0
+     }
+    ],
+    "computedbbox": [
+     75.4320068359375,
+     66.69000244140625,
+     449.135986328125,
+     316.6199951171875
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       116.00000762939453,
+       247.30999755859375,
+       150.0,
+       120.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       116.00000762939453,
+       247.30999755859375,
+       150.0,
+       120.0
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       116.0,
+       247.0,
+       150.0,
+       120.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       308.5679931640625,
+       247.30999755859375,
+       200.0,
+       120.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       308.5679931640625,
+       247.30999755859375,
+       200.0,
+       120.0
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       309.0,
+       247.0,
+       200.0,
+       120.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       116.00000762939453,
+       106.0,
+       392.5679931640625,
+       100.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       116.00000762939453,
+       106.0,
+       392.5679931640625,
+       100.0
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       116.0,
+       106.0,
+       393.0,
+       100.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      449.135986328125,
+      316.6199951171875
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "type": "Fixed",
+      "x": 120.0
+     },
+     {
+      "type": "Fixed",
+      "x": 100.0
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "fixed_sizes",
+   "resized_size": [
+    449.0,
+    317.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    75.4320068359375,
+    66.69000244140625,
+    449.135986328125,
+    316.6199951171875
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "index": 1,
+      "ratio": 1.0,
+      "type": "Aspect"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     400.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       324.3800048828125,
+       324.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       324.3800048828125,
+       324.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       324.0,
+       325.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       407.5159912109375,
+       39.30999755859375,
+       276.4840087890625,
+       324.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       407.5159912109375,
+       39.30999755859375,
+       276.4840087890625,
+       324.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       408.0,
+       39.0,
+       276.0,
+       325.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     400.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "aspect_col",
+   "resized_size": [
+    700.0,
+    400.0
+   ],
+   "size": [
+    700.0,
+    400.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    700.0,
+    400.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     500.0,
+     600.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       362.28399658203125,
+       443.4320068359375,
+       221.71600341796875
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       362.28399658203125,
+       443.4320068359375,
+       221.71600341796875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       362.0,
+       443.0,
+       222.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       443.4320068359375,
+       281.66400146484375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       443.4320068359375,
+       281.66400146484375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       443.0,
+       282.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 1,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "index": 1,
+      "ratio": 0.5,
+      "type": "Aspect"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     500.0,
+     600.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "aspect_row",
+   "resized_size": [
+    500.0,
+    600.0
+   ],
+   "size": [
+    500.0,
+    600.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    500.0,
+    600.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 40.0
+     },
+     {
+      "type": "Fixed",
+      "x": 5.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     500.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       357.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       357.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       357.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       288.23468017578125,
+       357.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       288.23468017578125,
+       357.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       288.0,
+       357.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       500.9013671875,
+       357.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       500.9013671875,
+       357.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       501.0,
+       357.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       207.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       207.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       207.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       288.23468017578125,
+       207.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       288.23468017578125,
+       207.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       288.0,
+       207.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       500.9013671875,
+       207.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       500.9013671875,
+       207.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       501.0,
+       207.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        3,
+        3
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       288.23468017578125,
+       39.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        3,
+        3
+       ]
+      },
+      "suggestedbbox": [
+       288.23468017578125,
+       39.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       288.0,
+       39.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       500.9013671875,
+       39.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        3,
+        3
+       ]
+      },
+      "suggestedbbox": [
+       500.9013671875,
+       39.30999755859375,
+       183.09869384765625,
+       126.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       501.0,
+       39.0,
+       183.0,
+       127.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 3,
+    "nrows": 3,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 0.0
+     },
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     500.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "custom_gaps",
+   "resized_size": [
+    700.0,
+    500.0
+   ],
+   "size": [
+    700.0,
+    500.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    700.0000610351562,
+    500.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       83.8994369506836,
+       257.30999755859375,
+       228.76626586914062,
+       176.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       49.769996643066406,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        49.769996643066406,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       83.8994369506836,
+       257.30999755859375,
+       228.76626586914062,
+       176.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       84.0,
+       257.0,
+       229.0,
+       177.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       83.8994369506836,
+       39.30999755859375,
+       228.76626586914062,
+       176.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       67.8994369506836,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        67.8994369506836,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       83.8994369506836,
+       39.30999755859375,
+       228.76626586914062,
+       176.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       84.0,
+       39.0,
+       229.0,
+       177.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       355.2337341308594,
+       39.30999755859375,
+       228.76626586914062,
+       394.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       355.2337341308594,
+       39.30999755859375,
+       228.76626586914062,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       355.0,
+       39.0,
+       229.0,
+       395.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "ticklabel_widths",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       460.77001953125,
+       394.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       460.77001953125,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       460.0,
+       395.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       12.0,
+       null
+      ],
+      "computedbbox": [
+       519.3380126953125,
+       39.30999755859375,
+       12.0,
+       394.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Colorbar",
+      "protrusions": [
+       0.0,
+       52.66200256347656,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        12.0,
+        null
+       ],
+       "outer": [
+        0.0,
+        52.66200256347656,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       519.3380126953125,
+       39.30999755859375,
+       12.0,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "colorbar",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       439.40399169921875,
+       394.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       439.40399169921875,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       439.0,
+       395.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       86.02799987792969,
+       55.0
+      ],
+      "computedbbox": [
+       497.97198486328125,
+       209.15499877929688,
+       86.02801513671875,
+       55.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Legend",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        86.02799987792969,
+        null
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       497.97198486328125,
+       39.30999755859375,
+       86.02801513671875,
+       394.69000244140625
+      ],
+      "tellheight": false,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "legend_vertical",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       32.784000396728516,
+       89.30999755859375,
+       254.32400512695312,
+       344.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       16.784000396728516,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        16.784000396728516,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       32.784000396728516,
+       89.30999755859375,
+       254.32400512695312,
+       344.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       33.0,
+       89.0,
+       254.0,
+       345.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       329.6759948730469,
+       89.30999755859375,
+       254.32400512695312,
+       344.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       329.6759948730469,
+       89.30999755859375,
+       254.32400512695312,
+       344.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       330.0,
+       89.0,
+       254.0,
+       345.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       145.69000244140625,
+       32.0
+      ],
+      "computedbbox": [
+       235.5469970703125,
+       16.0,
+       145.69000244140625,
+       32.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Legend",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        32.0
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       32.784000396728516,
+       16.0,
+       551.2160034179688,
+       32.0
+      ],
+      "tellheight": true,
+      "tellwidth": false,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "legend_horizontal",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    0.0,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       250.4320068359375,
+       328.4200134277344
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       250.4320068359375,
+       328.4200134277344
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       250.0,
+       329.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       333.5679931640625,
+       39.30999755859375,
+       250.4320068359375,
+       328.4200134277344
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       333.5679931640625,
+       39.30999755859375,
+       250.4320068359375,
+       328.4200134277344
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       334.0,
+       39.0,
+       250.0,
+       329.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       117.3599853515625,
+       27.959999084472656
+      ],
+      "computedbbox": [
+       253.60400390625,
+       406.0400085449219,
+       117.3599853515625,
+       27.959991455078125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        117.3599853515625,
+        27.959999084472656
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       406.0400085449219,
+       543.4320068359375,
+       27.959991455078125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "supertitle",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     500.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       282.30999755859375,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       282.30999755859375,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       282.0,
+       300.0,
+       174.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       16.119998931884766,
+       28.299999237060547
+      ],
+      "computedbbox": [
+       24.448001861572266,
+       455.70001220703125,
+       16.119998931884766,
+       28.29998779296875
+      ],
+      "halign": 1.0,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        16.119998931884766,
+        28.299999237060547
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "TopLeft",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       16.0,
+       455.70001220703125,
+       24.56800079345703,
+       28.29998779296875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       383.5679931640625,
+       282.30999755859375,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       383.5679931640625,
+       282.30999755859375,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       384.0,
+       282.0,
+       300.0,
+       174.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       17.220001220703125,
+       28.299999237060547
+      ],
+      "computedbbox": [
+       366.3479919433594,
+       455.70001220703125,
+       17.220001220703125,
+       28.29998779296875
+      ],
+      "halign": 1.0,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        17.220001220703125,
+        28.299999237060547
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "TopLeft",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       359.0,
+       455.70001220703125,
+       24.5679931640625,
+       28.29998779296875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.309967041015625,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.309967041015625,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       300.0,
+       174.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       16.119998931884766,
+       28.299999237060547
+      ],
+      "computedbbox": [
+       24.448001861572266,
+       212.69998168945312,
+       16.119998931884766,
+       28.300003051757812
+      ],
+      "halign": 1.0,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        16.119998931884766,
+        28.299999237060547
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "TopLeft",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       16.0,
+       212.69998168945312,
+       24.56800079345703,
+       28.300003051757812
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       383.5679931640625,
+       39.309967041015625,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       383.5679931640625,
+       39.309967041015625,
+       300.4320068359375,
+       173.3900146484375
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       384.0,
+       39.0,
+       300.0,
+       174.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       17.220001220703125,
+       28.299999237060547
+      ],
+      "computedbbox": [
+       366.3479919433594,
+       212.69998168945312,
+       17.220001220703125,
+       28.300003051757812
+      ],
+      "halign": 1.0,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        17.220001220703125,
+        28.299999237060547
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "TopLeft",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       359.0,
+       212.69998168945312,
+       24.5679931640625,
+       28.300003051757812
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     500.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "panel_labels",
+   "resized_size": [
+    700.0,
+    500.0
+   ],
+   "size": [
+    700.0,
+    500.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -3.24249267578125e-5,
+    700.0,
+    500.0000305175781
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       180.6199951171875,
+       200.0,
+       253.3800048828125
+      ],
+      "halign": 0.0,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        200.0,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       180.6199951171875,
+       200.0,
+       253.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       181.0,
+       200.0,
+       253.0
+      ],
+      "width": {
+       "type": "Fixed",
+       "x": 200.0
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       283.135986328125,
+       284.0,
+       300.864013671875,
+       150.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Fixed",
+       "x": 150.0
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       283.135986328125,
+       180.6199951171875,
+       300.864013671875,
+       253.3800048828125
+      ],
+      "tellheight": false,
+      "tellwidth": true,
+      "valign": 1.0,
+      "viewport": [
+       283.0,
+       284.0,
+       301.0,
+       150.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       162.28399658203125,
+       39.30999755859375,
+       300.0,
+       100.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Fixed",
+       "x": 100.0
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        100.0
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       543.4320068359375,
+       100.0
+      ],
+      "tellheight": true,
+      "tellwidth": false,
+      "valign": 0.5,
+      "viewport": [
+       162.0,
+       39.0,
+       300.0,
+       100.0
+      ],
+      "width": {
+       "type": "Fixed",
+       "x": 300.0
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "fixed_axis_align",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     800.0,
+     500.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       61.87800216674805,
+       58.6199951171875,
+       339.7770080566406,
+       405.07000732421875
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       45.87800216674805,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        45.87800216674805,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       61.87800216674805,
+       58.6199951171875,
+       339.7770080566406,
+       405.07000732421875
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       62.0,
+       59.0,
+       340.0,
+       405.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "grid": {
+       "alignmode": {
+        "type": "Inside"
+       },
+       "colgaps": [
+        {
+         "type": "Fixed",
+         "x": 18.0
+        }
+       ],
+       "colsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        },
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "computedbbox": [
+        444.2229919433594,
+        58.6199951171875,
+        339.7770080566406,
+        405.07000732421875
+       ],
+       "content": [
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          444.2229919433594,
+          275.30999755859375,
+          148.60452270507812,
+          188.3800048828125
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          23.309999465942383,
+          20.309999465942383
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           23.309999465942383,
+           20.309999465942383
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           1,
+           1
+          ]
+         },
+         "suggestedbbox": [
+          444.2229919433594,
+          275.30999755859375,
+          148.60452270507812,
+          188.3800048828125
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          444.0,
+          275.0,
+          149.0,
+          189.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        },
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          444.2229919433594,
+          58.6199951171875,
+          148.60452270507812,
+          188.3800048828125
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          42.619998931884766,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           42.619998931884766,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           2,
+           2
+          ]
+         },
+         "suggestedbbox": [
+          444.2229919433594,
+          58.6199951171875,
+          148.60452270507812,
+          188.3800048828125
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          444.0,
+          59.0,
+          149.0,
+          188.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        },
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          635.3955078125,
+          58.6199951171875,
+          148.6044921875,
+          405.07000732421875
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          23.309999465942383,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           23.309999465942383,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           2,
+           2
+          ],
+          "rows": [
+           1,
+           2
+          ]
+         },
+         "suggestedbbox": [
+          635.3955078125,
+          58.6199951171875,
+          148.6044921875,
+          405.07000732421875
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          635.0,
+          59.0,
+          149.0,
+          405.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        }
+       ],
+       "equalprotrusiongaps": [
+        false,
+        false
+       ],
+       "halign": 0.5,
+       "height": {
+        "type": "Auto"
+       },
+       "ncols": 2,
+       "nrows": 2,
+       "reported": {
+        "inner": [
+         null,
+         null
+        ],
+        "outer": [
+         24.56800079345703,
+         0.0,
+         42.619998931884766,
+         20.309999465942383
+        ]
+       },
+       "rowgaps": [
+        {
+         "type": "Fixed",
+         "x": 5.0
+        }
+       ],
+       "rowsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        },
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "suggestedbbox": [
+        444.2229919433594,
+        58.6199951171875,
+        339.7770080566406,
+        405.07000732421875
+       ],
+       "tellheight": true,
+       "tellwidth": true,
+       "valign": 0.5,
+       "width": {
+        "type": "Auto"
+       }
+      },
+      "kind": "GridLayout",
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     800.0,
+     500.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "nested",
+   "resized_size": [
+    800.0,
+    500.0
+   ],
+   "size": [
+    800.0,
+    500.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -3.814697265625e-6,
+    800.0,
+    500.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      5.0,
+      30.0,
+      10.0,
+      40.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     },
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 2.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 0.5,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     400.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       29.56800079345703,
+       33.30999755859375,
+       130.0845947265625,
+       326.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       29.56800079345703,
+       33.30999755859375,
+       130.0845947265625,
+       326.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       30.0,
+       33.0,
+       130.0,
+       327.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       202.2205810546875,
+       33.30999755859375,
+       260.1691589355469,
+       326.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       202.2205810546875,
+       33.30999755859375,
+       260.1691589355469,
+       326.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       202.0,
+       33.0,
+       260.0,
+       327.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       504.95770263671875,
+       33.30999755859375,
+       65.04229736328125,
+       326.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        3,
+        3
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       504.95770263671875,
+       33.30999755859375,
+       65.04229736328125,
+       326.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       505.0,
+       33.0,
+       65.0,
+       327.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 3,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     400.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "padding_auto_ratio",
+   "resized_size": [
+    600.0,
+    400.0
+   ],
+   "size": [
+    600.0,
+    400.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    400.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Relative",
+      "x": 0.1
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       257.594482421875,
+       233.48880004882812,
+       176.405517578125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       257.594482421875,
+       233.48880004882812,
+       176.405517578125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       258.0,
+       233.0,
+       176.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       350.5111999511719,
+       257.594482421875,
+       233.48880004882812,
+       176.405517578125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       350.5111999511719,
+       257.594482421875,
+       233.48880004882812,
+       176.405517578125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       351.0,
+       258.0,
+       233.0,
+       176.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30998229980469,
+       233.48880004882812,
+       176.40550231933594
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30998229980469,
+       233.48880004882812,
+       176.40550231933594
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       233.0,
+       177.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       350.5111999511719,
+       39.30998229980469,
+       233.48880004882812,
+       176.40550231933594
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       350.5111999511719,
+       39.30998229980469,
+       233.48880004882812,
+       176.40550231933594
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       351.0,
+       39.0,
+       233.0,
+       177.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Relative",
+      "x": 0.05
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "relative_gaps",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.71661376953125e-5,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": false,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       74.87800598144531,
+       274.4649963378906,
+       509.12200927734375,
+       159.53500366210938
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       74.87800598144531,
+       274.4649963378906,
+       509.12200927734375,
+       159.53500366210938
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       75.0,
+       274.0,
+       509.0,
+       160.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       74.87800598144531,
+       73.6199951171875,
+       509.12200927734375,
+       159.53500366210938
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       74.87800598144531,
+       73.6199951171875,
+       509.12200927734375,
+       159.53500366210938
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       75.0,
+       74.0,
+       509.0,
+       159.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       16.31000328063965,
+       87.14998626708984
+      ],
+      "computedbbox": [
+       16.0,
+       210.23500061035156,
+       16.31000518798828,
+       87.14997863769531
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        16.31000328063965,
+        87.14998626708984
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       16.0,
+       73.6199951171875,
+       16.31000518798828,
+       360.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       392.9938659667969,
+       16.309999465942383
+      ],
+      "computedbbox": [
+       132.94207763671875,
+       15.999998092651367,
+       392.99383544921875,
+       16.309999465942383
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        16.309999465942383
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        3,
+        3
+       ]
+      },
+      "suggestedbbox": [
+       74.87800598144531,
+       15.999998092651367,
+       509.12200927734375,
+       16.309999465942383
+      ],
+      "tellheight": true,
+      "tellwidth": false,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 3,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     },
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "label_autofalse",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       42.310001373291016,
+       39.30999755859375,
+       243.3380126953125,
+       394.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       42.310001373291016,
+       39.30999755859375,
+       243.3380126953125,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       42.0,
+       39.0,
+       244.0,
+       395.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       328.21600341796875,
+       39.30999755859375,
+       243.3380126953125,
+       394.69000244140625
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       328.21600341796875,
+       39.30999755859375,
+       243.3380126953125,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       328.0,
+       39.0,
+       244.0,
+       395.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       26.310001373291016,
+       48.24399948120117
+      ],
+      "computedbbox": [
+       16.0,
+       212.5330047607422,
+       26.310001373291016,
+       48.24400329589844
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        26.310001373291016,
+        48.24399948120117
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Left",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       16.0,
+       39.30999755859375,
+       26.310001373291016,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       72.36599731445312,
+       16.309999465942383
+      ],
+      "computedbbox": [
+       270.7490234375,
+       15.999998092651367,
+       72.36599731445312,
+       16.309999465942383
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        72.36599731445312,
+        16.309999465942383
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Bottom",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       42.310001373291016,
+       15.999998092651367,
+       529.2440185546875,
+       23.309999465942383
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.0,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       10.107999801635742,
+       16.309999465942383
+      ],
+      "computedbbox": [
+       572.7230224609375,
+       228.5,
+       10.10797119140625,
+       16.30999755859375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        10.107999801635742,
+        16.309999465942383
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Right",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       571.5540161132812,
+       39.30999755859375,
+       12.44598388671875,
+       394.69000244140625
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       12.446000099182129,
+       16.309999465942383
+      ],
+      "computedbbox": [
+       571.5540161132812,
+       19.499998092651367,
+       12.44598388671875,
+       16.309999465942383
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        12.446000099182129,
+        16.309999465942383
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "BottomRight",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       571.5540161132812,
+       15.999998092651367,
+       12.44598388671875,
+       23.309999465942383
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 1,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "side_labels",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     500.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       177.30999755859375,
+       312.71600341796875,
+       286.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       177.30999755859375,
+       312.71600341796875,
+       286.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       177.0,
+       312.0,
+       287.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "grid": {
+       "alignmode": {
+        "sides": [
+         {
+          "pad": 0.0
+         },
+         null,
+         null,
+         {
+          "protrusion": 0.0
+         }
+        ],
+        "type": "Mixed"
+       },
+       "colgaps": [],
+       "colsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "computedbbox": [
+        371.28399658203125,
+        177.30999755859375,
+        312.71600341796875,
+        286.3800048828125
+       ],
+       "content": [
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          417.1619873046875,
+          341.1549987792969,
+          266.8380126953125,
+          122.53500366210938
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          45.87800216674805,
+          0.0,
+          23.309999465942383,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           45.87800216674805,
+           0.0,
+           23.309999465942383,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           1,
+           1
+          ]
+         },
+         "suggestedbbox": [
+          417.1619873046875,
+          341.1549987792969,
+          266.8380126953125,
+          122.53500366210938
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          417.0,
+          341.0,
+          267.0,
+          123.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        },
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          417.1619873046875,
+          177.30999755859375,
+          266.8380126953125,
+          122.53500366210938
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          23.309999465942383,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           23.309999465942383,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           2,
+           2
+          ]
+         },
+         "suggestedbbox": [
+          417.1619873046875,
+          177.30999755859375,
+          266.8380126953125,
+          122.53500366210938
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          417.0,
+          177.0,
+          267.0,
+          123.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        }
+       ],
+       "equalprotrusiongaps": [
+        false,
+        false
+       ],
+       "halign": 0.5,
+       "height": {
+        "type": "Auto"
+       },
+       "ncols": 1,
+       "nrows": 2,
+       "reported": {
+        "inner": [
+         null,
+         null
+        ],
+        "outer": [
+         0.0,
+         0.0,
+         23.309999465942383,
+         0.0
+        ]
+       },
+       "rowgaps": [
+        {
+         "type": "Fixed",
+         "x": 18.0
+        }
+       ],
+       "rowsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        },
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "suggestedbbox": [
+        371.28399658203125,
+        177.30999755859375,
+        312.71600341796875,
+        286.3800048828125
+       ],
+       "tellheight": true,
+       "tellwidth": true,
+       "valign": 0.5,
+       "width": {
+        "type": "Auto"
+       }
+      },
+      "kind": "GridLayout",
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      }
+     },
+     {
+      "grid": {
+       "alignmode": {
+        "padding": [
+         10.0,
+         10.0,
+         10.0,
+         10.0
+        ],
+        "type": "Outside"
+       },
+       "colgaps": [],
+       "colsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "computedbbox": [
+        40.56800079345703,
+        16.0,
+        643.4320068359375,
+        120.0
+       ],
+       "content": [
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          75.13600158691406,
+          68.6199951171875,
+          598.864013671875,
+          57.3800048828125
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          42.619998931884766,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           42.619998931884766,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           1,
+           1
+          ]
+         },
+         "suggestedbbox": [
+          75.13600158691406,
+          68.6199951171875,
+          598.864013671875,
+          57.3800048828125
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          75.0,
+          69.0,
+          599.0,
+          57.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        }
+       ],
+       "equalprotrusiongaps": [
+        false,
+        false
+       ],
+       "halign": 0.5,
+       "height": {
+        "type": "Fixed",
+        "x": 120.0
+       },
+       "ncols": 1,
+       "nrows": 1,
+       "reported": {
+        "inner": [
+         null,
+         120.0
+        ],
+        "outer": [
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
+       "rowgaps": [],
+       "rowsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "suggestedbbox": [
+        40.56800079345703,
+        16.0,
+        643.4320068359375,
+        120.0
+       ],
+       "tellheight": true,
+       "tellwidth": true,
+       "valign": 0.5,
+       "width": {
+        "type": "Auto"
+       }
+      },
+      "kind": "GridLayout",
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     700.0,
+     500.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "nested_alignmodes",
+   "resized_size": [
+    700.0,
+    500.0
+   ],
+   "size": [
+    700.0,
+    500.0
+   ],
+   "tight_bbox": [
+    0.0,
+    0.0,
+    700.0,
+    500.0
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     269.9320068359375,
+     141.53500366210938,
+     360.135986328125,
+     416.9299621582031
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       310.5,
+       322.15496826171875,
+       250.0,
+       200.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Fixed",
+       "x": 200.0
+      },
+      "kind": "Axis",
+      "protrusions": [
+       16.784000396728516,
+       0.0,
+       23.309999465942383,
+       20.309999465942383
+      ],
+      "reported": {
+       "inner": [
+        250.0,
+        200.0
+       ],
+       "outer": [
+        16.784000396728516,
+        0.0,
+        23.309999465942383,
+        20.309999465942383
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       310.5,
+       322.15496826171875,
+       250.0,
+       200.0
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       310.0,
+       322.0,
+       250.0,
+       200.0
+      ],
+      "width": {
+       "type": "Fixed",
+       "x": 250.0
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       12.0,
+       null
+      ],
+      "computedbbox": [
+       578.5,
+       322.15496826171875,
+       12.0,
+       200.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Colorbar",
+      "protrusions": [
+       0.0,
+       23.56800079345703,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        12.0,
+        null
+       ],
+       "outer": [
+        0.0,
+        23.56800079345703,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       578.5,
+       322.15496826171875,
+       12.0,
+       200.0
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       310.5,
+       180.844970703125,
+       250.0,
+       100.0
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Fixed",
+       "x": 100.0
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        250.0,
+        100.0
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       310.5,
+       180.844970703125,
+       250.0,
+       100.0
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       310.0,
+       181.0,
+       250.0,
+       100.0
+      ],
+      "width": {
+       "type": "Fixed",
+       "x": 250.0
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      360.135986328125,
+      416.92999267578125
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     900.0,
+     700.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "tight",
+   "resized_size": [
+    360.0,
+    417.0
+   ],
+   "size": [
+    900.0,
+    700.0
+   ],
+   "tight_bbox": [
+    269.9320068359375,
+    141.53497314453125,
+    360.135986328125,
+    416.92999267578125
+   ]
+  },
+  {
+   "layout": {
+    "alignmode": {
+     "padding": [
+      16.0,
+      16.0,
+      16.0,
+      16.0
+     ],
+     "type": "Outside"
+    },
+    "colgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "colsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "computedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "content": [
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       null,
+       null
+      ],
+      "computedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       380.864013671875,
+       360.3800048828125
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Nothing"
+      },
+      "kind": "Axis",
+      "protrusions": [
+       24.56800079345703,
+       0.0,
+       23.309999465942383,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        null
+       ],
+       "outer": [
+        24.56800079345703,
+        0.0,
+        23.309999465942383,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        1
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       39.30999755859375,
+       380.864013671875,
+       360.3800048828125
+      ],
+      "tellheight": true,
+      "tellwidth": true,
+      "valign": 0.5,
+      "viewport": [
+       41.0,
+       39.0,
+       380.0,
+       361.0
+      ],
+      "width": {
+       "type": "Nothing"
+      }
+     },
+     {
+      "grid": {
+       "alignmode": {
+        "type": "Inside"
+       },
+       "colgaps": [],
+       "colsizes": [
+        {
+         "type": "Fixed",
+         "x": 120.0
+        }
+       ],
+       "computedbbox": [
+        464.0,
+        39.30999755859375,
+        120.0,
+        360.3800048828125
+       ],
+       "content": [
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          464.0,
+          240.15499877929688,
+          120.0,
+          159.53500366210938
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          23.309999465942383,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           23.309999465942383,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           1,
+           1
+          ]
+         },
+         "suggestedbbox": [
+          464.0,
+          240.15499877929688,
+          120.0,
+          159.53500366210938
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          464.0,
+          240.0,
+          120.0,
+          160.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        },
+        {
+         "alignmode": {
+          "type": "Inside"
+         },
+         "autosize": [
+          null,
+          null
+         ],
+         "computedbbox": [
+          464.0,
+          39.30999755859375,
+          120.0,
+          159.53500366210938
+         ],
+         "halign": 0.5,
+         "height": {
+          "type": "Nothing"
+         },
+         "kind": "Axis",
+         "protrusions": [
+          24.56800079345703,
+          0.0,
+          23.309999465942383,
+          0.0
+         ],
+         "reported": {
+          "inner": [
+           null,
+           null
+          ],
+          "outer": [
+           24.56800079345703,
+           0.0,
+           23.309999465942383,
+           0.0
+          ]
+         },
+         "side": "Inner",
+         "span": {
+          "cols": [
+           1,
+           1
+          ],
+          "rows": [
+           2,
+           2
+          ]
+         },
+         "suggestedbbox": [
+          464.0,
+          39.30999755859375,
+          120.0,
+          159.53500366210938
+         ],
+         "tellheight": true,
+         "tellwidth": true,
+         "valign": 0.5,
+         "viewport": [
+          464.0,
+          39.0,
+          120.0,
+          160.0
+         ],
+         "width": {
+          "type": "Nothing"
+         }
+        }
+       ],
+       "equalprotrusiongaps": [
+        false,
+        false
+       ],
+       "halign": 0.5,
+       "height": {
+        "type": "Auto"
+       },
+       "ncols": 1,
+       "nrows": 2,
+       "reported": {
+        "inner": [
+         120.0,
+         null
+        ],
+        "outer": [
+         24.56800079345703,
+         0.0,
+         23.309999465942383,
+         0.0
+        ]
+       },
+       "rowgaps": [
+        {
+         "type": "Fixed",
+         "x": 18.0
+        }
+       ],
+       "rowsizes": [
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        },
+        {
+         "ratio": 1.0,
+         "trydetermine": true,
+         "type": "Auto"
+        }
+       ],
+       "suggestedbbox": [
+        464.0,
+        39.30999755859375,
+        120.0,
+        360.3800048828125
+       ],
+       "tellheight": true,
+       "tellwidth": true,
+       "valign": 0.5,
+       "width": {
+        "type": "Auto"
+       }
+      },
+      "kind": "GridLayout",
+      "side": "Inner",
+      "span": {
+       "cols": [
+        2,
+        2
+       ],
+       "rows": [
+        2,
+        2
+       ]
+      }
+     },
+     {
+      "alignmode": {
+       "type": "Inside"
+      },
+      "autosize": [
+       70.02799987792969,
+       16.309999465942383
+      ],
+      "computedbbox": [
+       277.2699890136719,
+       417.69000244140625,
+       70.02798461914062,
+       16.30999755859375
+      ],
+      "halign": 0.5,
+      "height": {
+       "type": "Auto"
+      },
+      "kind": "Label",
+      "protrusions": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "reported": {
+       "inner": [
+        null,
+        16.309999465942383
+       ],
+       "outer": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      "side": "Inner",
+      "span": {
+       "cols": [
+        1,
+        2
+       ],
+       "rows": [
+        1,
+        1
+       ]
+      },
+      "suggestedbbox": [
+       40.56800079345703,
+       417.69000244140625,
+       543.4320068359375,
+       16.30999755859375
+      ],
+      "tellheight": true,
+      "tellwidth": false,
+      "valign": 0.5,
+      "width": {
+       "type": "Auto"
+      }
+     }
+    ],
+    "equalprotrusiongaps": [
+     false,
+     false
+    ],
+    "halign": 0.5,
+    "height": {
+     "type": "Auto"
+    },
+    "ncols": 2,
+    "nrows": 2,
+    "reported": {
+     "inner": [
+      null,
+      null
+     ],
+     "outer": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "rowgaps": [
+     {
+      "type": "Fixed",
+      "x": 18.0
+     }
+    ],
+    "rowsizes": [
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     },
+     {
+      "ratio": 1.0,
+      "trydetermine": true,
+      "type": "Auto"
+     }
+    ],
+    "suggestedbbox": [
+     0.0,
+     0.0,
+     600.0,
+     450.0
+    ],
+    "tellheight": true,
+    "tellwidth": true,
+    "valign": 0.5,
+    "width": {
+     "type": "Auto"
+    }
+   },
+   "name": "nested_determined",
+   "resized_size": [
+    600.0,
+    450.0
+   ],
+   "size": [
+    600.0,
+    450.0
+   ],
+   "tight_bbox": [
+    0.0,
+    -1.9073486328125e-6,
+    600.0,
+    450.0
+   ]
+  }
+ ],
+ "makie_version": "0.24.14"
+}

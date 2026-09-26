@@ -29,3 +29,8 @@ impl Offscreen {
 pub fn set_interactive_limits(ax: &crate::Axis, lims: [f64; 4]) {
     ax.with_state(crate::figure::Dirty::LIMITS, |a| a.interactive = Some(lims));
 }
+
+/// The grid layout solver, for the GridLayoutBase fixture tests (`tests/layout.rs`).
+pub mod layout {
+    pub use crate::layout::{AlignMode, BBox, BlockSize, Content, Gap, Grid, LayoutItem, MixedSide, Protrusion};
+}
