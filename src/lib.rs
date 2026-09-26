@@ -64,6 +64,7 @@ pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::{ColorSpec, Cycled, Scatter};
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
+pub use text::{colored, tex};
 pub use theme::{Theme, current_theme, reset_theme, set_theme, theme_minimal, with_theme};
 pub use transform::Scale;
 #[cfg(feature = "window")]

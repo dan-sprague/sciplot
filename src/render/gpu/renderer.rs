@@ -122,6 +122,7 @@ impl Renderer {
         let full = [0, 0, size[0], size[1]];
         {
             let mut f = Frame { res: &mut self.res, pipes, uniforms: &mut uniforms, ubuf: ubuf.clone(), ppu, size };
+            pipelines::glyph::begin_frame(&mut f, dl);
             for item in &dl.items {
                 let scissor = match item.clip {
                     Some(r) => match scissor(r, ppu, size) {
@@ -138,7 +139,8 @@ impl Renderer {
                     Prim::Rects(r) => pipelines::mesh::prepare_rects(&mut f, r),
                     Prim::Mesh(m) => pipelines::mesh::prepare(&mut f, m, xform),
                     Prim::Markers(m) => pipelines::sprite::prepare(&mut f, m, xform),
-                    Prim::Lines(_) | Prim::Glyphs(_) | Prim::Field(_) => {
+                    Prim::Glyphs(g) => pipelines::glyph::prepare(&mut f, g, xform),
+                    Prim::Lines(_) | Prim::Field(_) => {
                         if !self.warned {
                             log::debug!("ezviz: primitive not yet supported by the GPU backend");
                             self.warned = true;
