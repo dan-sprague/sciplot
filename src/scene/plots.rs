@@ -128,22 +128,34 @@ pub(crate) fn resolve_color(spec: &ColorSpec, cycle: usize, palette: &[Color]) -
     }
 }
 
+/// Each plot's index in its cycle group, for an axis' plots in order (0 for missing plots and
+/// plots with an explicit color). Only plots whose cycled attribute is automatic advance their
+/// group's counter (Makie).
+pub(crate) fn cycle_indices(st: &FigState, plots: &[crate::figure::PlotId]) -> Vec<usize> {
+    let mut counters: HashMap<&'static str, usize> = HashMap::new();
+    plots
+        .iter()
+        .map(|pid| {
+            let Some(imp) = st.plot(*pid).map(|p| p.kind.imp()) else { return 0 };
+            if imp.color_is_auto(&st.theme) {
+                let c = counters.entry(imp.cycle_group()).or_insert(0);
+                *c += 1;
+                *c - 1
+            } else {
+                0
+            }
+        })
+        .collect()
+}
+
 pub(crate) fn emit_plots(em: &mut Emitter, st: &FigState, a: &AxisFrame, g: &Globals, cache: &mut SceneCache) {
     let Some(ax) = st.block(a.id).and_then(|b| b.as_axis()) else {
         return;
     };
-    let mut counters: HashMap<&'static str, usize> = HashMap::new();
-    for pid in &ax.plots {
+    let cycles = cycle_indices(st, &ax.plots);
+    for (pid, &cycle) in ax.plots.iter().zip(&cycles) {
         let Some(p) = st.plot(*pid) else { continue };
         let imp = p.kind.imp();
-        // Only plots whose cycled attribute is automatic advance the counter (Makie).
-        let cycle = if imp.color_is_auto(&st.theme) {
-            let c = counters.entry(imp.cycle_group()).or_insert(0);
-            *c += 1;
-            *c - 1
-        } else {
-            0
-        };
         if !p.common.visible {
             continue;
         }

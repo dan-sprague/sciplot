@@ -64,6 +64,17 @@ impl PlotImpl for ScatterState {
         point_bounds(&self.pos, xs, ys)
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        let r = self.attrs.resolve(&ctx.theme.scatter, ctx.g);
+        vec![super::LegendElement::Marker {
+            color: ctx.color(&r.color, false, r.alpha, super::legend_elements::DEFAULT_MARKERCOLOR),
+            marker: r.marker,
+            markersize: r.markersize,
+            strokecolor: r.strokecolor.with_alpha(r.strokecolor.a * r.alpha as f32),
+            strokewidth: r.strokewidth,
+        }]
+    }
+
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.scatter, ctx.g);
         let alpha = r.alpha as f32;

@@ -33,6 +33,7 @@ pub fn theme_minimal() -> Theme {
             .xlabelpadding(3)
             .ylabelpadding(3)
     })
+    .legend(|l| l.framevisible(false).padding(0))
 }
 
 /// Makie's `theme_light()`: gray text, faint grid, no spines, no ticks, label padding 3.
@@ -52,6 +53,7 @@ pub fn theme_light() -> Theme {
             .xlabelpadding(3)
             .ylabelpadding(3)
     })
+    .legend(|l| l.framevisible(false).padding(0))
 }
 
 /// Makie's `theme_dark()`: `gray10` background, `gray45` text, faint white grid, no spines, no
@@ -72,6 +74,7 @@ pub fn theme_dark() -> Theme {
             .xlabelpadding(3)
             .ylabelpadding(3)
     })
+    .legend(|l| l.framevisible(false).padding(0))
 }
 
 #[cfg(test)]

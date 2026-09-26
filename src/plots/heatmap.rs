@@ -116,6 +116,16 @@ impl PlotImpl for HeatmapState {
         true
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        // Makie's heatmap element: values [0 0.3; 0.6 1] (first index = x) through the colormap.
+        let r = self.attrs.resolve(&ctx.theme.heatmap, ctx.g);
+        let c = |t: f64| {
+            let c = r.colormap.sample(t);
+            c.with_alpha(c.a * r.alpha as f32)
+        };
+        vec![super::LegendElement::Cells { colors: [c(0.0), c(0.6), c(0.3), c(1.0)] }]
+    }
+
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         if self.nx == 0 || self.ny == 0 {
             return;

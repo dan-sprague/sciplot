@@ -8,6 +8,7 @@ pub(crate) mod drawlist;
 mod plots;
 
 pub(crate) use plots::PlotCtx;
+pub(crate) use plots::{cycle_indices, resolve_color};
 
 use crate::blocks::Block;
 use crate::blocks::axis::AxisResolved;
