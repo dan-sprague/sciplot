@@ -331,3 +331,10 @@ Revised order after wave 1 merges:
 4. **3D:** Axis3, depth buffer, orbit camera, lines3d/scatter3d/surface/mesh, 3D ticks.
 5. **Standalone interactive HTML export.**
 6. The remaining original polish milestones (M8–M10: interaction polish, live polish, themes/perf/docs).
+
+### 8.1 Decisions made during implementation (2026-09-26)
+- Marker strokes follow **CairoMakie** (stroke centered on the outline), not GLMakie (stroke outside),
+  so PNG/SVG exports match the publication-quality reference.
+- Linked axes share one set of limits: the union of their data, with the largest margin of the
+  non-tight members (tight only if all members are tight). This matches what Makie shows.
+- Web toolchain is repo-local: `wasm-bindgen-cli` 0.2.129 installed into `.tools/` (gitignored).

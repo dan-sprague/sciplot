@@ -4,3 +4,4 @@
 !docs/**/*.png
 !tests/**/*.png
 /.claude
+/.tools
