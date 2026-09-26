@@ -1,9 +1,12 @@
 //! Text: rich strings, the bundled TeX Gyre Heros Makie fonts, and Makie-exact layout
 //! (advance-only, no kerning; line box = ascender − descender = 1.165 em).
 
+pub(crate) mod atlas;
 mod rich;
+mod tex;
 
 pub use rich::{RichText, TextSpan, subscript, superscript};
+pub use tex::{IntoSpans, colored, tex};
 
 use crate::color::Color;
 use crate::scene::drawlist::GlyphInst;
@@ -119,6 +122,9 @@ pub(crate) fn layout(rt: &RichText, size: f64, font: Font, color: Color) -> Text
                 continue;
             }
             let id: GlyphId = face.glyph_id(ch);
+            if id.0 == 0 {
+                atlas::warn_missing_glyph(ch);
+            }
             glyphs.push(GlyphInst {
                 font: f,
                 glyph: id.0,

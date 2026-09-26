@@ -67,6 +67,7 @@ pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
+pub use text::{colored, tex};
 pub use theme::{Theme, current_theme, reset_theme, set_theme, theme_minimal, with_theme};
 pub use transform::Scale;
 pub use ticks::{LabelFn, MinorSpec, TickFn, TickFormat, TickSpec, Wilkinson, format_ticks_auto, format_with};

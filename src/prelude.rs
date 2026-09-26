@@ -12,3 +12,4 @@ pub use crate::{
     logspace, scatter, set_theme, subscript, superscript, theme_minimal, with_theme,
 };
 pub use crate::{MinorSpec, TickFormat, TickSpec, Wilkinson};
+pub use crate::{colored, rich, tex};

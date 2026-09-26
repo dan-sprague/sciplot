@@ -52,6 +52,8 @@ pub(crate) struct Resources {
     pub dummy_lut: wgpu::TextureView,
     pub frame: u64,
     pub stats: RenderStats,
+    /// The glyph atlas (created on first use).
+    pub glyphs: Option<super::pipelines::glyph::GlyphCache>,
 }
 
 impl Resources {
@@ -72,6 +74,7 @@ impl Resources {
             dummy_lut,
             frame: 0,
             stats: RenderStats::default(),
+            glyphs: None,
         }
     }
 

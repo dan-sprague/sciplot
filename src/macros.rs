@@ -108,3 +108,22 @@ impl AsAxis for &&crate::Axis {
 pub fn __as_axis<T: AsAxis + ?Sized>(t: &T) -> &crate::Axis {
     t.__axis()
 }
+
+/// Makie's `rich(...)`: builds a [`RichText`](crate::RichText) from strings, spans
+/// ([`superscript`](crate::superscript), [`subscript`](crate::subscript), `.color(..)`,
+/// [`colored`](crate::text::colored)) and other rich texts (e.g. [`tex`](crate::text::tex)).
+///
+/// ```
+/// use ezviz::prelude::*;
+/// let label = rich!("k", superscript("\u{2212}5/3"), colored(" (fit)", RED));
+/// assert_eq!(label.plain_text(), "k\u{2212}5/3 (fit)");
+/// ```
+#[macro_export]
+macro_rules! rich {
+    ($($s:expr),* $(,)?) => {{
+        #[allow(unused_mut)]
+        let mut spans = ::std::vec::Vec::new();
+        $($crate::text::IntoSpans::push_into($s, &mut spans);)*
+        $crate::RichText::from_spans(spans)
+    }};
+}
