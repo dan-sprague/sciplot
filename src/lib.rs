@@ -69,6 +69,10 @@ pub use plots::Heatmap;
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
 pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
+pub use data::PointData;
+pub use plots::lines::{LinesTheme, lines, lines_points};
+pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
+pub use plots::{Lines, ScatterLines};
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
 pub use text::{colored, tex};
@@ -98,5 +102,7 @@ const _: () = {
     ok::<Axis>();
     ok::<Scatter>();
     ok::<Heatmap>();
+    ok::<Lines>();
+    ok::<ScatterLines>();
     ok::<GridPosition>();
 };

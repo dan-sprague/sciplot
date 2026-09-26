@@ -6,10 +6,12 @@
 
 mod cells;
 mod data2d;
+pub(crate) mod points;
 
 pub use cells::{CellCoords, CellSpec, Edges};
 pub(crate) use cells::{CellEdges, Spec as CellSpecKind};
 pub use data2d::{Data2D, Field};
+pub use points::PointData;
 
 mod sealed {
     pub trait Sealed {}

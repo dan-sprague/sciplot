@@ -15,6 +15,11 @@ pub use hist::{Bins, Hist};
 pub use heatmap::Heatmap;
 pub use scatter::Scatter;
 pub use textplot::{IntoTexts, TextPlot};
+pub(crate) mod lines;
+pub(crate) mod scatterlines;
+
+pub use lines::Lines;
+pub use scatterlines::ScatterLines;
 
 use crate::attrs::Conv;
 use crate::color::{Color, IntoColor};
@@ -143,6 +148,8 @@ plot_kinds! {
     Band(band::BandState),
     Text(textplot::TextState),
     Heatmap(heatmap::HeatmapState),
+    Lines(lines::LinesState),
+    ScatterLines(scatterlines::ScatterLinesState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

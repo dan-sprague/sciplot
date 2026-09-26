@@ -14,3 +14,4 @@ pub use crate::{
 pub use crate::{MinorSpec, TickFormat, TickSpec, Wilkinson};
 pub use crate::{colored, rich, tex};
 pub use crate::{CellCoords, Colormap, Edges, Heatmap, IntoColormap, heatmap, heatmap_xy};
+pub use crate::{Lines, PointData, ScatterLines, lines, lines_points, scatterlines, scatterlines_points};

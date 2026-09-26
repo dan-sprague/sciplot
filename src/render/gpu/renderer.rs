@@ -139,6 +139,7 @@ impl Renderer {
                     Prim::Rects(r) => pipelines::mesh::prepare_rects(&mut f, r),
                     Prim::Mesh(m) => pipelines::mesh::prepare(&mut f, m, xform),
                     Prim::Markers(m) => pipelines::sprite::prepare(&mut f, m, xform),
+                    Prim::Lines(l) => pipelines::line::prepare(&mut f, l, xform),
                     Prim::Glyphs(g) => pipelines::glyph::prepare(&mut f, g, xform),
                     Prim::Field(p) => {
                         let aff = match item.space {
@@ -150,7 +151,8 @@ impl Renderer {
                         draws.extend(cmds.into_iter().map(|c| (scissor, c)));
                         last
                     }
-                    Prim::Lines(_) => {
+                    #[allow(unreachable_patterns)]
+                    _ => {
                         if !self.warned {
                             log::debug!("ezviz: primitive not yet supported by the GPU backend");
                             self.warned = true;

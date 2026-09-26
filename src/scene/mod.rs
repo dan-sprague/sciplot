@@ -28,6 +28,8 @@ pub(crate) struct SceneCache {
     pub(crate) conv: HashMap<(u64, u8), (u64, Arc<Vec<[f32; 2]>>)>,
     /// (plot uid, part) -> (key, any derived data), for `memo`.
     memos: HashMap<(u64, u8), (u64, Arc<dyn std::any::Any + Send + Sync>)>,
+    /// (plot uid, part) -> append-aware conversion of live, append-only point data
+    pub(crate) append: HashMap<(u64, u8), crate::data::points::LocalCache>,
 }
 
 impl SceneCache {

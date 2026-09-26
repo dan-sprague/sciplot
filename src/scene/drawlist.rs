@@ -173,7 +173,9 @@ pub(crate) struct MarkersPrim {
 #[derive(Clone, Debug)]
 #[allow(dead_code)]
 pub(crate) struct LinesPrim {
+    /// Points; NaN breaks a polyline.
     pub pts: Buf<[f32; 2]>,
+    /// Uniform, per-point, or per-point values (interpolated along each segment, then colormapped).
     pub color: PrimColor,
     /// Line width in units.
     pub width: f32,
@@ -181,9 +183,17 @@ pub(crate) struct LinesPrim {
     pub pattern: Option<Vec<f32>>,
     pub cap: LineCap,
     pub join: JoinStyle,
+    /// Makie's `miter_limit`: joints turning by more than `pi - miter_limit` radians are
+    /// beveled (π/3 by default, i.e. SVG `stroke-miterlimit = 1 / sin(miter_limit / 2) = 2`).
     pub miter_limit: f32,
     /// `true`: independent segments (pairs of points); `false`: a polyline with NaN breaks.
     pub segments: bool,
+    /// A polyline whose last point repeats the first: its ends are joined instead of capped
+    /// (Makie closes such loops of 3+ segments without NaNs).
+    pub closed: bool,
+    /// `pts.key.rev` is an append-only revision (`data::points::append_rev`): backends holding
+    /// an older buffer of the same generation only need the new tail.
+    pub append: bool,
 }
 
 /// One glyph to draw, positioned in figure units.

@@ -7,6 +7,7 @@
 
 pub(crate) mod glyph;
 pub(crate) mod field;
+pub(crate) mod line;
 pub(crate) mod mesh;
 pub(crate) mod sprite;
 
@@ -17,6 +18,7 @@ pub(crate) struct Pipelines {
     pub globals_layout: wgpu::BindGroupLayout,
     pub sampler: wgpu::Sampler,
     pub nearest: wgpu::Sampler,
+    pub line: line::LinePipeline,
     pub mesh: mesh::MeshPipeline,
     pub field: field::FieldPipeline,
     pub sprite: sprite::SpritePipeline,
@@ -54,6 +56,7 @@ impl Pipelines {
             ..Default::default()
         });
         Pipelines {
+            line: line::create(device, &globals_layout),
             mesh: mesh::create(device, &globals_layout),
             field: field::create(device, &globals_layout),
             sprite: sprite::create(device, &globals_layout),
