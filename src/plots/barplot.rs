@@ -148,6 +148,16 @@ impl PlotImpl for BarPlotState {
         self.categories.clone().map(|c| (!horizontal, c))
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        let r = self.attrs.resolve(&ctx.theme.barplot, ctx.g);
+        let (a, sc) = (r.alpha as f32, r.strokecolor);
+        vec![super::LegendElement::Poly {
+            color: ctx.color(&r.color, true, r.alpha, super::legend_elements::DEFAULT_POLYCOLOR),
+            strokecolor: sc.with_alpha(sc.a * a),
+            strokewidth: r.strokewidth,
+        }]
+    }
+
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.barplot, ctx.g);
         let vscale = if r.direction == Direction::Y { ctx.axis.attrs.yscale } else { ctx.axis.attrs.xscale };

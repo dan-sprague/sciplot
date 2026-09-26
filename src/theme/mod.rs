@@ -3,6 +3,7 @@
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
 use crate::blocks::label::{LabelAttrs, LabelTheme};
+use crate::blocks::legend::{LegendAttrs, LegendTheme};
 use crate::color::{Color, WONG};
 use crate::plots::band::{BandAttrs, BandTheme};
 use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
@@ -68,6 +69,7 @@ pub struct Theme {
     pub(crate) patchpalette: Option<Vec<Color>>,
     pub(crate) axis: AxisAttrs,
     pub(crate) label: LabelAttrs,
+    pub(crate) legend: LegendAttrs,
     pub(crate) scatter: ScatterAttrs,
     pub(crate) barplot: BarPlotAttrs,
     pub(crate) hist: HistAttrs,
@@ -121,6 +123,12 @@ impl Theme {
     /// Label defaults.
     pub fn label(mut self, f: impl FnOnce(LabelTheme) -> LabelTheme) -> Self {
         self.label = f(LabelTheme(self.label)).0;
+        self
+    }
+
+    /// Legend defaults: `Theme::new().legend(|l| l.framevisible(false))`.
+    pub fn legend(mut self, f: impl FnOnce(LegendTheme) -> LegendTheme) -> Self {
+        self.legend = f(LegendTheme(self.legend)).0;
         self
     }
 
@@ -187,6 +195,7 @@ impl Theme {
         );
         out.axis.merge_from(&self.axis);
         out.label.merge_from(&self.label);
+        out.legend.merge_from(&self.legend);
         out.scatter.merge_from(&self.scatter);
         out.barplot.merge_from(&self.barplot);
         out.hist.merge_from(&self.hist);
@@ -267,5 +276,7 @@ pub fn current_theme() -> Theme {
 
 /// Makie's `theme_minimal()`: no grid, only left and bottom spines.
 pub fn theme_minimal() -> Theme {
-    Theme::new().axis(|a| a.xgridvisible(false).ygridvisible(false).topspinevisible(false).rightspinevisible(false))
+    Theme::new()
+        .axis(|a| a.xgridvisible(false).ygridvisible(false).topspinevisible(false).rightspinevisible(false))
+        .legend(|l| l.framevisible(false).padding(0))
 }

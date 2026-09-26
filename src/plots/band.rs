@@ -76,6 +76,13 @@ impl PlotImpl for BandState {
         point_bounds(&l, xs, ys)
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        // Makie draws a band's patch without a stroke.
+        let r = self.attrs.resolve(&ctx.theme.band, ctx.g);
+        let color = ctx.color(&r.color, true, r.alpha, super::legend_elements::DEFAULT_POLYCOLOR);
+        vec![super::LegendElement::Poly { color, strokecolor: Color::TRANSPARENT, strokewidth: 0.0 }]
+    }
+
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.band, ctx.g);
         let alpha = r.alpha as f32;

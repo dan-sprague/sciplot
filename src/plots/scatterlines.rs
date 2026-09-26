@@ -74,6 +74,26 @@ impl PlotImpl for ScatterLinesState {
         self.pts.bounds(xs, ys)
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        use super::legend_elements::{DEFAULT_LINECOLOR, DEFAULT_MARKERCOLOR};
+        let r = self.attrs.resolve(&ctx.theme.scatterlines, ctx.g);
+        let line = ctx.color(&r.color, false, r.alpha, DEFAULT_LINECOLOR);
+        let marker = match &r.markercolor {
+            ColorSpec::Auto => ctx.color(&r.color, false, r.alpha, DEFAULT_MARKERCOLOR),
+            spec => ctx.color(spec, false, r.alpha, DEFAULT_MARKERCOLOR),
+        };
+        vec![
+            super::LegendElement::Line { color: line, linewidth: r.linewidth, linestyle: r.linestyle },
+            super::LegendElement::Marker {
+                color: marker,
+                marker: r.marker,
+                markersize: r.markersize,
+                strokecolor: r.strokecolor.with_alpha(r.strokecolor.a * r.alpha as f32),
+                strokewidth: r.strokewidth,
+            },
+        ]
+    }
+
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.scatterlines, ctx.g);
         let style = LineStyle {

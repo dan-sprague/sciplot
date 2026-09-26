@@ -6,6 +6,7 @@ pub(crate) mod barplot;
 pub(crate) mod bars;
 pub(crate) mod heatmap;
 pub(crate) mod hist;
+pub(crate) mod legend_elements;
 pub(crate) mod pick;
 pub(crate) mod scatter;
 pub(crate) mod textplot;
@@ -14,6 +15,7 @@ pub use band::Band;
 pub use barplot::{BarPlot, BarX};
 pub use heatmap::Heatmap;
 pub use hist::{Bins, Hist};
+pub use legend_elements::LegendElement;
 pub use scatter::Scatter;
 pub use textplot::{IntoTexts, TextPlot};
 pub(crate) mod lines;
@@ -129,6 +131,10 @@ pub(crate) trait PlotImpl {
     /// Hover inspection: the element nearest to the cursor within `ctx.radius`, if any.
     fn pick(&self, _ctx: &mut pick::PickCtx<'_>) -> Option<pick::Hover> {
         None
+    }
+    /// How the plot looks in a legend entry (Makie's `legendelements`; none by default).
+    fn legend_elements(&self, _ctx: &legend_elements::LegendCtx<'_>) -> Vec<legend_elements::LegendElement> {
+        Vec::new()
     }
 }
 

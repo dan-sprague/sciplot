@@ -8,9 +8,11 @@
 
 pub(crate) mod axis;
 pub(crate) mod label;
+pub(crate) mod legend;
 
 pub use axis::{Axis, linkaxes, linkxaxes, linkyaxes};
 pub use label::Label;
+pub use legend::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
 
 use crate::figure::{BlockId, FigState};
 use crate::layout::{AlignMode, BlockSize, Protrusion};
@@ -95,6 +97,7 @@ macro_rules! block_kinds {
 
 block_kinds! {
     Label(label::LabelState),
+    Legend(legend::LegendState),
 }
 
 impl Block {

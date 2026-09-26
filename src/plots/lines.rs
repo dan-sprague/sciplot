@@ -189,6 +189,15 @@ impl PlotImpl for LinesState {
         self.pts.bounds(xs, ys)
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        let r = self.attrs.resolve(&ctx.theme.lines, ctx.g);
+        vec![super::LegendElement::Line {
+            color: ctx.color(&r.color, false, r.alpha, super::legend_elements::DEFAULT_LINECOLOR),
+            linewidth: r.linewidth,
+            linestyle: r.linestyle,
+        }]
+    }
+
     fn emit(&self, ctx: &mut PlotCtx<'_>) {
         let r = self.attrs.resolve(&ctx.theme.lines, ctx.g);
         emit_line(ctx, &self.pts, &r.style(), self.style_rev);

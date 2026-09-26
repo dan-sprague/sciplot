@@ -45,6 +45,24 @@ macro_rules! Label {
     };
 }
 
+/// Makie's `Legend(fig[r, c], axes; kw...)`: `Legend!(fig.at(1, 2), &ax; title = "T")` or
+/// `Legend!(fig.at(1..=2, 3), &[&a, &b]; unique = true)` = `Legend::new(pos, src).unique(true)`.
+#[macro_export]
+macro_rules! Legend {
+    ($pos:expr, $src:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::Legend::new($pos, $src) $(; $($k = $v),*)?)
+    };
+}
+
+/// Makie's `axislegend(ax; position = :rt, kw...)`: `axislegend!(ax; position = Pos::LT)` =
+/// `axislegend(&ax).position(Pos::LT)`.
+#[macro_export]
+macro_rules! axislegend {
+    ($ax:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::axislegend($crate::__as_axis(&$ax)) $(; $($k = $v),*)?)
+    };
+}
+
 /// Makie's `scatter!(ax, x, y; kw...)`: draws into `ax` (an `Axis` or `&Axis`).
 #[macro_export]
 macro_rules! scatter {

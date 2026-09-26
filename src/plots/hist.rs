@@ -177,6 +177,16 @@ impl PlotImpl for HistState {
         is_auto(self.attrs.color.as_ref(), theme.hist.color.as_ref())
     }
 
+    fn legend_elements(&self, ctx: &super::legend_elements::LegendCtx<'_>) -> Vec<super::LegendElement> {
+        let r = self.attrs.resolve(&ctx.theme.hist, ctx.g);
+        let (a, sc) = (r.alpha as f32, r.strokecolor);
+        vec![super::LegendElement::Poly {
+            color: ctx.color(&r.color, true, r.alpha, super::legend_elements::DEFAULT_POLYCOLOR),
+            strokecolor: sc.with_alpha(sc.a * a),
+            strokewidth: r.strokewidth,
+        }]
+    }
+
     fn data_bounds(&self, xs: Scale, ys: Scale) -> Option<[f64; 4]> {
         let r = self.attrs.resolve(&Default::default(), &crate::theme::Globals::default());
         let vscale = if r.direction == Direction::Y { ys } else { xs };
