@@ -57,16 +57,14 @@ pub use macros::{__as_axis, AsAxis};
 pub use render::gpu::testing as gpu_testing;
 
 pub use attrs::Conv;
+pub use blocks::Colorbar;
 pub use blocks::axis::AxisTheme;
 pub use blocks::axis::{Aspect, AxisAspect, DataAspect};
-pub use blocks::label::LabelTheme;
-pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
-pub use blocks::legend::LegendTheme;
-pub use blocks::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
-pub use plots::LegendElement;
 pub use blocks::colorbar::ColorbarTheme;
-pub use blocks::Colorbar;
-pub use plots::{ColorMapped, ResolvedColormap};
+pub use blocks::label::LabelTheme;
+pub use blocks::legend::LegendTheme;
+pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
+pub use blocks::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
 pub use color::{Color, IntoColor, WONG, colors};
 pub use color::{Colormap, IntoColormap};
 pub use data::PointData;
@@ -75,6 +73,7 @@ pub use data::{Data1D, Data2D, Field, Iter, Num, Scalar, iter, linspace, logspac
 pub use error::{Error, Result};
 pub use figure::{Figure, GridPosition, GridSize, IntoSpan, Prepend, RgbaImage, Save, Side, Span};
 pub use plots::Heatmap;
+pub use plots::LegendElement;
 pub use plots::band::{BandTheme, band};
 pub use plots::barplot::{BarPlotTheme, barplot};
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
@@ -85,6 +84,7 @@ pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
 pub use plots::{ABLines, HLines, RefLines, RefValues, VLines};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
+pub use plots::{ColorMapped, ResolvedColormap};
 pub use plots::{Lines, ScatterLines};
 #[doc(hidden)]
 pub use scene::axis::AxisGeometry;
@@ -97,6 +97,9 @@ pub use theme::{theme_dark, theme_light};
 pub use ticks::testing as __ticks;
 pub use ticks::{LabelFn, MinorSpec, TickFn, TickFormat, TickSpec, Wilkinson, format_ticks_auto, format_with};
 pub use transform::Scale;
+/// The per-frame state passed to [`Figure::animate`] callbacks.
+#[cfg(feature = "window")]
+pub use window::Frame;
 /// Window interactions as a pure state machine (exposed for tests).
 #[cfg(feature = "window")]
 #[doc(hidden)]
@@ -109,9 +112,6 @@ pub use window::show_all;
 pub use window::testing as window_testing;
 #[cfg(feature = "window")]
 pub use window::{Live, Screen};
-/// The per-frame state passed to [`Figure::animate`] callbacks.
-#[cfg(feature = "window")]
-pub use window::Frame;
 
 /// Logs a warning once per distinct message.
 pub(crate) fn warn_once(msg: &'static str) {

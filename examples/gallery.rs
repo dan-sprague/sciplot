@@ -113,7 +113,7 @@ fn s2_lines() -> ezviz::Result<()> {
     let ax = Axis::new(fig.at(1, 1)).title("Harmonic oscillator").xlabel("time t (s)").ylabel("displacement x (mm)");
     ax.lines(&t, &s).label("sin");
     ax.lines(&t, &c).label("cos").linestyle(Linestyle::Dash);
-    // TODO(legend): axislegend!(ax; position = Pos::RT) once Legend lands (and in makie_gallery.jl).
+    axislegend!(ax; position = Pos::RT);
     save("s2_lines", &fig, Data::default().put("t", &t).put("s", &s).put("c", &c), None)
 }
 
@@ -141,7 +141,7 @@ fn s3_panels() -> ezviz::Result<()> {
     linkxaxes(&[&a, &b]);
     linkyaxes(&[&a, &b]);
     b.hideydecorations(false);
-    // TODO(legend): Legend!(fig.at(1..=2, 3), &[&a, &b, &c]; unique = true, framevisible = false).
+    Legend!(fig.at(1..=2, 3), &[&a, &b, &c]; unique = true, framevisible = false);
     for (pos, s) in [(fig.at(1, 1), "A"), (fig.at(1, 2), "B"), (fig.at(2, 1..=2), "C")] {
         Label::new(pos.side(Side::TopLeft), s)
             .fontsize(20)
@@ -170,12 +170,15 @@ fn s4_heatmap() -> ezviz::Result<()> {
 
     let fig = Figure::new().size((800, 950));
     let ax1 = Axis::new(fig.at(1, 1)).title("flat Vec<f64>").ylabel("y (mm)");
-    ax1.heatmap_xy(0.0..=lx, 0.0..=ly, Field::new(&n, nx, ny)).colormap(Colormap::MAGMA).colorrange((0.0, 1.2));
-    // TODO(colorbar): Colorbar!(fig.at(1, 2), &hm1; label = "n (a.u.)") once Colorbar lands.
+    let hm1 =
+        ax1.heatmap_xy(0.0..=lx, 0.0..=ly, Field::new(&n, nx, ny)).colormap(Colormap::MAGMA).colorrange((0.0, 1.2));
+    Colorbar!(fig.at(1, 2), &hm1; label = "n (a.u.)");
     let ax2 = Axis::new(fig.at(2, 1)).title("cell centres").ylabel("y (mm)");
-    ax2.heatmap_xy(&xc, &yc, Field::new(&n, nx, ny)).colormap(Colormap::MAGMA).colorrange((0.0, 1.2));
+    let hm2 = ax2.heatmap_xy(&xc, &yc, Field::new(&n, nx, ny)).colormap(Colormap::MAGMA).colorrange((0.0, 1.2));
+    Colorbar!(fig.at(2, 2), &hm2; label = "n (a.u.)");
     let ax3 = Axis::new(fig.at(3, 1)).title("probes").xlabel("x (mm)").ylabel("y (mm)");
-    ax3.scatter(&px, &py).color(&temp).colormap(Colormap::VIRIDIS).markersize(10);
+    let sc = ax3.scatter(&px, &py).color(&temp).colormap(Colormap::VIRIDIS).markersize(10);
+    Colorbar!(fig.at(3, 2), &sc; label = "T (eV)");
     fig.colsize(1, GridSize::Aspect(1, lx / ly));
     linkaxes(&[&ax1, &ax2, &ax3]);
     ax1.hidexdecorations(false);
@@ -236,7 +239,8 @@ fn s7_stats() -> ezviz::Result<()> {
     let ax3 = Axis::new(fig.at(1, 3)).title("ensemble mean ± 95% CI").xlabel("t (s)").ylabel("u");
     ax3.band(&t, &lo, &hi).color((WONG[0], 0.3)).label("95% CI");
     ax3.lines(&t, &mean).color(WONG[0]).label("mean");
-    // TODO(legend): axislegend!(ax1) and axislegend!(ax3; position = Pos::RB).
+    axislegend!(ax1);
+    axislegend!(ax3; position = Pos::RB);
     let mut d = Data::default();
     d.put("samples", &samples).put("xs", &xs).put("pdf", &pdf).put("heights", &heights);
     d.put("t", &t).put("mean", &mean).put("lo", &lo).put("hi", &hi);

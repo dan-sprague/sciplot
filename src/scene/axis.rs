@@ -104,23 +104,33 @@ pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec
             if let (Some(v), false) = (ax.interactive, ax.follow) {
                 return v;
             }
-            // Union with linked axes before margins.
+            // Union with linked axes before margins. Linked axes share one set of limits (Makie
+            // propagates the last reset); the group is tight only if every member is (heatmaps),
+            // otherwise it keeps the largest margin of its non-tight members.
+            let own = |j: usize, x: bool| -> Option<[f64; 2]> {
+                (!raw[j].2).then(|| if x { resolved[j].xautolimitmargin } else { resolved[j].yautolimitmargin })
+            };
+            let widest = |a: Option<[f64; 2]>, b: Option<[f64; 2]>| match (a, b) {
+                (Some(a), Some(b)) => Some([a[0].max(b[0]), a[1].max(b[1])]),
+                (x, None) | (None, x) => x,
+            };
             let mut bx = raw[i].0;
             let mut by = raw[i].1;
-            let mut tight = raw[i].2;
+            let mut mx = own(i, true);
+            let mut my = own(i, false);
             for l in &ax.xlinks {
                 if let Some(j) = index_of(l) {
                     bx = union(bx, raw[j].0);
-                    tight |= raw[j].2;
+                    mx = widest(mx, own(j, true));
                 }
             }
             for l in &ax.ylinks {
                 if let Some(j) = index_of(l) {
                     by = union(by, raw[j].1);
-                    tight |= raw[j].2;
+                    my = widest(my, own(j, false));
                 }
             }
-            let (mx, my) = if tight { ([0.0; 2], [0.0; 2]) } else { (r.xautolimitmargin, r.yautolimitmargin) };
+            let (mx, my) = (mx.unwrap_or([0.0; 2]), my.unwrap_or([0.0; 2]));
             let (mut x0, mut x1) = bx.map_or(default_limits(r.xscale), |b| expand(b, mx, r.xscale));
             let (mut y0, mut y1) = by.map_or(default_limits(r.yscale), |b| expand(b, my, r.yscale));
             // User limits (possibly partial) win; a linked axis' user x limits apply too.
