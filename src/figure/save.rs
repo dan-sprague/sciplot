@@ -17,11 +17,12 @@ pub struct Save {
     pub(crate) px_per_unit: f64,
     pub(crate) pt_per_unit: f64,
     pub(crate) background: Option<crate::color::Color>,
+    pub(crate) cpu: bool,
 }
 
 impl Default for Save {
     fn default() -> Self {
-        Save { px_per_unit: 2.0, pt_per_unit: 0.75, background: None }
+        Save { px_per_unit: 2.0, pt_per_unit: 0.75, background: None, cpu: false }
     }
 }
 
@@ -46,6 +47,13 @@ impl Save {
     /// Overrides the figure background (use `Color::TRANSPARENT` for a transparent PNG).
     pub fn backgroundcolor(mut self, c: impl crate::attrs::Conv<crate::color::Color>) -> Save {
         self.background = Some(c.conv());
+        self
+    }
+    /// Rasterizes bitmaps on the CPU (the SVG through resvg) instead of the GPU. This is what
+    /// happens automatically when no GPU adapter exists; `EZVIZ_FORCE_CPU=1` forces it globally.
+    /// Needs the `cpu-png` feature (on by default).
+    pub fn cpu(mut self, v: bool) -> Save {
+        self.cpu = v;
         self
     }
 }
@@ -82,22 +90,56 @@ impl Figure {
         }
     }
 
-    /// Renders to an RGBA8 image at `opts.px_per_unit` (headless; any thread).
+    /// Renders to an RGBA8 image at `opts.px_per_unit` (headless; any thread). Uses the GPU, or
+    /// the CPU rasterizer when no GPU adapter exists or `opts.cpu(true)` is set.
     pub fn render_rgba(&self, opts: &Save) -> Result<RgbaImage> {
         let st = self.sh.snapshot();
-        let gpu = crate::render::gpu::gpu()?;
-        let mut r = crate::render::gpu::Renderer::new(gpu);
-        let (mut dl, _) = crate::scene::build(&st, None, &mut r.scene);
+        #[cfg(feature = "cpu-png")]
+        let force_cpu = opts.cpu || crate::render::cpu::forced_by_env();
+        #[cfg(not(feature = "cpu-png"))]
+        let force_cpu = false;
+        if !force_cpu {
+            match crate::render::gpu::gpu() {
+                Ok(gpu) => {
+                    let mut r = crate::render::gpu::Renderer::new(gpu);
+                    let (mut dl, _) = crate::scene::build(&st, None, &mut r.scene);
+                    if let Some(bg) = opts.background {
+                        dl.background = bg;
+                    }
+                    let (width, height, data) = r.render_rgba(&dl, opts.px_per_unit)?;
+                    return Ok(RgbaImage { width, height, data });
+                }
+                #[cfg(feature = "cpu-png")]
+                Err(Error::NoGpuAdapter(e)) => {
+                    log::info!("ezviz: no GPU adapter ({e})");
+                    crate::warn_once("no GPU adapter found; rendering bitmaps on the CPU (resvg)");
+                }
+                Err(e) => return Err(e),
+            }
+        }
+        #[cfg(feature = "cpu-png")]
+        {
+            let (mut dl, _) = crate::scene::build(&st, None, &mut crate::scene::SceneCache::new());
+            if let Some(bg) = opts.background {
+                dl.background = bg;
+            }
+            let (width, height, data) = crate::render::cpu::render_rgba(&dl, opts.px_per_unit)?;
+            Ok(RgbaImage { width, height, data })
+        }
+        #[cfg(not(feature = "cpu-png"))]
+        Err(Error::Gpu("the CPU rasterizer needs the `cpu-png` feature".into()))
+    }
+
+    /// The figure as a standalone SVG document (`width`/`height` in points from
+    /// `opts.pt_per_unit`, `viewBox` in figure units). Text is drawn as glyph outlines.
+    pub fn to_svg_string(&self, opts: &Save) -> Result<String> {
+        let st = self.sh.snapshot();
+        let (mut dl, _) = crate::scene::build(&st, None, &mut crate::scene::SceneCache::new());
         if let Some(bg) = opts.background {
             dl.background = bg;
         }
-        let (width, height, data) = r.render_rgba(&dl, opts.px_per_unit)?;
-        Ok(RgbaImage { width, height, data })
-    }
-
-    /// The figure as an SVG document.
-    pub fn to_svg_string(&self, _opts: &Save) -> Result<String> {
-        Err(Error::UnsupportedFormat("svg (not implemented yet)".into()))
+        let svg_opts = crate::render::svg::SvgOptions { pt_per_unit: opts.pt_per_unit, snap_ppu: None };
+        Ok(crate::render::svg::document(&dl, &svg_opts))
     }
 }
 

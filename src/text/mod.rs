@@ -1,6 +1,7 @@
 //! Text: rich strings, the bundled TeX Gyre Heros Makie fonts, and Makie-exact layout
 //! (advance-only, no kerning; line box = ascender − descender = 1.165 em).
 
+pub(crate) mod outline;
 mod rich;
 
 pub use rich::{RichText, TextSpan, subscript, superscript};

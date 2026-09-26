@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="450pt" height="337.5pt" viewBox="0 0 600 450">
+<defs>
+<clipPath id="c1"><rect x="41" y="36" width="250" height="374"/></clipPath>
+<clipPath id="c2"><rect x="334" y="36" width="250" height="374"/></clipPath>
+<circle id="m3" r="4.935"/>
+<mask id="k4" maskUnits="userSpaceOnUse" x="-12.05" y="-12.05" width="24.1" height="24.1"><rect x="-12.05" y="-12.05" width="24.1" height="24.1" fill="#ffffff"/><circle r="7.05" fill="#000000"/></mask>
+<g id="m4"><circle r="7.05" fill="none" stroke="#000000" stroke-opacity="0.5" stroke-width="4" stroke-linejoin="round" mask="url(#k4)"/><circle r="7.05"/></g>
+<path id="g5" d="M0.507 -0.341C0.507 -0.108 0.425 0.015 0.275 0.015C0.123 0.015 0.043 -0.108 0.043 -0.347C0.043 -0.585 0.122 -0.709 0.275 -0.709C0.429 -0.709 0.507 -0.587 0.507 -0.341ZM0.417 -0.349C0.417 -0.539 0.37 -0.631 0.275 -0.631C0.18 -0.631 0.133 -0.54 0.133 -0.346C0.133 -0.152 0.18 -0.058 0.273 -0.058C0.371 -0.058 0.417 -0.148 0.417 -0.349Z"/>
+<path id="g6" d="M0.511 -0.501C0.511 -0.414 0.46 -0.34 0.361 -0.287L0.261 -0.233C0.174 -0.182 0.142 -0.145 0.133 -0.087L0.506 -0.087L0.506 0L0.034 0C0.042 -0.156 0.085 -0.223 0.233 -0.307L0.325 -0.359C0.388 -0.395 0.421 -0.443 0.421 -0.499C0.421 -0.575 0.361 -0.632 0.281 -0.632C0.194 -0.632 0.145 -0.582 0.138 -0.463L0.05 -0.463C0.055 -0.635 0.139 -0.709 0.284 -0.709C0.418 -0.709 0.511 -0.621 0.511 -0.501Z"/>
+<path id="g7" d="M0.52 -0.17L0.415 -0.17L0.415 0L0.327 0L0.327 -0.17L0.028 -0.17L0.028 -0.263L0.35 -0.709L0.415 -0.709L0.415 -0.249L0.52 -0.249ZM0.327 -0.249L0.327 -0.559L0.105 -0.249Z"/>
+<path id="g8" d="M0.513 -0.22C0.513 -0.081 0.416 0.015 0.281 0.015C0.119 0.015 0.043 -0.102 0.043 -0.323C0.043 -0.57 0.132 -0.709 0.297 -0.709C0.405 -0.709 0.481 -0.64 0.498 -0.524L0.41 -0.524C0.396 -0.592 0.353 -0.631 0.291 -0.631C0.19 -0.631 0.134 -0.535 0.133 -0.362C0.171 -0.414 0.226 -0.441 0.296 -0.441C0.423 -0.441 0.513 -0.352 0.513 -0.22ZM0.423 -0.213C0.423 -0.308 0.37 -0.363 0.285 -0.363C0.198 -0.363 0.138 -0.306 0.138 -0.218C0.138 -0.127 0.2 -0.063 0.282 -0.063C0.363 -0.063 0.423 -0.124 0.423 -0.213Z"/>
+<path id="g9" d="M0.513 -0.2C0.513 -0.071 0.415 0.015 0.275 0.015C0.135 0.015 0.037 -0.071 0.037 -0.201C0.037 -0.279 0.077 -0.334 0.158 -0.373C0.086 -0.418 0.062 -0.454 0.062 -0.52C0.062 -0.631 0.15 -0.709 0.275 -0.709C0.401 -0.709 0.488 -0.631 0.488 -0.52C0.488 -0.453 0.464 -0.417 0.391 -0.373C0.473 -0.334 0.513 -0.279 0.513 -0.2ZM0.398 -0.518C0.398 -0.587 0.35 -0.631 0.275 -0.631C0.201 -0.631 0.152 -0.587 0.152 -0.519C0.152 -0.452 0.201 -0.408 0.275 -0.408C0.349 -0.408 0.398 -0.452 0.398 -0.518ZM0.423 -0.199C0.423 -0.282 0.363 -0.334 0.275 -0.334C0.187 -0.334 0.127 -0.282 0.127 -0.199C0.127 -0.116 0.187 -0.063 0.273 -0.063C0.363 -0.063 0.423 -0.115 0.423 -0.199Z"/>
+<path id="g10" d="M0.347 0L0.259 0L0.259 -0.505L0.102 -0.505L0.102 -0.568C0.238 -0.585 0.258 -0.6 0.289 -0.709L0.347 -0.709Z"/>
+<path id="g11" d="M0.574 -0.27C0.574 -0.106 0.478 0.009 0.348 0.009C0.28 0.009 0.232 -0.012 0.198 -0.072L0.198 0.218L0.058 0.218L0.058 -0.54L0.198 -0.54L0.198 -0.46C0.232 -0.52 0.28 -0.549 0.348 -0.549C0.489 -0.549 0.574 -0.43 0.574 -0.27ZM0.434 -0.268C0.434 -0.371 0.387 -0.432 0.316 -0.432C0.246 -0.432 0.198 -0.371 0.198 -0.27C0.198 -0.169 0.246 -0.108 0.316 -0.108C0.385 -0.108 0.434 -0.17 0.434 -0.268Z"/>
+<path id="g12" d="M0.525 -0.25L0.524 -0.233L0.162 -0.233C0.166 -0.128 0.208 -0.098 0.274 -0.098C0.325 -0.098 0.369 -0.113 0.381 -0.152L0.519 -0.152C0.488 -0.046 0.39 0.009 0.269 0.009C0.116 0.009 0.022 -0.09 0.022 -0.263C0.022 -0.444 0.117 -0.549 0.272 -0.549C0.431 -0.549 0.525 -0.436 0.525 -0.25ZM0.379 -0.326C0.372 -0.403 0.33 -0.442 0.27 -0.442C0.208 -0.442 0.173 -0.401 0.164 -0.326Z"/>
+<path id="g13" d="M0.37 -0.406C0.351 -0.409 0.341 -0.41 0.326 -0.41C0.244 -0.41 0.203 -0.369 0.203 -0.287L0.203 0L0.063 0L0.063 -0.54L0.203 -0.54L0.203 -0.434C0.233 -0.507 0.289 -0.549 0.353 -0.549C0.357 -0.549 0.362 -0.549 0.37 -0.548Z"/>
+<path id="g14" d="M0.569 -0.266C0.569 -0.093 0.466 0.009 0.302 0.009C0.136 0.009 0.035 -0.092 0.035 -0.27C0.035 -0.447 0.136 -0.549 0.301 -0.549C0.47 -0.549 0.569 -0.449 0.569 -0.266ZM0.429 -0.268C0.429 -0.374 0.379 -0.436 0.302 -0.436C0.226 -0.436 0.175 -0.373 0.175 -0.27C0.175 -0.167 0.226 -0.104 0.302 -0.104C0.377 -0.104 0.429 -0.167 0.429 -0.268Z"/>
+<path id="g15" d="M0.207 0L0.067 0L0.067 -0.54L0.207 -0.54ZM0.209 -0.605L0.069 -0.605L0.069 -0.745L0.209 -0.745Z"/>
+<path id="g16" d="M0.546 0L0.406 0L0.406 -0.333C0.406 -0.397 0.376 -0.43 0.316 -0.43C0.248 -0.43 0.203 -0.388 0.203 -0.324L0.203 0L0.063 0L0.063 -0.54L0.203 -0.54L0.203 -0.462C0.243 -0.522 0.292 -0.549 0.365 -0.549C0.48 -0.549 0.546 -0.481 0.546 -0.362Z"/>
+<path id="g17" d="M0.301 0C0.276 0.001 0.251 0.004 0.22 0.004C0.128 0.004 0.083 -0.031 0.083 -0.116L0.083 -0.436L0.014 -0.436L0.014 -0.529L0.083 -0.529L0.083 -0.674L0.223 -0.674L0.223 -0.529L0.301 -0.529L0.301 -0.436L0.223 -0.436L0.223 -0.154C0.223 -0.106 0.232 -0.095 0.269 -0.095C0.279 -0.095 0.287 -0.096 0.301 -0.098Z"/>
+<path id="g18" d="M0.524 0L0.372 0C0.359 -0.016 0.356 -0.04 0.356 -0.068C0.307 -0.017 0.252 0.009 0.192 0.009C0.102 0.009 0.028 -0.041 0.028 -0.146C0.028 -0.244 0.08 -0.29 0.187 -0.309L0.243 -0.319C0.313 -0.331 0.355 -0.325 0.355 -0.382C0.355 -0.418 0.328 -0.436 0.274 -0.436C0.205 -0.436 0.182 -0.418 0.175 -0.362L0.04 -0.362C0.049 -0.487 0.125 -0.549 0.271 -0.549C0.417 -0.549 0.492 -0.493 0.492 -0.383L0.492 -0.083C0.492 -0.055 0.499 -0.04 0.524 -0.017ZM0.355 -0.231L0.355 -0.255C0.339 -0.247 0.333 -0.245 0.296 -0.238L0.248 -0.229C0.19 -0.218 0.168 -0.203 0.168 -0.162C0.168 -0.122 0.197 -0.104 0.244 -0.104C0.315 -0.104 0.355 -0.15 0.355 -0.231Z"/>
+<path id="g19" d="M0.207 0L0.067 0L0.067 -0.729L0.207 -0.729Z"/>
+<path id="g20" d="M0.541 0L0.401 0L0.401 -0.33C0.401 -0.403 0.365 -0.43 0.315 -0.43C0.252 -0.43 0.207 -0.386 0.207 -0.324L0.207 0L0.067 0L0.067 -0.729L0.207 -0.729L0.207 -0.462C0.246 -0.521 0.296 -0.549 0.365 -0.549C0.467 -0.549 0.541 -0.488 0.541 -0.362Z"/>
+</defs>
+<rect width="600" height="450" fill="#ffffff"/>
+<rect x="41" y="36" width="250" height="374" fill="#ffffff"/>
+<rect x="334" y="36" width="250" height="374" fill="#ffffff"/>
+<g clip-path="url(#c1)">
+<g fill="#000000" fill-opacity="0.12">
+<rect x="51.864" y="36" width="1" height="374"/>
+<rect x="93.186" y="36" width="1" height="374"/>
+<rect x="134.508" y="36" width="1" height="374"/>
+<rect x="175.831" y="36" width="1" height="374"/>
+<rect x="217.153" y="36" width="1" height="374"/>
+<rect x="258.475" y="36" width="1" height="374"/>
+<rect x="41" y="392.5" width="250" height="1"/>
+<rect x="41" y="336.302" width="250" height="1"/>
+<rect x="41" y="280.103" width="250" height="1"/>
+<rect x="41" y="223.905" width="250" height="1"/>
+<rect x="41" y="167.707" width="250" height="1"/>
+<rect x="41" y="111.508" width="250" height="1"/>
+<rect x="41" y="55.31" width="250" height="1"/>
+</g>
+</g>
+<g clip-path="url(#c2)">
+<g fill="#000000" fill-opacity="0.12">
+<rect x="344.864" y="36" width="1" height="374"/>
+<rect x="386.186" y="36" width="1" height="374"/>
+<rect x="427.508" y="36" width="1" height="374"/>
+<rect x="468.831" y="36" width="1" height="374"/>
+<rect x="510.153" y="36" width="1" height="374"/>
+<rect x="551.475" y="36" width="1" height="374"/>
+<rect x="334" y="52.5" width="250" height="1"/>
+<rect x="334" y="108.698" width="250" height="1"/>
+<rect x="334" y="164.897" width="250" height="1"/>
+<rect x="334" y="221.095" width="250" height="1"/>
+<rect x="334" y="277.293" width="250" height="1"/>
+<rect x="334" y="333.492" width="250" height="1"/>
+<rect x="334" y="389.69" width="250" height="1"/>
+</g>
+</g>
+<g clip-path="url(#c1)">
+<use xlink:href="#m3" x="52.364" y="393" fill="#0072b2"/>
+<use xlink:href="#m3" x="73.025" y="390.19" fill="#e69f00"/>
+<use xlink:href="#m3" x="93.686" y="381.76" fill="#009e73"/>
+<use xlink:href="#m3" x="114.347" y="367.711" fill="#cc79a7"/>
+<use xlink:href="#m3" x="135.008" y="348.041" fill="#56b4e9"/>
+<use xlink:href="#m3" x="155.669" y="322.752" fill="#d55e00"/>
+<use xlink:href="#m3" x="176.331" y="291.843" fill="#f0e442"/>
+<use xlink:href="#m3" x="196.992" y="255.314" fill="#0072b2"/>
+<use xlink:href="#m3" x="217.653" y="213.165" fill="#e69f00"/>
+<use xlink:href="#m3" x="238.314" y="165.397" fill="#009e73"/>
+<use xlink:href="#m3" x="258.975" y="112.008" fill="#cc79a7"/>
+<use xlink:href="#m3" x="279.636" y="53" fill="#56b4e9"/>
+</g>
+<g clip-path="url(#c2)">
+<g fill="#d55e00" fill-opacity="0.5">
+<use xlink:href="#m4" x="345.364" y="53"/>
+<use xlink:href="#m4" x="366.025" y="55.81"/>
+<use xlink:href="#m4" x="386.686" y="64.24"/>
+<use xlink:href="#m4" x="407.347" y="78.289"/>
+<use xlink:href="#m4" x="428.008" y="97.959"/>
+<use xlink:href="#m4" x="448.669" y="123.248"/>
+<use xlink:href="#m4" x="469.331" y="154.157"/>
+<use xlink:href="#m4" x="489.992" y="190.686"/>
+<use xlink:href="#m4" x="510.653" y="232.835"/>
+<use xlink:href="#m4" x="531.314" y="280.603"/>
+<use xlink:href="#m4" x="551.975" y="333.992"/>
+<use xlink:href="#m4" x="572.636" y="393"/>
+</g>
+</g>
+<g fill="#000000">
+<rect x="51.864" y="410" width="1" height="5"/>
+<rect x="93.186" y="410" width="1" height="5"/>
+<rect x="134.508" y="410" width="1" height="5"/>
+<rect x="175.831" y="410" width="1" height="5"/>
+<rect x="217.153" y="410" width="1" height="5"/>
+<rect x="258.475" y="410" width="1" height="5"/>
+<rect x="36" y="392.5" width="5" height="1"/>
+<rect x="36" y="336.302" width="5" height="1"/>
+<rect x="36" y="280.103" width="5" height="1"/>
+<rect x="36" y="223.905" width="5" height="1"/>
+<rect x="36" y="167.707" width="5" height="1"/>
+<rect x="36" y="111.508" width="5" height="1"/>
+<rect x="36" y="55.31" width="5" height="1"/>
+</g>
+<g fill="#000000">
+<rect x="344.864" y="410" width="1" height="5"/>
+<rect x="386.186" y="410" width="1" height="5"/>
+<rect x="427.508" y="410" width="1" height="5"/>
+<rect x="468.831" y="410" width="1" height="5"/>
+<rect x="510.153" y="410" width="1" height="5"/>
+<rect x="551.475" y="410" width="1" height="5"/>
+<rect x="329" y="52.5" width="5" height="1"/>
+<rect x="329" y="108.698" width="5" height="1"/>
+<rect x="329" y="164.897" width="5" height="1"/>
+<rect x="329" y="221.095" width="5" height="1"/>
+<rect x="329" y="277.293" width="5" height="1"/>
+<rect x="329" y="333.492" width="5" height="1"/>
+<rect x="329" y="389.69" width="5" height="1"/>
+</g>
+<g fill="#000000">
+<rect x="40.5" y="35.5" width="1" height="375"/>
+<rect x="290.5" y="35.5" width="1" height="375"/>
+<rect x="40.5" y="409.5" width="251" height="1"/>
+<rect x="40.5" y="35.5" width="251" height="1"/>
+</g>
+<g fill="#000000">
+<rect x="333.5" y="35.5" width="1" height="375"/>
+<rect x="583.5" y="35.5" width="1" height="375"/>
+<rect x="333.5" y="409.5" width="251" height="1"/>
+<rect x="333.5" y="35.5" width="251" height="1"/>
+</g>
+<g fill="#000000">
+<use xlink:href="#g5" transform="translate(48.472 430.258) scale(14)"/>
+<use xlink:href="#g6" transform="translate(89.794 430.258) scale(14)"/>
+<use xlink:href="#g7" transform="translate(131.116 430.258) scale(14)"/>
+<use xlink:href="#g8" transform="translate(172.439 430.258) scale(14)"/>
+<use xlink:href="#g9" transform="translate(213.761 430.258) scale(14)"/>
+<use xlink:href="#g10" transform="translate(251.191 430.258) scale(14)"/>
+<use xlink:href="#g5" transform="translate(258.975 430.258) scale(14)"/>
+<use xlink:href="#g5" transform="translate(24.216 398.103) scale(14)"/>
+<use xlink:href="#g6" transform="translate(24.216 341.905) scale(14)"/>
+<use xlink:href="#g7" transform="translate(24.216 285.706) scale(14)"/>
+<use xlink:href="#g8" transform="translate(24.216 229.508) scale(14)"/>
+<use xlink:href="#g9" transform="translate(24.216 173.31) scale(14)"/>
+<use xlink:href="#g10" transform="translate(16.432 117.111) scale(14)"/>
+<use xlink:href="#g5" transform="translate(24.216 117.111) scale(14)"/>
+<use xlink:href="#g10" transform="translate(16.432 60.913) scale(14)"/>
+<use xlink:href="#g6" transform="translate(24.216 60.913) scale(14)"/>
+<use xlink:href="#g11" transform="translate(136.054 28.948) scale(14)"/>
+<use xlink:href="#g12" transform="translate(144.608 28.948) scale(14)"/>
+<use xlink:href="#g13" transform="translate(152.392 28.948) scale(14)"/>
+<use xlink:href="#g11" transform="translate(161.73 28.948) scale(14)"/>
+<use xlink:href="#g14" transform="translate(170.284 28.948) scale(14)"/>
+<use xlink:href="#g15" transform="translate(178.838 28.948) scale(14)"/>
+<use xlink:href="#g16" transform="translate(182.73 28.948) scale(14)"/>
+<use xlink:href="#g17" transform="translate(191.284 28.948) scale(14)"/>
+</g>
+<g fill="#000000">
+<use xlink:href="#g5" transform="translate(341.472 430.258) scale(14)"/>
+<use xlink:href="#g6" transform="translate(382.794 430.258) scale(14)"/>
+<use xlink:href="#g7" transform="translate(424.116 430.258) scale(14)"/>
+<use xlink:href="#g8" transform="translate(465.439 430.258) scale(14)"/>
+<use xlink:href="#g9" transform="translate(506.761 430.258) scale(14)"/>
+<use xlink:href="#g10" transform="translate(544.191 430.258) scale(14)"/>
+<use xlink:href="#g5" transform="translate(551.975 430.258) scale(14)"/>
+<use xlink:href="#g5" transform="translate(317.216 58.103) scale(14)"/>
+<use xlink:href="#g6" transform="translate(317.216 114.301) scale(14)"/>
+<use xlink:href="#g7" transform="translate(317.216 170.5) scale(14)"/>
+<use xlink:href="#g8" transform="translate(317.216 226.698) scale(14)"/>
+<use xlink:href="#g9" transform="translate(317.216 282.896) scale(14)"/>
+<use xlink:href="#g10" transform="translate(309.432 339.095) scale(14)"/>
+<use xlink:href="#g5" transform="translate(317.216 339.095) scale(14)"/>
+<use xlink:href="#g10" transform="translate(309.432 395.293) scale(14)"/>
+<use xlink:href="#g6" transform="translate(317.216 395.293) scale(14)"/>
+<use xlink:href="#g18" transform="translate(440.716 28.948) scale(14)"/>
+<use xlink:href="#g19" transform="translate(448.5 28.948) scale(14)"/>
+<use xlink:href="#g11" transform="translate(452.392 28.948) scale(14)"/>
+<use xlink:href="#g20" transform="translate(460.946 28.948) scale(14)"/>
+<use xlink:href="#g18" transform="translate(469.5 28.948) scale(14)"/>
+</g>
+</svg>
