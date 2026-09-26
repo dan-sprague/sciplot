@@ -91,6 +91,16 @@ attributes! {
         /// Fixed room for y tick labels (units), so the layout doesn't jitter as labels change.
         xticklabelspace: Option<f64> = |_| None, LAYOUT;
         yticklabelspace: Option<f64> = |_| None, LAYOUT;
+        /// Major x ticks: `TickSpec::Automatic` (Wilkinson), values `[0.0, 1.0]`, `(values, labels)`,
+        /// `TickSpec::LogMakie`, or a function of the limits.
+        xticks: crate::ticks::TickSpec = |_| crate::ticks::TickSpec::Automatic, LAYOUT;
+        yticks: crate::ticks::TickSpec = |_| crate::ticks::TickSpec::Automatic, LAYOUT;
+        /// Tick label format: automatic (Makie's), a closure `|v: f64| String`, or a format string.
+        xtickformat: crate::ticks::TickFormat = |_| crate::ticks::TickFormat::Automatic, LAYOUT;
+        ytickformat: crate::ticks::TickFormat = |_| crate::ticks::TickFormat::Automatic, LAYOUT;
+        /// Minor ticks: `MinorSpec::Auto` (2 intervals; 2..9 on log axes), `IntervalsBetween(n)`, values.
+        xminorticks: crate::ticks::MinorSpec = |_| crate::ticks::MinorSpec::Auto, STYLE;
+        yminorticks: crate::ticks::MinorSpec = |_| crate::ticks::MinorSpec::Auto, STYLE;
         xticksvisible: bool = |_| true, LAYOUT;
         yticksvisible: bool = |_| true, LAYOUT;
         xticksize: f64 = |_| 5.0, LAYOUT;

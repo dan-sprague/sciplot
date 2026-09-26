@@ -74,7 +74,10 @@ pub enum GridSize {
     /// Makie `Auto(trydetermine, ratio)`. With `trydetermine = false` the column/row ignores
     /// fixed-size content (e.g. a wide caption) and shares the leftover space like undetermined
     /// Autos, by `ratio`. [`GridSize::Auto`] is `AutoWith { trydetermine: true, ratio: 1.0 }`.
-    AutoWith { trydetermine: bool, ratio: f64 },
+    AutoWith {
+        trydetermine: bool,
+        ratio: f64,
+    },
 }
 
 /// The root grid layout's settings.

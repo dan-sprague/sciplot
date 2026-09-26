@@ -5,8 +5,8 @@
 //! Adding a pipeline = a new module, one field in [`Pipelines`], one line in `Pipelines::new`,
 //! and one match arm in `Renderer::render`.
 
-pub(crate) mod glyph;
 pub(crate) mod field;
+pub(crate) mod glyph;
 pub(crate) mod line;
 pub(crate) mod mesh;
 pub(crate) mod sprite;

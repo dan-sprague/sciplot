@@ -128,14 +128,49 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
     let g: Globals = st.theme.globals();
     let size = size.unwrap_or(g.size);
 
-    // 1. Axes: resolve attributes and limits.
+    // 1. Layout requests, in block order: axes (after limits and ticks) and other blocks.
+    enum Owner {
+        Axis(usize),
+        Block(BlockId),
+    }
     let mut axes: Vec<AxisFrame> = Vec::new();
     let mut items: Vec<LayoutItem> = Vec::new();
+    let mut owners: Vec<Owner> = Vec::new();
+    let mut inside: Vec<(BlockId, BlockId)> = Vec::new();
     let axis_ids: Vec<BlockId> =
         st.iter_blocks().filter(|(_, s)| matches!(s.block, Block::Axis(_))).map(|(id, _)| id).collect();
     let limits = axis::compute_limits(st, &axis_ids, &g);
-    for (slot, (id, bslot)) in st.iter_blocks().filter(|(_, s)| matches!(s.block, Block::Axis(_))).enumerate() {
-        let Block::Axis(ax) = &bslot.block;
+    for (id, bslot) in st.iter_blocks() {
+        let ax = match &bslot.block {
+            Block::Axis(ax) => ax,
+            other => {
+                let Some(imp) = other.imp() else { continue };
+                if let Some(target) = imp.inside_axis() {
+                    inside.push((id, target));
+                    continue;
+                }
+                let ctx = crate::blocks::BlockCtx { st, g: &g, axes: &[], id };
+                let bl = imp.layout(&ctx);
+                items.push(LayoutItem {
+                    rows: bslot.place.rows,
+                    cols: bslot.place.cols,
+                    side: bslot.place.side,
+                    protrusion: bl.protrusion,
+                    width: bl.width,
+                    height: bl.height,
+                    autosize: bl.autosize,
+                    tellwidth: bl.tellwidth,
+                    tellheight: bl.tellheight,
+                    halign: bl.halign,
+                    valign: bl.valign,
+                    alignmode: bl.alignmode,
+                    round: false,
+                });
+                owners.push(Owner::Block(id));
+                continue;
+            }
+        };
+        let slot = axes.len();
         let attrs = ax.attrs.resolve(&st.theme.axis, &g);
         let lim = limits[slot];
         let view = [
@@ -145,8 +180,8 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
             attrs.yscale.forward(lim[3]),
         ];
         let rebase = cache.rebase_for(id, view);
-        let mut xticks = crate::ticks::major_ticks(lim[0], lim[1], attrs.xscale);
-        let mut yticks = crate::ticks::major_ticks(lim[2], lim[3], attrs.yscale);
+        let mut xticks = crate::ticks::resolve_ticks(&attrs.xticks, &attrs.xtickformat, lim[0], lim[1], attrs.xscale);
+        let mut yticks = crate::ticks::resolve_ticks(&attrs.yticks, &attrs.ytickformat, lim[2], lim[3], attrs.yscale);
         // Categorical plots (e.g. barplot with names) label their axis with the categories.
         for pid in &ax.plots {
             if let Some((on_x, cats)) = st.plot(*pid).and_then(|p| p.kind.imp().categories()) {
@@ -154,7 +189,11 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
                     values: (1..=cats.len()).map(|i| i as f64).collect(),
                     labels: cats.iter().map(|c| crate::text::RichText::from(c.as_str())).collect(),
                 };
-                if on_x { xticks = t } else { yticks = t }
+                if on_x && matches!(attrs.xticks, crate::ticks::TickSpec::Automatic) {
+                    xticks = t;
+                } else if !on_x && matches!(attrs.yticks, crate::ticks::TickSpec::Automatic) {
+                    yticks = t;
+                }
             }
         }
         let protrusion = axis::protrusion(&attrs, &xticks, &yticks);
@@ -170,6 +209,7 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
             round: true,
             ..Default::default()
         });
+        owners.push(Owner::Axis(slot));
         axes.push(AxisFrame {
             id,
             slot: slot as u16,
@@ -185,8 +225,12 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
 
     // 2. Layout.
     let rects = crate::layout::solve(&items, &st.grid, size, g.figure_padding, g.colgap, g.rowgap);
-    for (a, r) in axes.iter_mut().zip(rects) {
-        a.rect = r;
+    let mut block_rects: Vec<(BlockId, Rect)> = Vec::new();
+    for (o, r) in owners.iter().zip(rects) {
+        match o {
+            Owner::Axis(s) => axes[*s].rect = r,
+            Owner::Block(id) => block_rects.push((*id, r)),
+        }
     }
 
     // 3. Emit.
@@ -205,6 +249,14 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
     for a in &axes {
         axis::emit_decorations(&mut em, a, &xforms[a.slot as usize]);
         plots::emit_plots(&mut em, st, a, &g, cache);
+    }
+    let axis_rect = |id: BlockId| axes.iter().find(|a| a.id == id).map(|a| a.rect);
+    for (id, r) in
+        block_rects.into_iter().chain(inside.into_iter().filter_map(|(id, ax)| axis_rect(ax).map(|r| (id, r))))
+    {
+        if let Some(imp) = st.block(id).and_then(|b| b.imp()) {
+            imp.emit(&crate::blocks::BlockCtx { st, g: &g, axes: &axes, id }, &mut em, r);
+        }
     }
 
     let mut dl = DrawList { size, background: g.backgroundcolor, axes: xforms, items: em.items };

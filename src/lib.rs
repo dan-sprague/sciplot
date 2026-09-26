@@ -55,44 +55,45 @@ pub use macros::{__as_axis, AsAxis};
 
 pub use attrs::Conv;
 pub use blocks::axis::AxisTheme;
-pub use blocks::{Axis, linkaxes, linkxaxes, linkyaxes};
+pub use blocks::label::LabelTheme;
+pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
 pub use color::{Color, IntoColor, WONG, colors};
 pub use color::{Colormap, IntoColormap};
+pub use data::PointData;
 pub use data::{CellCoords, Edges};
 pub use data::{Data1D, Data2D, Field, Iter, Num, Scalar, iter, linspace, logspace};
 pub use error::{Error, Result};
 pub use figure::{Figure, GridPosition, GridSize, IntoSpan, Prepend, RgbaImage, Save, Side, Span};
+pub use plots::Heatmap;
 pub use plots::band::{BandTheme, band};
 pub use plots::barplot::{BarPlotTheme, barplot};
-pub use plots::hist::{HistTheme, hist};
-pub use plots::Heatmap;
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
-pub use plots::scatter::{ScatterTheme, scatter};
-pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
-pub use data::PointData;
+pub use plots::hist::{HistTheme, hist};
 pub use plots::lines::{LinesTheme, lines, lines_points};
+pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
+pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
 pub use plots::{Lines, ScatterLines};
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
 pub use text::{colored, tex};
 pub use theme::{Theme, current_theme, reset_theme, set_theme, theme_minimal, with_theme};
-pub use transform::Scale;
-pub use ticks::{LabelFn, MinorSpec, TickFn, TickFormat, TickSpec, Wilkinson, format_ticks_auto, format_with};
 #[doc(hidden)]
 pub use ticks::testing as __ticks;
-#[cfg(feature = "window")]
-pub use window::show_all;
-#[cfg(feature = "window")]
-pub use window::{Live, Screen};
+pub use ticks::{LabelFn, MinorSpec, TickFn, TickFormat, TickSpec, Wilkinson, format_ticks_auto, format_with};
+pub use transform::Scale;
 /// Window interactions as a pure state machine (exposed for tests).
 #[cfg(feature = "window")]
 #[doc(hidden)]
 pub use window::interact;
+#[cfg(feature = "window")]
+pub use window::show_all;
 /// Scripted-window hooks (feature `testing`).
 #[cfg(feature = "testing")]
 #[doc(hidden)]
 pub use window::testing as window_testing;
+#[cfg(feature = "window")]
+pub use window::{Live, Screen};
 
 /// Logs a warning once per distinct message.
 pub(crate) fn warn_once(msg: &'static str) {

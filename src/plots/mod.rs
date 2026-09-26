@@ -4,16 +4,16 @@
 pub(crate) mod band;
 pub(crate) mod barplot;
 pub(crate) mod bars;
-pub(crate) mod hist;
 pub(crate) mod heatmap;
+pub(crate) mod hist;
 pub(crate) mod pick;
 pub(crate) mod scatter;
 pub(crate) mod textplot;
 
 pub use band::Band;
 pub use barplot::{BarPlot, BarX};
-pub use hist::{Bins, Hist};
 pub use heatmap::Heatmap;
+pub use hist::{Bins, Hist};
 pub use scatter::Scatter;
 pub use textplot::{IntoTexts, TextPlot};
 pub(crate) mod lines;

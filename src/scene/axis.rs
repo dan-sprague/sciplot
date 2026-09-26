@@ -241,12 +241,12 @@ pub(crate) fn emit_decorations(em: &mut Emitter, a: &AxisFrame, xf: &AxisXform) 
     let xs: Vec<f64> = a.xticks.values.iter().copied().filter(|v| inside(*v, a.limits[0], a.limits[1])).collect();
     let ys: Vec<f64> = a.yticks.values.iter().copied().filter(|v| inside(*v, a.limits[2], a.limits[3])).collect();
     let xminor = if at.xminorticksvisible || at.xminorgridvisible {
-        crate::ticks::minor_ticks(&a.xticks.values, a.limits[0], a.limits[1], at.xscale, 2)
+        crate::ticks::resolve_minor(&at.xminorticks, &a.xticks.values, a.limits[0], a.limits[1], at.xscale)
     } else {
         vec![]
     };
     let yminor = if at.yminorticksvisible || at.yminorgridvisible {
-        crate::ticks::minor_ticks(&a.yticks.values, a.limits[2], a.limits[3], at.yscale, 2)
+        crate::ticks::resolve_minor(&at.yminorticks, &a.yticks.values, a.limits[2], a.limits[3], at.yscale)
     } else {
         vec![]
     };

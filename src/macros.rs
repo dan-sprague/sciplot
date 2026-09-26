@@ -37,6 +37,14 @@ macro_rules! Axis {
     };
 }
 
+/// `Label!(fig.at(Prepend, ..), "Title"; fontsize = 20)` = `Label::new(pos, text).fontsize(20)`.
+#[macro_export]
+macro_rules! Label {
+    ($pos:expr, $text:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::Label::new($pos, $text) $(; $($k = $v),*)?)
+    };
+}
+
 /// Makie's `scatter!(ax, x, y; kw...)`: draws into `ax` (an `Axis` or `&Axis`).
 #[macro_export]
 macro_rules! scatter {

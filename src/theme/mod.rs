@@ -2,15 +2,16 @@
 //! thread-scoped `with_theme`.
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
+use crate::blocks::label::{LabelAttrs, LabelTheme};
 use crate::color::{Color, WONG};
 use crate::plots::band::{BandAttrs, BandTheme};
 use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
-use crate::plots::hist::{HistAttrs, HistTheme};
 use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
-use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
-use crate::plots::textplot::TextAttrs;
+use crate::plots::hist::{HistAttrs, HistTheme};
 use crate::plots::lines::{LinesAttrs, LinesTheme};
+use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
 use crate::plots::scatterlines::{ScatterLinesAttrs, ScatterLinesTheme};
+use crate::plots::textplot::TextAttrs;
 use parking_lot::RwLock;
 use std::cell::RefCell;
 
@@ -66,6 +67,7 @@ pub struct Theme {
     pub(crate) palette: Option<Vec<Color>>,
     pub(crate) patchpalette: Option<Vec<Color>>,
     pub(crate) axis: AxisAttrs,
+    pub(crate) label: LabelAttrs,
     pub(crate) scatter: ScatterAttrs,
     pub(crate) barplot: BarPlotAttrs,
     pub(crate) hist: HistAttrs,
@@ -113,6 +115,12 @@ impl Theme {
     /// Axis defaults: `Theme::new().axis(|a| a.xgridvisible(false))`.
     pub fn axis(mut self, f: impl FnOnce(AxisTheme) -> AxisTheme) -> Self {
         self.axis = f(AxisTheme(self.axis)).0;
+        self
+    }
+
+    /// Label defaults.
+    pub fn label(mut self, f: impl FnOnce(LabelTheme) -> LabelTheme) -> Self {
+        self.label = f(LabelTheme(self.label)).0;
         self
     }
 
@@ -178,6 +186,7 @@ impl Theme {
             patchpalette
         );
         out.axis.merge_from(&self.axis);
+        out.label.merge_from(&self.label);
         out.scatter.merge_from(&self.scatter);
         out.barplot.merge_from(&self.barplot);
         out.hist.merge_from(&self.hist);
