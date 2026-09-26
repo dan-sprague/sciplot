@@ -15,5 +15,7 @@ pub use crate::{CellCoords, Colormap, Edges, Heatmap, IntoColormap, heatmap, hea
 pub use crate::{Lines, PointData, ScatterLines, lines, lines_points, scatterlines, scatterlines_points};
 #[cfg(feature = "window")]
 pub use crate::{Live, Screen};
+#[cfg(feature = "window")]
+pub use crate::Frame;
 pub use crate::{MinorSpec, TickFormat, TickSpec, Wilkinson};
 pub use crate::{colored, rich, tex};
