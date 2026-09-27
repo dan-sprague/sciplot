@@ -22,5 +22,10 @@
   {"click": [200, 170], "count": 2},
   {"click": [510, 170], "count": 2},
   {"move": [85, 76]},
-  {"shot": "out/web/input_7_reset_and_hover.png"}
+  {"shot": "out/web/input_7_reset_and_hover.png"},
+  {"key": "x", "down": true},
+  {"wheel": [200, 170, -120]}, {"sleep": 50},
+  {"wheel": [200, 170, -120]},
+  {"key": "x", "down": false},
+  {"shot": "out/web/input_8_x_held_wheel_zooms_x.png"}
 ]

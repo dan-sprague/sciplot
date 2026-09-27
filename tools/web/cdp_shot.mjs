@@ -14,6 +14,7 @@
 //   {"drag": [x0, y0, x1, y1], "button": "right", "steps": 10}   press, move, release
 //   {"click": [x, y], "button": "left", "count": 1}
 //   {"touch": [[x, y], ...], "to": [[x, y], ...], "steps": 10}   touch start, move to, end
+//   {"key": "x", "down": true}                     key press / release (letters; the focused element gets it)
 //   {"eval": "js expression"}                      logs the value
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, mkdtempSync, rmSync } from 'node:fs';
@@ -149,6 +150,11 @@ try {
           await sleep(16);
         }
         await touch('touchEnd', []);
+      } else if (a.key) {
+        const key = a.key, code = 'Key' + key.toUpperCase();
+        await send('Input.dispatchKeyEvent', {
+          type: a.down ? 'rawKeyDown' : 'keyUp', key, code, windowsVirtualKeyCode: key.toUpperCase().charCodeAt(0),
+        }, s);
       } else if (a.eval) {
         const r = await send('Runtime.evaluate', { expression: a.eval, returnByValue: true }, s);
         logs.push(`[cdp] eval ${a.eval} = ${JSON.stringify(r.result.value)}`);

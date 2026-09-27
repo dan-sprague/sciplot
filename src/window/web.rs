@@ -98,7 +98,8 @@ pub(super) fn create_window(
         .with_canvas(canvas)
         .with_append(owned)
         .with_prevent_default(true) // no page scroll/zoom from wheel and touch over the figure
-        .with_focusable(true); // keyboard (x/y keys, modifiers) needs focus
+        .with_focusable(true) // keyboard (x/y keys, modifiers) needs focus; a click gives it
+        .with_active(false); // focusing at creation would scroll the page to the canvas
     let window = el.create_window(attrs).map_err(|e| Error::EventLoop(e.to_string()))?;
     let canvas = window.canvas().ok_or_else(|| Error::EventLoop("the window has no canvas".into()))?;
     let style = canvas.style();

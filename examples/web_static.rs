@@ -44,6 +44,13 @@ fn main() -> ezviz::Result<()> {
 fn main() -> ezviz::Result<()> {
     let fig = figure();
     fig.show_in("ezviz")?;
+    // A second figure on the same page, in a canvas ezviz appends (the page's CSS moves it out
+    // of the captured area): it reaches the running event loop through its proxy and gets its
+    // own GPU context on WebGL2.
+    let small = Figure::new().size((300, 200));
+    let ax = Axis::new(small.at(1, 1)).title("second figure");
+    ax.scatter([1.0, 2.0, 3.0], [2.0, 1.0, 3.0]).markersize(12);
+    small.show()?;
     // The offscreen GPU path: the same figure as a PNG, rendered and read back asynchronously.
     wasm_bindgen_futures::spawn_local(async move {
         let src = match fig.to_png_bytes_async(&Save::new().px_per_unit(2)).await {
