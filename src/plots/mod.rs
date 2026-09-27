@@ -30,9 +30,15 @@ pub use scatter::Scatter;
 pub use streamplot::{Interval, StreamPlot, VectorFieldFn};
 pub use textplot::{IntoTexts, TextPlot};
 pub(crate) mod lines;
+pub(crate) mod lines3d;
+pub(crate) mod scatter3d;
 pub(crate) mod scatterlines;
+pub(crate) mod surface;
 
 pub use lines::Lines;
+pub use lines3d::Lines3d;
+pub use scatter3d::Scatter3d;
+pub use surface::Surface;
 pub use scatterlines::ScatterLines;
 
 use crate::attrs::Conv;
@@ -256,6 +262,9 @@ plot_kinds! {
     StreamPlot(streamplot::StreamPlotState),
     Contour(contour::ContourState),
     Contourf(contourf::ContourfState),
+    Lines3d(lines3d::Lines3dState),
+    Scatter3d(scatter3d::Scatter3dState),
+    Surface(surface::SurfaceState),
 }
 
 /// `true` if a color spec (explicit or themed) is automatic.

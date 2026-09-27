@@ -21,6 +21,8 @@ struct GlobalsU {
 pub(crate) struct Renderer {
     res: Resources,
     msaa: Option<(wgpu::TextureView, [u32; 2], wgpu::TextureFormat)>,
+    /// Multisampled depth buffer of 3D passes (created when a frame has 3D items).
+    depth: Option<(wgpu::TextureView, [u32; 2])>,
     uniforms: Option<(wgpu::Buffer, usize)>,
     globals_buf: wgpu::Buffer,
     globals_bg: wgpu::BindGroup,
@@ -56,6 +58,7 @@ impl Renderer {
         Renderer {
             res,
             msaa: None,
+            depth: None,
             uniforms: None,
             globals_buf,
             globals_bg,
@@ -91,6 +94,27 @@ impl Renderer {
         });
         let v = tex.create_view(&wgpu::TextureViewDescriptor::default());
         self.msaa = Some((v.clone(), size, format));
+        v
+    }
+
+    fn depth_view(&mut self, size: [u32; 2]) -> wgpu::TextureView {
+        if let Some((v, s)) = &self.depth
+            && *s == size
+        {
+            return v.clone();
+        }
+        let tex = self.res.gpu.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("depth"),
+            size: wgpu::Extent3d { width: size[0], height: size[1], depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: MSAA,
+            dimension: wgpu::TextureDimension::D2,
+            format: pipelines::view3d::DEPTH_FORMAT,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let v = tex.create_view(&wgpu::TextureViewDescriptor::default());
+        self.depth = Some((v.clone(), size));
         v
     }
 
@@ -158,6 +182,8 @@ impl Renderer {
         let mut uniforms: Vec<u8> = Vec::with_capacity(dl.items.len() * self.ualign);
         let pipes = self.res.gpu.pipelines(format);
         let mut draws: Vec<([u32; 4], DrawCmd)> = Vec::with_capacity(dl.items.len());
+        // The depth group of each draw (3D items of one Axis3; `None` for 2D items).
+        let mut groups: Vec<Option<u64>> = Vec::with_capacity(dl.items.len());
         let full = [0, 0, size[0], size[1]];
         {
             let mut f = Frame {
@@ -195,12 +221,22 @@ impl Renderer {
                     Prim::Field(p) => {
                         let mut cmds = pipelines::field::prepare(&mut f, p, aff);
                         let last = cmds.pop();
+                        groups.extend(cmds.iter().map(|_| None));
                         draws.extend(cmds.into_iter().map(|c| (scissor, c)));
                         last
                     }
+                    Prim::Lines3d(l) => pipelines::lines3d::prepare(&mut f, l),
+                    Prim::Markers3d(m) => pipelines::markers3d::prepare(&mut f, m),
+                    Prim::Mesh3d(m) => pipelines::mesh3d::prepare(&mut f, m),
                 };
                 if let Some(cmd) = cmd {
                     draws.push((scissor, cmd));
+                    groups.push(match &item.prim {
+                        Prim::Lines3d(l) => Some(l.view.group),
+                        Prim::Markers3d(m) => Some(m.view.group),
+                        Prim::Mesh3d(m) => Some(m.view.group),
+                        _ => None,
+                    });
                 }
             }
         }
@@ -211,29 +247,60 @@ impl Renderer {
 
         let mut enc =
             self.res.gpu.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("frame") });
-        {
-            let bg = dl.background;
-            let clear = wgpu::Color {
-                r: (bg.r * bg.a) as f64,
-                g: (bg.g * bg.a) as f64,
-                b: (bg.b * bg.a) as f64,
-                a: if opaque { 1.0 } else { bg.a as f64 },
+        // One render pass per run of draws with the same depth group: 2D runs have no depth
+        // attachment (a frame without 3D items is a single pass, as before); 3D runs share a
+        // multisampled depth buffer, cleared when a new group starts.
+        let mut runs: Vec<(usize, usize, Option<u64>)> = Vec::new();
+        for (i, g) in groups.iter().enumerate() {
+            match runs.last_mut() {
+                Some(r) if r.2 == *g => r.1 = i + 1,
+                _ => runs.push((i, i + 1, *g)),
+            }
+        }
+        if runs.is_empty() {
+            runs.push((0, 0, None));
+        }
+        let depth = runs.iter().any(|r| r.2.is_some()).then(|| self.depth_view(size));
+        let bg = dl.background;
+        let clear = wgpu::Color {
+            r: (bg.r * bg.a) as f64,
+            g: (bg.g * bg.a) as f64,
+            b: (bg.b * bg.a) as f64,
+            a: if opaque { 1.0 } else { bg.a as f64 },
+        };
+        let mut cleared_group = None;
+        for (k, &(start, end, group)) in runs.iter().enumerate() {
+            let last = k + 1 == runs.len();
+            let depth_attachment = match (group, &depth) {
+                (Some(gid), Some(view)) => {
+                    let load = if cleared_group == Some(gid) { wgpu::LoadOp::Load } else { wgpu::LoadOp::Clear(1.0) };
+                    cleared_group = Some(gid);
+                    Some(wgpu::RenderPassDepthStencilAttachment {
+                        view,
+                        depth_ops: Some(wgpu::Operations { load, store: wgpu::StoreOp::Store }),
+                        stencil_ops: None,
+                    })
+                }
+                _ => None,
             };
             let mut pass = enc.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("figure"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa,
                     depth_slice: None,
-                    resolve_target: Some(target),
-                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(clear), store: wgpu::StoreOp::Discard },
+                    resolve_target: last.then_some(target),
+                    ops: wgpu::Operations {
+                        load: if k == 0 { wgpu::LoadOp::Clear(clear) } else { wgpu::LoadOp::Load },
+                        store: if last { wgpu::StoreOp::Discard } else { wgpu::StoreOp::Store },
+                    },
                 })],
-                depth_stencil_attachment: None,
+                depth_stencil_attachment: depth_attachment,
                 timestamp_writes: None,
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bg, &[]);
-            for (sc, d) in &draws {
+            for (sc, d) in &draws[start..end] {
                 pass.set_scissor_rect(sc[0], sc[1], sc[2], sc[3]);
                 pass.set_pipeline(&d.pipeline);
                 pass.set_bind_group(1, &d.bind, &[d.offset]);

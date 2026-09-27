@@ -71,6 +71,12 @@ affine `AxisXform::affine(ppu)` computed in f64, so pan/zoom never re-uploads pl
    `Some(axis_id)` from `inside_axis()` and get the axis rect in `emit`.
 3. Register: one line in `block_kinds!{..}`; theme field + `Theme::<name>(|t| ..)` builder + merge line;
    a `Name!` macro in `src/macros.rs`; re-exports.
+**Axis3** (`src/blocks/axis3.rs`, lowered by `src/scene/axis3/`) is a block whose `emit` is done by
+`scene::axis3::emit` (it needs the `SceneCache`). 3D plot types implement `PlotImpl` (colormaps,
+cycling) plus `scene::axis3::Plot3dImpl` (`bounds`, `emit3`) and register in `plot3d()`; they emit
+`Prim::Lines3d` / `Markers3d` / `Mesh3d` carrying an `Arc<View3d>` (camera, clip box, lights). The
+GPU draws each Axis3's 3D items in a depth-tested pass (`pipelines/view3d.rs`); `render/svg/three_d.rs`
+depth-sorts them.
 The layout port (src/layout) is GridLayoutBase-exact: see `LayoutItem`, `BlockSize`, `AlignMode`.
 
 **A new GPU pipeline** (`src/render/gpu/pipelines/<name>.rs` + `<name>.wgsl`):

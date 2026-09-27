@@ -95,3 +95,19 @@ required-features = ["window"]
 [[example]]
 name = "interact_check"
 required-features = ["window"]
+
+[[example]]
+name = "lorenz3d"
+required-features = ["window"]
+
+[[example]]
+name = "web_grayscott"
+required-features = ["window"]
+
+[[example]]
+name = "web_lorenz"
+required-features = ["window"]
+
+[[example]]
+name = "web_static"
+required-features = ["window"]

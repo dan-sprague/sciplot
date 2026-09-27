@@ -110,6 +110,10 @@ pub(crate) enum Prim {
     Lines(LinesPrim),
     Glyphs(GlyphsPrim),
     Field(FieldPrim),
+    /// 3D primitives of an `Axis3`, depth-tested against the other 3D items of their view group.
+    Lines3d(Lines3dPrim),
+    Markers3d(Markers3dPrim),
+    Mesh3d(Mesh3dPrim),
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -236,6 +240,90 @@ pub(crate) struct FieldPrim {
     pub y: GridAxis,
     pub map: ColorMapping,
     pub interpolate: bool,
+}
+
+/// The camera of one `Axis3` for one frame, shared by its 3D items (`Space::Figure`; the items
+/// carry their own projection).
+#[derive(Clone, Debug)]
+pub(crate) struct View3d {
+    /// Local coordinates -> Makie's clip space of `area` (OpenGL conventions: x, y, z in -1..1,
+    /// y up).
+    pub mvp: [[f64; 4]; 4],
+    /// The scene area clip space maps to (figure units, y down).
+    pub area: Rect,
+    /// Local -> world (the normalized box the lights live in): `world = local * scale + offset`.
+    pub world_scale: [f64; 3],
+    pub world_offset: [f64; 3],
+    /// Data-space normal -> world-space direction: multiply componentwise, then normalize
+    /// (Makie's normal matrix `inv(model)ᵀ`).
+    pub normal_scale: [f64; 3],
+    /// Content outside this local-space box `[min, max]` is hidden (Makie's `clip`).
+    pub clip: Option<[[f32; 3]; 2]>,
+    /// World-space direction the light travels (Makie's camera-relative default light).
+    pub light_dir: [f64; 3],
+    /// World-space camera position.
+    pub eye: [f64; 3],
+    /// Makie's `ambient` and directional `light_color` (gray levels).
+    pub ambient: f32,
+    pub light_color: f32,
+    /// Items of the same group share one depth buffer (one Axis3 in one frame).
+    pub group: u64,
+}
+
+/// A 3D polyline (NaN breaks it), `width` in units, drawn with round joins.
+#[derive(Clone, Debug)]
+pub(crate) struct Lines3dPrim {
+    pub view: Arc<View3d>,
+    pub pts: Buf<[f32; 3]>,
+    /// Uniform, per-point, or per-point values (interpolated along each segment).
+    pub color: PrimColor,
+    pub width: f32,
+    /// `pts.key.rev` is an append-only revision (see `LinesPrim::append`).
+    pub append: bool,
+}
+
+/// Screen-space markers at 3D positions (depth at their centre).
+#[derive(Clone, Debug)]
+pub(crate) struct Markers3dPrim {
+    pub view: Arc<View3d>,
+    pub pos: Buf<[f32; 3]>,
+    pub color: PrimColor,
+    /// Marker size in units, or per-point sizes.
+    pub size: f32,
+    pub sizes: Option<Buf<f32>>,
+    pub marker: Marker,
+    pub stroke_color: Color,
+    pub stroke_width: f32,
+    /// `pos.key.rev` is an append-only revision (see `LinesPrim::append`).
+    pub append: bool,
+}
+
+/// A mesh vertex in local coordinates with its data-space normal.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
+pub(crate) struct Vertex3d {
+    pub pos: [f32; 3],
+    pub normal: [f32; 3],
+}
+
+/// Makie's shading attributes (`FastShading`: ambient + one directional light, Blinn-Phong).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub(crate) struct Material {
+    pub diffuse: f32,
+    pub specular: f32,
+    pub shininess: f32,
+}
+
+/// A triangle list in 3D with per-vertex colors.
+#[derive(Clone, Debug)]
+pub(crate) struct Mesh3dPrim {
+    pub view: Arc<View3d>,
+    /// Triangle list (3 vertices per triangle).
+    pub verts: Buf<Vertex3d>,
+    /// Uniform, per-vertex, or per-vertex values (interpolated, then colormapped).
+    pub color: PrimColor,
+    /// Lit by the view's light (`None`: flat colors, Makie's `NoShading`).
+    pub shading: Option<Material>,
 }
 
 /// Everything needed to draw one frame.

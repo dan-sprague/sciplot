@@ -2,6 +2,10 @@
 //! thread-scoped `with_theme`.
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
+use crate::blocks::axis3::{Axis3Attrs, Axis3Theme};
+use crate::plots::lines3d::{Lines3dAttrs, Lines3dTheme};
+use crate::plots::scatter3d::{Scatter3dAttrs, Scatter3dTheme};
+use crate::plots::surface::{SurfaceAttrs, SurfaceTheme};
 use crate::blocks::colorbar::{ColorbarAttrs, ColorbarTheme};
 use crate::blocks::label::{LabelAttrs, LabelTheme};
 use crate::blocks::legend::{LegendAttrs, LegendTheme};
@@ -90,6 +94,10 @@ pub struct Theme {
     pub(crate) streamplot: StreamPlotAttrs,
     pub(crate) contour: ContourAttrs,
     pub(crate) contourf: ContourfAttrs,
+    pub(crate) axis3: Axis3Attrs,
+    pub(crate) lines3d: Lines3dAttrs,
+    pub(crate) scatter3d: Scatter3dAttrs,
+    pub(crate) surface: SurfaceAttrs,
 }
 
 macro_rules! theme_setters {
@@ -222,6 +230,30 @@ impl Theme {
         self
     }
 
+    /// Axis3 defaults: `Theme::new().axis3(|a| a.azimuth(0.3))`.
+    pub fn axis3(mut self, f: impl FnOnce(Axis3Theme) -> Axis3Theme) -> Self {
+        self.axis3 = f(Axis3Theme(self.axis3)).0;
+        self
+    }
+
+    /// Defaults of lines in an Axis3.
+    pub fn lines3d(mut self, f: impl FnOnce(Lines3dTheme) -> Lines3dTheme) -> Self {
+        self.lines3d = f(Lines3dTheme(self.lines3d)).0;
+        self
+    }
+
+    /// Defaults of scatters in an Axis3.
+    pub fn scatter3d(mut self, f: impl FnOnce(Scatter3dTheme) -> Scatter3dTheme) -> Self {
+        self.scatter3d = f(Scatter3dTheme(self.scatter3d)).0;
+        self
+    }
+
+    /// Surface defaults.
+    pub fn surface(mut self, f: impl FnOnce(SurfaceTheme) -> SurfaceTheme) -> Self {
+        self.surface = f(SurfaceTheme(self.surface)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -258,6 +290,10 @@ impl Theme {
         out.streamplot.merge_from(&self.streamplot);
         out.contour.merge_from(&self.contour);
         out.contourf.merge_from(&self.contourf);
+        out.axis3.merge_from(&self.axis3);
+        out.lines3d.merge_from(&self.lines3d);
+        out.scatter3d.merge_from(&self.scatter3d);
+        out.surface.merge_from(&self.surface);
         out
     }
 

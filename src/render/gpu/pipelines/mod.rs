@@ -13,8 +13,12 @@
 pub(crate) mod field;
 pub(crate) mod glyph;
 pub(crate) mod line;
+pub(crate) mod lines3d;
+pub(crate) mod markers3d;
 pub(crate) mod mesh;
+pub(crate) mod mesh3d;
 pub(crate) mod sprite;
+pub(crate) mod view3d;
 
 use super::MSAA;
 
@@ -28,17 +32,23 @@ pub(crate) struct Layouts {
     pub field: wgpu::BindGroupLayout,
     pub sprite: wgpu::BindGroupLayout,
     pub glyph: wgpu::BindGroupLayout,
-    shaders: [wgpu::ShaderModule; 5],
+    pub lines3d: wgpu::BindGroupLayout,
+    pub markers3d: wgpu::BindGroupLayout,
+    pub mesh3d: wgpu::BindGroupLayout,
+    shaders: [wgpu::ShaderModule; 8],
 }
 
 /// The WGSL of every pipeline (with `common.wgsl` prepended), by name.
-pub(crate) fn sources() -> [(&'static str, String); 5] {
+pub(crate) fn sources() -> [(&'static str, String); 8] {
     [
         ("line", with_common(line::SHADER)),
         ("mesh", with_common(mesh::SHADER)),
         ("field", with_common(field::SHADER)),
         ("sprite", with_common(sprite::SHADER)),
         ("glyph", with_common(glyph::SHADER)),
+        ("lines3d", with_common(&format!("{}\n{}", view3d::SHADER, lines3d::SHADER))),
+        ("markers3d", with_common(&format!("{}\n{}", view3d::SHADER, markers3d::SHADER))),
+        ("mesh3d", with_common(&format!("{}\n{}", view3d::SHADER, mesh3d::SHADER))),
     ]
 }
 
@@ -87,6 +97,9 @@ impl Layouts {
             field: field::layout(device),
             sprite: sprite::layout(device),
             glyph: glyph::layout(device),
+            lines3d: lines3d::layout(device),
+            markers3d: markers3d::layout(device),
+            mesh3d: mesh3d::layout(device),
             shaders,
         }
     }
@@ -99,17 +112,23 @@ pub(crate) struct Pipelines {
     pub field: wgpu::RenderPipeline,
     pub sprite: wgpu::RenderPipeline,
     pub glyph: wgpu::RenderPipeline,
+    pub lines3d: wgpu::RenderPipeline,
+    pub markers3d: wgpu::RenderPipeline,
+    pub mesh3d: wgpu::RenderPipeline,
 }
 
 impl Pipelines {
     pub fn new(device: &wgpu::Device, l: &Layouts, format: wgpu::TextureFormat) -> Pipelines {
-        let [s_line, s_mesh, s_field, s_sprite, s_glyph] = &l.shaders;
+        let [s_line, s_mesh, s_field, s_sprite, s_glyph, s_lines3d, s_markers3d, s_mesh3d] = &l.shaders;
         Pipelines {
             line: line::pipeline(device, l, s_line, format),
             mesh: mesh::pipeline(device, l, s_mesh, format),
             field: field::pipeline(device, l, s_field, format),
             sprite: sprite::pipeline(device, l, s_sprite, format),
             glyph: glyph::pipeline(device, l, s_glyph, format),
+            lines3d: lines3d::pipeline(device, l, s_lines3d, format),
+            markers3d: markers3d::pipeline(device, l, s_markers3d, format),
+            mesh3d: mesh3d::pipeline(device, l, s_mesh3d, format),
         }
     }
 }
