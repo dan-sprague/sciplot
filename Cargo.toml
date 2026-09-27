@@ -34,6 +34,16 @@ pollster = "1.0.1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wgpu = { version = "30.0.1", default-features = false, features = ["webgpu", "webgl"] }
+# The CLI that post-processes the .wasm must match exactly (tools/web/build.sh installs it into .tools/).
+wasm-bindgen = "=0.2.129"
+wasm-bindgen-futures = "0.4.79"
+js-sys = "0.3.106"
+web-sys = { version = "0.3.106", features = [
+    "Blob", "BlobPropertyBag", "CssStyleDeclaration", "Document", "DomRect", "Element", "HtmlAnchorElement",
+    "HtmlCanvasElement", "HtmlElement", "Location", "Node", "Url", "Window",
+] }
+console_error_panic_hook = "0.1.7"
+console_log = "1.0"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = { version = "0.6", optional = true }
@@ -43,9 +53,12 @@ objc2-core-graphics = { version = "0.3", optional = true, default-features = fal
 [dev-dependencies]
 # Already in the tree through wgpu; the GLSL ES 3.00 writer checks that every shader translates for WebGL2.
 naga = { version = "30.0.1", features = ["wgsl-in", "glsl-out"] }
-rand = "0.9"
 serde_json = "1"
 trybuild = "1"
+
+# Native only: rand's getrandom needs extra configuration on wasm32, and the wasm examples use xorshift.
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+rand = "0.9"
 
 [[test]]
 name = "window_smoke"

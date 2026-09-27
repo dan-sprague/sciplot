@@ -46,6 +46,31 @@ pub(crate) enum Op {
     Dump(std::path::PathBuf, std::sync::mpsc::Sender<Result<(), String>>),
 }
 
+/// A synthetic event as the interaction input the window would get from the real one (same
+/// unit conversions).
+pub(crate) fn translate_synthetic(ev: Synthetic, scale: f64, time: f64) -> super::interact::Input {
+    use super::input::{cursor_units, scroll_steps};
+    use super::interact::Input;
+    use Synthetic as S;
+    use winit::dpi::PhysicalPosition;
+    use winit::event::MouseScrollDelta;
+    match ev {
+        S::CursorMoved { x, y } => Input::CursorMoved(cursor_units(PhysicalPosition::new(x * scale, y * scale), scale)),
+        S::CursorLeft => Input::CursorLeft,
+        S::Button { button, pressed } => Input::Button { button, pressed, time },
+        S::ScrollLines { dx, dy } => {
+            Input::Scroll(scroll_steps(MouseScrollDelta::LineDelta(dx as f32, dy as f32), scale))
+        }
+        S::ScrollPixels { dx, dy } => Input::Scroll(scroll_steps(
+            MouseScrollDelta::PixelDelta(PhysicalPosition::new(dx * scale, dy * scale)),
+            scale,
+        )),
+        S::Pinch(d) => Input::Pinch(d),
+        S::Key { key, pressed } => Input::Key { key, pressed },
+        S::Modifiers(m) => Input::Modifiers(m),
+    }
+}
+
 static HOVER: Mutex<Option<HashMap<u64, Option<String>>>> = Mutex::new(None);
 
 pub(crate) fn record_hover(fig_uid: u64, text: Option<&str>) {

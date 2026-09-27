@@ -110,7 +110,7 @@ pub use window::show_all;
 #[cfg(feature = "testing")]
 #[doc(hidden)]
 pub use window::testing as window_testing;
-#[cfg(feature = "window")]
+#[cfg(all(feature = "window", not(target_arch = "wasm32")))]
 pub use window::{Live, Screen};
 
 /// Logs a warning once per distinct message.
@@ -135,7 +135,7 @@ const _: () = {
     ok::<ScatterLines>();
     ok::<GridPosition>();
     ok::<Colorbar>();
-    #[cfg(feature = "window")]
+    #[cfg(all(feature = "window", not(target_arch = "wasm32")))]
     ok_send_sync::<Live>();
 };
 
