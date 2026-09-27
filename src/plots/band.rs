@@ -6,8 +6,8 @@ use crate::color::Color;
 use crate::data::Data1D;
 use crate::figure::{Dirty, FigShared, PlotId};
 use crate::scene::PlotCtx;
-use crate::scene::drawlist::{MeshPrim, MeshVertex, Prim};
-use crate::style::Direction;
+use crate::scene::drawlist::{LinesPrim, MeshPrim, MeshVertex, Prim, PrimColor};
+use crate::style::{Direction, JoinStyle, LineCap};
 use crate::transform::Scale;
 use std::sync::Arc;
 
@@ -32,8 +32,11 @@ attributes! {
         color: ColorSpec = |_| ColorSpec::Auto, STYLE;
         /// `Direction::X` (default: bands between two y curves over x) or `Direction::Y`.
         direction: Direction = |_| Direction::X, LIMITS;
+        /// Opacity multiplier for fill and stroke.
         alpha: f64 = |_| 1.0, STYLE;
+        /// Width in units of the lines along the lower and upper curves (Makie default 0).
         strokewidth: f64 = |_| 0.0, STYLE;
+        /// Color of the lines along the lower and upper curves (Makie default black).
         strokecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
     }
 }
@@ -57,6 +60,15 @@ impl BandState {
             }
         }
         (lower, upper)
+    }
+
+    /// The stroke's polyline: the lower curve, a NaN break, then the upper curve (Makie's
+    /// `merged_points`; only points with a NaN coordinate break a curve).
+    fn stroke_points(&self, dir: Direction) -> Vec<[f64; 2]> {
+        let mk = |x: f64, y: f64| if dir == Direction::X { [x, y] } else { [y, x] };
+        let lower = self.x.iter().zip(self.lo.iter()).map(|(x, y)| mk(*x, *y));
+        let upper = self.x.iter().zip(self.hi.iter()).map(|(x, y)| mk(*x, *y));
+        lower.chain(std::iter::once([f64::NAN; 2])).chain(upper).collect()
     }
 }
 
@@ -107,6 +119,24 @@ impl PlotImpl for BandState {
         });
         let buf = ctx.keyed_buf(2, key, verts);
         ctx.push_data(Prim::Mesh(MeshPrim { verts: buf }));
+
+        // Makie's band stroke: `lines!` through the lower curve, a NaN break, then the upper one.
+        let sc = r.strokecolor;
+        if r.strokewidth > 0.0 && sc.a > 0.0 {
+            let pts = ctx.local_points(3, &self.stroke_points(r.direction));
+            ctx.push_data(Prim::Lines(LinesPrim {
+                pts,
+                color: PrimColor::Uniform(sc.with_alpha(sc.a * alpha)),
+                width: r.strokewidth as f32,
+                pattern: None,
+                cap: LineCap::Butt,
+                join: JoinStyle::Miter,
+                miter_limit: std::f32::consts::FRAC_PI_3,
+                segments: false,
+                closed: false,
+                append: false,
+            }));
+        }
     }
 }
 
@@ -114,7 +144,9 @@ impl Band {
     fn with_attrs(&self, f: impl FnOnce(&mut BandAttrs), dirty: u8) {
         self.with_slot(dirty, |p| {
             if let PlotKind::Band(s) = &mut p.kind {
-                f(&mut s.attrs)
+                f(&mut s.attrs);
+                // `direction` changes the converted points, which are cached per data revision.
+                p.data_rev += 1;
             }
         });
     }
@@ -166,4 +198,37 @@ impl crate::GridPosition {
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]
 pub fn band(x: impl Data1D, lo: impl Data1D, hi: impl Data1D) -> Band {
     crate::Figure::new().at(1, 1).band(x, lo, hi)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+    use crate::scene::drawlist::{LinesPrim, Prim, PrimColor};
+    use crate::scene::{SceneCache, build};
+
+    fn stroke(b: &Band) -> Option<LinesPrim> {
+        let dl = build(&b.figure().sh.snapshot(), None, &mut SceneCache::new()).0;
+        dl.items.into_iter().find_map(|i| match i.prim {
+            Prim::Lines(l) => Some(l),
+            _ => None,
+        })
+    }
+
+    #[test]
+    fn stroke_follows_both_curves() {
+        let b = band([0.0, 1.0, 2.0], [0.0, f64::NAN, 0.0], [1.0, 2.0, 1.0]);
+        assert!(stroke(&b).is_none(), "no stroke by default (strokewidth 0)");
+        b.strokewidth(2).strokecolor(RED).alpha(0.5);
+        let l = stroke(&b).expect("a stroke");
+        // lower (3 points), a NaN break, upper (3 points); a NaN in one curve only breaks it.
+        let p = &l.pts.data;
+        assert_eq!(p.len(), 7);
+        assert!(p[1][1].is_nan() && p[3][0].is_nan() && p[4..].iter().all(|q| q[1].is_finite()));
+        assert!(!l.closed && l.width == 2.0);
+        assert!(matches!(l.color, PrimColor::Uniform(c) if c.r == 1.0 && (c.a - 0.5).abs() < 1e-6));
+        // Changing the direction re-converts the cached points.
+        b.direction(Direction::Y);
+        let q = stroke(&b).unwrap().pts.data;
+        assert!(q[4] != p[4]);
+    }
 }

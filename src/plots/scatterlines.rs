@@ -1,9 +1,9 @@
 //! `scatterlines`: a polyline with markers at its points.
 
-use super::lines::{LineStyle, emit_line, live_points, prim_color};
+use super::lines::{LineStyle, emit_line_mapped, live_points, prim_color_mapped};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, zip_xy};
 use crate::attrs::attributes;
-use crate::color::Color;
+use crate::color::{Color, Colormap, MappingAttrs, encoded_values};
 use crate::data::points::Points;
 use crate::data::{Data1D, PointData};
 use crate::figure::{FigShared, PlotId};
@@ -55,11 +55,35 @@ attributes! {
         markercolor: ColorSpec = |_| ColorSpec::Auto, STYLE;
         strokecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
         strokewidth: f64 = |_| 0.0, STYLE;
+        /// Colormap for `color = values` / `markercolor = values` (default viridis).
+        colormap: Colormap = |_| Colormap::VIRIDIS, STYLE;
+        /// `(lo, hi)` mapped to the colormap ends; default: the finite extrema of the values.
+        colorrange: Option<[f64; 2]> = |_| None, STYLE;
+        /// Color for values below the colorrange (default: the first colormap color).
+        lowclip: Option<Color> = |_| None, STYLE;
+        /// Color for values above the colorrange (default: the last colormap color).
+        highclip: Option<Color> = |_| None, STYLE;
+        /// Color for NaN values (default transparent).
+        nan_color: Color = |_| Color::TRANSPARENT, STYLE;
     }
 }
 
 plot_common!(ScatterLines);
+super::color_mapped!(ScatterLines);
 live_points!(ScatterLines, ScatterLines, "ScatterLines");
+
+impl ScatterLinesResolved {
+    fn mapping(&self) -> MappingAttrs<'_> {
+        MappingAttrs {
+            colormap: &self.colormap,
+            colorrange: self.colorrange,
+            lowclip: self.lowclip,
+            highclip: self.highclip,
+            nan_color: self.nan_color,
+            alpha: self.alpha,
+        }
+    }
+}
 
 impl PlotImpl for ScatterLinesState {
     fn cycle_group(&self) -> &'static str {
@@ -105,13 +129,14 @@ impl PlotImpl for ScatterLinesState {
             miter_limit: r.miter_limit,
             alpha: r.alpha,
         };
-        let Some((pos, line_color)) = emit_line(ctx, &self.pts, &style, self.style_rev) else {
+        let map = r.mapping();
+        let Some((pos, line_color)) = emit_line_mapped(ctx, &self.pts, &style, self.style_rev, Some(&map)) else {
             return;
         };
         let alpha = r.alpha as f32;
         let color = match &r.markercolor {
             ColorSpec::Auto => line_color,
-            spec => prim_color(ctx, spec, alpha, self.pts.len(), 3, self.style_rev),
+            spec => prim_color_mapped(ctx, spec, alpha, self.pts.len(), 3, self.style_rev, Some(&map)),
         };
         ctx.push_data(Prim::Markers(MarkersPrim {
             pos,
@@ -123,6 +148,24 @@ impl PlotImpl for ScatterLinesState {
             stroke_width: r.strokewidth as f32,
             rotation: 0.0,
         }));
+    }
+
+    fn colormapping(&self, theme: &crate::theme::Theme, g: &crate::theme::Globals) -> Option<super::ResolvedColormap> {
+        let r = self.attrs.resolve(&theme.scatterlines, g);
+        // The line's values, else the markers' (both share the colormap attributes).
+        let values = match (&r.color, &r.markercolor) {
+            (ColorSpec::Values(v), _) | (_, ColorSpec::Values(v)) => v,
+            _ => return Some(super::ResolvedColormap::unmapped(r.colormap, r.alpha)),
+        };
+        let [lo, hi] = r.colorrange.unwrap_or_else(|| encoded_values(values).enc.auto_range());
+        Some(super::ResolvedColormap {
+            colormap: r.colormap,
+            colorrange: (lo, hi),
+            lowclip: r.lowclip,
+            highclip: r.highclip,
+            alpha: r.alpha,
+            mapped: true,
+        })
     }
 }
 
@@ -181,4 +224,63 @@ pub fn scatterlines(x: impl Data1D, y: impl Data1D) -> ScatterLines {
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]
 pub fn scatterlines_points(p: impl PointData) -> ScatterLines {
     crate::Figure::new().at(1, 1).scatterlines_points(p)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+    use crate::scene::drawlist::{ColorMapping, Prim, PrimColor};
+    use crate::scene::{SceneCache, build};
+
+    /// The `color = values` mappings of the line and of the markers.
+    fn mappings(fig: &Figure) -> (Option<ColorMapping>, Option<ColorMapping>) {
+        let (dl, _) = build(&fig.sh.snapshot(), None, &mut SceneCache::new());
+        let (mut line, mut markers) = (None, None);
+        for i in dl.items {
+            match i.prim {
+                Prim::Lines(l) => line = if let PrimColor::Values(_, m) = l.color { Some(m) } else { None },
+                Prim::Markers(m) => markers = if let PrimColor::Values(_, m) = m.color { Some(m) } else { None },
+                _ => {}
+            }
+        }
+        (line, markers)
+    }
+
+    #[test]
+    fn colormap_attributes() {
+        let fig = Figure::new();
+        let ax = Axis::new(fig.at(1, 1));
+        let s = ax.scatterlines([0.0, 1.0, 2.0], [0.0, 1.0, 0.0]).color(vec![0.0, 5.0, 10.0]);
+        let (l, m) = mappings(&fig);
+        let (l, m) = (l.expect("line colormapped"), m.expect("markers follow the line"));
+        assert_eq!(l.lut.first(), Colormap::VIRIDIS.lut().first());
+        assert_eq!(m.lut.first(), Colormap::VIRIDIS.lut().first());
+        s.colormap(Colormap::MAGMA).colorrange((0, 20)).lowclip(RED).highclip(BLUE).nan_color(GREEN);
+        let (l, _) = mappings(&fig);
+        let l = l.unwrap();
+        assert_eq!(l.lut.last(), Colormap::MAGMA.lut().last());
+        // 0 -> -1, 10 -> 1, so 20 -> 3.
+        assert!((l.range[0] + 1.0).abs() < 1e-6 && (l.range[1] - 3.0).abs() < 1e-6, "{:?}", l.range);
+        assert_eq!((l.lowclip, l.highclip, l.nan_color), (Some(RED), Some(BLUE), GREEN));
+        // Markers colored by their own values share the colormap attributes.
+        s.color(BLACK).markercolor(vec![1.0, 2.0, 3.0]);
+        let (l, m) = mappings(&fig);
+        assert!(l.is_none());
+        let m = m.expect("markers colormapped");
+        assert_eq!(m.lut.last(), Colormap::MAGMA.lut().last());
+        assert_eq!(m.highclip, Some(BLUE));
+    }
+
+    #[test]
+    fn colorbar_follows_scatterlines() {
+        let fig = Figure::new();
+        let s = fig.at(1, 1).scatterlines([0.0, 1.0, 2.0], [0.0, 1.0, 0.0]).color(vec![2.0, 4.0, 3.0]);
+        let cb = Colorbar::new(fig.at(1, 2), &s);
+        let m = cb.colormapping().unwrap();
+        assert!(m.mapped && m.colorrange == (2.0, 4.0) && m.colormap == Colormap::VIRIDIS);
+        s.colormap(Colormap::MAGMA).colorrange((0, 10)).highclip(RED);
+        let m = cb.colormapping().unwrap();
+        assert_eq!((m.colormap, m.colorrange, m.highclip), (Colormap::MAGMA, (0.0, 10.0), Some(RED)));
+        assert!(!s.color(BLACK).colormapping().unwrap().mapped);
+    }
 }
