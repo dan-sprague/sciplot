@@ -200,7 +200,10 @@ pub(crate) fn prim_color3(
             let mut h = std::collections::hash_map::DefaultHasher::new();
             (ctx.data_rev, style_rev, part).hash(&mut h);
             let data = cs.iter().map(|c| c.with_alpha(c.a * a).to_premul_u32()).collect();
-            PrimColor::PerElement(Buf { key: Some(BufKey { uid: ctx.uid, part, rev: h.finish() }), data: Arc::new(data) })
+            PrimColor::PerElement(Buf {
+                key: Some(BufKey { uid: ctx.uid, part, rev: h.finish() }),
+                data: Arc::new(data),
+            })
         }
         ColorSpec::Values(v) if v.len() == n => {
             let e = encoded_values(v);

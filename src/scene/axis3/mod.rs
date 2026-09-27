@@ -114,6 +114,16 @@ impl Axis3Frame {
         if !(q[3] > 0.0) {
             return None;
         }
+        self.project_up_any(p)
+    }
+
+    /// [`project_up`](Self::project_up) without the camera-side check: points behind the camera
+    /// come out mirrored, as in Makie's `project` (tick directions use such points).
+    pub fn project_up_any(&self, p: [f64; 3]) -> Option<[f64; 2]> {
+        let q = camera::apply(&self.pvm, p);
+        if q[3] == 0.0 || !q.iter().all(|v| v.is_finite()) {
+            return None;
+        }
         let (nx, ny) = (q[0] / q[3], q[1] / q[3]);
         let a = self.area;
         let y_up0 = self.fig_h - a.bottom();

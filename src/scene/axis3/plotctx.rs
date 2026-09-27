@@ -76,9 +76,8 @@ impl Plot3dCtx<'_> {
         let mut h = std::collections::hash_map::DefaultHasher::new();
         (pts.epoch, part, self.frame.rebase.epoch).hash(&mut h);
         let rb = self.frame.rebase;
-        let (data, rev) = self.cache.axis3.append.entry((self.uid, part)).or_default().update(h.finish(), pts, |p| {
-            rb.to_local(*p)
-        });
+        let (data, rev) =
+            self.cache.axis3.append.entry((self.uid, part)).or_default().update(h.finish(), pts, |p| rb.to_local(*p));
         Buf { key: Some(BufKey { uid: self.uid, part, rev }), data }
     }
 

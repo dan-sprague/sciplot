@@ -66,7 +66,8 @@ fn main() -> ezviz::Result<()> {
 
     for (i, (suffix, az, el, persp)) in VIEWS.into_iter().enumerate() {
         let fig = Figure::new();
-        let ax = Axis3!(fig.at(1, 1); title = "Lorenz attractor", azimuth = az, elevation = el, perspectiveness = persp);
+        let ax =
+            Axis3!(fig.at(1, 1); title = "Lorenz attractor", azimuth = az, elevation = el, perspectiveness = persp);
         ax.lines(&lx, &ly, &lz).color(&t).linewidth(1.0);
         fig.save(format!("out/axis3_lorenz_{suffix}.png"))?;
         if i == 0 {

@@ -221,9 +221,7 @@ pub fn calculate_matrices(p: &CameraParams) -> Matrices {
 
     let box_origin = origin;
     let corners: Vec<[f64; 3]> = (0..8)
-        .map(|k| {
-            std::array::from_fn(|i| if k >> (2 - i) & 1 == 1 { box_origin[i] + ws[i] } else { box_origin[i] })
-        })
+        .map(|k| std::array::from_fn(|i| if k >> (2 - i) & 1 == 1 { box_origin[i] + ws[i] } else { box_origin[i] }))
         .collect();
     let projection = projection_matrix(p, &mul(&view, &model), &corners, radius, fov, axis_radius);
     Matrices { model, view, projection, lookat: lookat_pt, eyepos }

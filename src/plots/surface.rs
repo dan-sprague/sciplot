@@ -106,15 +106,7 @@ impl SurfaceState {
         z.write_f32(&mut v, enc.off, enc.k);
         // Heights as f64 again (relative precision of f32 over the value range).
         let zs = v.iter().map(|v| *v as f64 / enc.k + enc.off).collect();
-        SurfaceState {
-            x: Arc::new(x),
-            y: Arc::new(y),
-            z: Arc::new(zs),
-            nx,
-            ny,
-            enc,
-            attrs: SurfaceAttrs::default(),
-        }
+        SurfaceState { x: Arc::new(x), y: Arc::new(y), z: Arc::new(zs), nx, ny, enc, attrs: SurfaceAttrs::default() }
     }
 
     fn point(&self, i: usize, j: usize) -> [f64; 3] {

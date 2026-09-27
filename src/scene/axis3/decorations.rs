@@ -206,7 +206,7 @@ pub(super) fn ticks(f: &Axis3Frame, d: usize) -> TickGeom {
         } else {
             dpoint(d, t, f1 + df1, f2)
         };
-        let (Some(pp1), Some(pp2)) = (f.project_up(p1), f.project_up(p2)) else { continue };
+        let (Some(pp1), Some(pp2)) = (f.project_up_any(p1), f.project_up_any(p2)) else { continue };
         let dir = normalize2([pp2[0] - pp1[0], pp2[1] - pp1[1]]);
         let end = [pp1[0] + at.ticksize * dir[0], pp1[1] + at.ticksize * dir[1]];
         segments.push([pp1, end]);
@@ -240,7 +240,8 @@ pub(super) fn label(f: &Axis3Frame, d: usize) -> LabelGeom {
     let minr2 = min2 ^ rev[b];
     let f1 = if !minr1 { lo(f, a) } else { hi(f, a) };
     let f2 = if minr2 { lo(f, b) } else { hi(f, b) };
-    let (Some(pp1), Some(pp2)) = (f.project_up(dpoint(d, lo(f, d), f1, f2)), f.project_up(dpoint(d, hi(f, d), f1, f2)))
+    let (Some(pp1), Some(pp2)) =
+        (f.project_up_any(dpoint(d, lo(f, d), f1, f2)), f.project_up_any(dpoint(d, hi(f, d), f1, f2)))
     else {
         return LabelGeom { pos: [f64::NAN; 2], rotation: 0.0, align: (0.5, 1.0) };
     };
@@ -385,12 +386,8 @@ pub(super) fn emit_front(em: &mut Emitter, f: &Axis3Frame) {
         }
         let t = ticks(f, d);
         if at.ticksvisible && !t.segments.is_empty() {
-            let pts = t
-                .segments
-                .iter()
-                .flat_map(|s| s.map(|p| f.down(p)))
-                .map(|p| [p[0] as f32, p[1] as f32])
-                .collect();
+            let pts =
+                t.segments.iter().flat_map(|s| s.map(|p| f.down(p))).map(|p| [p[0] as f32, p[1] as f32]).collect();
             em.push(z::TICKS, None, Space::Figure, segments_prim(pts, None, at.tickcolor, at.tickwidth));
         }
         if at.ticklabelsvisible {

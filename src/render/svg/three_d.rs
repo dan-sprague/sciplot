@@ -15,9 +15,7 @@
 use super::field::Mapper;
 use super::num::unpremul_u32;
 use crate::color::Color;
-use crate::scene::drawlist::{
-    Buf, Item, LinesPrim, MarkersPrim, MeshPrim, MeshVertex, Prim, PrimColor, View3d,
-};
+use crate::scene::drawlist::{Buf, Item, LinesPrim, MarkersPrim, MeshPrim, MeshVertex, Prim, PrimColor, View3d};
 use crate::style::{JoinStyle, LineCap, Marker};
 
 /// The depth group of a 3D primitive (`None` for 2D primitives).
@@ -158,7 +156,8 @@ pub(super) fn flatten(items: &[Item]) -> Vec<Prim> {
                     if !tri.iter().all(|q| in_box(v, q.pos)) {
                         continue;
                     }
-                    let (Some(a), Some(b), Some(c)) = (project(v, tri[0].pos), project(v, tri[1].pos), project(v, tri[2].pos))
+                    let (Some(a), Some(b), Some(c)) =
+                        (project(v, tri[0].pos), project(v, tri[1].pos), project(v, tri[2].pos))
                     else {
                         continue;
                     };
@@ -198,8 +197,12 @@ pub(super) fn flatten(items: &[Item]) -> Vec<Prim> {
                     let Some((q, z)) = project(v, *p) else { continue };
                     let size = m.sizes.as_ref().map_or(Some(m.size), |s| s.data.get(i).copied());
                     let Some(size) = size else { continue };
-                    let style =
-                        MarkStyle { marker: m.marker, size, stroke_color: m.stroke_color, stroke_width: m.stroke_width };
+                    let style = MarkStyle {
+                        marker: m.marker,
+                        size,
+                        stroke_color: m.stroke_color,
+                        stroke_width: m.stroke_width,
+                    };
                     els.push((z, El::Mark(q, cs.at(i), style)));
                 }
             }
