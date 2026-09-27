@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>ezviz: Gray–Scott</title>
+  <style>html, body { margin: 0; background: #fff; }</style>
+</head>
+<body>
+  <!-- fig.animate() appends its canvas (CSS size = figure size) to <body>. -->
+  <script type="module">
+    import init from './pkg/web_grayscott.js';
+    import { signalDone } from './harness.js';
+    await init(); // runs the example's main(): builds the figure and starts the animation
+    signalDone({ frames: 60 });
+  </script>
+</body>
+</html>
