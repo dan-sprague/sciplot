@@ -338,3 +338,10 @@ Revised order after wave 1 merges:
 - Linked axes share one set of limits: the union of their data, with the largest margin of the
   non-tight members (tight only if all members are tight). This matches what Makie shows.
 - Web toolchain is repo-local: `wasm-bindgen-cli` 0.2.129 installed into `.tools/` (gitignored).
+- **Axis3** is a port of Makie 0.24's `axis3d.jl` (camera `calculate_matrices`, viewmode `:fitzoom`
+  default, protrusions 30, decorations on the far panels / viewer-facing edges), checked against
+  `tests/fixtures/axis3.json`. 3D plots (`lines`, `scatter`, `surface` on an `Axis3`) are GPU
+  primitives in their own render passes with a multisampled depth buffer: surfaces write depth,
+  lines and markers only test against it (they are hidden behind surfaces but draw over each
+  other in plot order, as in CairoMakie). Surfaces use Makie's default FastShading. The SVG
+  backend (and the CPU PNG path) sorts triangles, segments and markers back to front instead.

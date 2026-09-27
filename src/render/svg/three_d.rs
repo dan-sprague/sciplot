@@ -31,6 +31,9 @@ pub(super) fn group(p: &Prim) -> Option<u64> {
 /// How far (units) triangle edges are pushed out to hide antialiasing seams.
 const SEAM: f64 = 0.35;
 
+/// A run of markers of one style: positions and premultiplied colors.
+type MarkRun = (MarkStyle, Vec<[f32; 2]>, Vec<u32>);
+
 #[derive(Clone, Copy, PartialEq)]
 struct MarkStyle {
     marker: Marker,
@@ -215,7 +218,7 @@ pub(super) fn flatten(items: &[Item]) -> Vec<Prim> {
     let mut out = Vec::new();
     let mut tris: Vec<MeshVertex> = Vec::new();
     let mut segs: Option<(Color, f32, Vec<[f32; 2]>)> = None;
-    let mut marks: Option<(MarkStyle, Vec<[f32; 2]>, Vec<u32>)> = None;
+    let mut marks: Option<MarkRun> = None;
     let f32p = |p: [f64; 2]| [p[0] as f32, p[1] as f32];
     fn flush_tris(out: &mut Vec<Prim>, tris: &mut Vec<MeshVertex>) {
         if !tris.is_empty() {
@@ -238,7 +241,7 @@ pub(super) fn flatten(items: &[Item]) -> Vec<Prim> {
             }));
         }
     }
-    fn flush_marks(out: &mut Vec<Prim>, marks: &mut Option<(MarkStyle, Vec<[f32; 2]>, Vec<u32>)>) {
+    fn flush_marks(out: &mut Vec<Prim>, marks: &mut Option<MarkRun>) {
         if let Some((s, pos, cols)) = marks.take() {
             let first = cols[0];
             let color = if cols.iter().all(|c| *c == first) {

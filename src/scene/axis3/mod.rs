@@ -82,7 +82,7 @@ impl Rebase3 {
         })
     }
 
-    pub fn to_local(&self, p: [f64; 3]) -> [f32; 3] {
+    pub fn to_local(self, p: [f64; 3]) -> [f32; 3] {
         std::array::from_fn(|i| ((p[i] - self.origin[i]) * self.k[i]) as f32)
     }
 }

@@ -89,7 +89,7 @@ fn dim(f: &Axis3Frame, d: usize) -> Dim {
 /// Makie's `mi1`, `mi2`, `mi3`: whether the far side of the box is the minimum along x, y, z.
 fn mis(f: &Axis3Frame) -> [bool; 3] {
     let az = mod1(f.attrs.azimuth, 2.0 * PI);
-    [!(PI / 2.0 <= az && az < 1.5 * PI), (0.0..PI).contains(&az), f.attrs.elevation > 0.0]
+    [!(PI / 2.0..1.5 * PI).contains(&az), (0.0..PI).contains(&az), f.attrs.elevation > 0.0]
 }
 
 /// `(miv, min1, min2)` of dimension `d` (Makie's argument order per dimension).
@@ -293,7 +293,7 @@ fn segments_prim(pts: Vec<[f32; 2]>, colors: Option<Vec<u32>>, color: Color, wid
 /// Projects data-space segment endpoints to figure units (y down); drops pairs behind the camera.
 fn project_pairs(f: &Axis3Frame, pts: &[[f64; 3]]) -> Vec<[f32; 2]> {
     let mut out = Vec::with_capacity(pts.len());
-    for pair in pts.chunks_exact(2) {
+    for pair in pts.as_chunks::<2>().0 {
         if let (Some(a), Some(b)) = (f.project_up(pair[0]), f.project_up(pair[1])) {
             let (a, b) = (f.down(a), f.down(b));
             out.extend([[a[0] as f32, a[1] as f32], [b[0] as f32, b[1] as f32]]);

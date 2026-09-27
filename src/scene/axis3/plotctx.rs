@@ -95,12 +95,15 @@ impl Plot3dCtx<'_> {
 /// Points per sealed chunk of [`Points3`].
 const CHUNK: usize = 4096;
 
+/// A sealed chunk of [`Points3`] with its finite bounds.
+type Chunk3 = (Arc<Vec<[f64; 3]>>, Option<[f64; 6]>);
+
 /// Append-only 3D point storage (the 3D sibling of `data::points::Points`): sealed chunks of
 /// [`CHUNK`] points with cached bounds plus a tail, so snapshots are cheap and `push` is O(1)
 /// amortized.
 #[derive(Clone, Debug)]
 pub(crate) struct Points3 {
-    chunks: Vec<(Arc<Vec<[f64; 3]>>, Option<[f64; 6]>)>,
+    chunks: Vec<Chunk3>,
     tail: Arc<Vec<[f64; 3]>>,
     len: usize,
     /// Changes on every edit that is not an append.
