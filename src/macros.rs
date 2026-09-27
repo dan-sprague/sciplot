@@ -136,6 +136,36 @@ macro_rules! heatmap {
     };
 }
 
+/// Makie's `contour!(ax, z)` / `contour!(ax, x, y, z)` with keywords after `;`:
+/// `contour!(ax, &xs, &ys, Field::new(&v, nx, ny); levels = [0.0], color = RED)`.
+#[macro_export]
+macro_rules! contour {
+    ($ax:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).contour($z) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $x:expr, $y:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).contour_xy($x, $y, $z) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $($rest:tt)*) => {
+        compile_error!("contour! takes (ax, z) or (ax, x, y, z), then `;` before keyword arguments: contour!(ax, z; levels = 8)")
+    };
+}
+
+/// Makie's `contourf!(ax, z)` / `contourf!(ax, x, y, z)` with keywords after `;`:
+/// `contourf!(ax, &xs, &ys, Field::new(&v, nx, ny); levels = 8, extendhigh = Extend::Auto)`.
+#[macro_export]
+macro_rules! contourf {
+    ($ax:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).contourf($z) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $x:expr, $y:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::__as_axis(&$ax).contourf_xy($x, $y, $z) $(; $($k = $v),*)?)
+    };
+    ($ax:expr, $($rest:tt)*) => {
+        compile_error!("contourf! takes (ax, z) or (ax, x, y, z), then `;` before keyword arguments: contourf!(ax, z; levels = 8)")
+    };
+}
+
 /// Makie's `lines!(ax, x, y; kw...)` or `lines!(ax, points_or_y; kw...)`: draws into `ax` (an
 /// `Axis` or `&Axis`).
 ///

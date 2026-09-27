@@ -9,6 +9,8 @@ use crate::color::{Color, WONG};
 use crate::plots::arrows::{ArrowsAttrs, ArrowsTheme};
 use crate::plots::band::{BandAttrs, BandTheme};
 use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
+use crate::plots::contour::{ContourAttrs, ContourTheme};
+use crate::plots::contourf::{ContourfAttrs, ContourfTheme};
 use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
 use crate::plots::hist::{HistAttrs, HistTheme};
 use crate::plots::lines::{LinesAttrs, LinesTheme};
@@ -86,6 +88,8 @@ pub struct Theme {
     pub(crate) reflines: RefLinesAttrs,
     pub(crate) arrows: ArrowsAttrs,
     pub(crate) streamplot: StreamPlotAttrs,
+    pub(crate) contour: ContourAttrs,
+    pub(crate) contourf: ContourfAttrs,
 }
 
 macro_rules! theme_setters {
@@ -206,6 +210,18 @@ impl Theme {
         self
     }
 
+    /// Contour defaults: `Theme::new().contour(|c| c.linewidth(2).labels(true))`.
+    pub fn contour(mut self, f: impl FnOnce(ContourTheme) -> ContourTheme) -> Self {
+        self.contour = f(ContourTheme(self.contour)).0;
+        self
+    }
+
+    /// Contourf defaults: `Theme::new().contourf(|c| c.colormap(Colormap::MAGMA))`.
+    pub fn contourf(mut self, f: impl FnOnce(ContourfTheme) -> ContourfTheme) -> Self {
+        self.contourf = f(ContourfTheme(self.contourf)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -240,6 +256,8 @@ impl Theme {
         out.reflines.merge_from(&self.reflines);
         out.arrows.merge_from(&self.arrows);
         out.streamplot.merge_from(&self.streamplot);
+        out.contour.merge_from(&self.contour);
+        out.contourf.merge_from(&self.contourf);
         out
     }
 
