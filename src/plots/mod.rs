@@ -180,8 +180,8 @@ impl ResolvedColormap {
     }
 }
 
-/// Plot handles whose colors can come from a colormap (heatmaps; scatter and lines colored by
-/// values). A [`Colorbar`](crate::Colorbar) created from one follows its colormap, colorrange,
+/// Plot handles whose colors can come from a colormap (heatmaps; scatter, lines and scatterlines
+/// colored by values). A [`Colorbar`](crate::Colorbar) created from one follows its colormap, colorrange,
 /// clip colors and alpha on every frame.
 pub trait ColorMapped {
     #[doc(hidden)]
@@ -196,12 +196,24 @@ pub trait ColorMapped {
     }
 }
 
-/// An opaque reference to a plot (see [`ColorMapped`]).
-#[doc(hidden)]
+/// A type-erased reference to any plot: `PlotRef::from(&lines)`. Every plot handle converts into
+/// one, by reference or by value (e.g. to build [`LegendEntry`](crate::LegendEntry)s by hand).
 #[derive(Clone)]
 pub struct PlotRef {
     pub(crate) sh: Arc<crate::figure::FigShared>,
     pub(crate) id: crate::figure::PlotId,
+}
+
+impl std::fmt::Debug for PlotRef {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "PlotRef#{}", self.id.index)
+    }
+}
+
+impl PartialEq for PlotRef {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.sh, &other.sh) && self.id == other.id
+    }
 }
 
 /// Implements [`ColorMapped`] for a plot handle.
@@ -209,7 +221,7 @@ macro_rules! color_mapped {
     ($Handle:ident) => {
         impl $crate::plots::ColorMapped for $Handle {
             fn plot_ref(&self) -> $crate::plots::PlotRef {
-                $crate::plots::PlotRef { sh: self.sh.clone(), id: self.id }
+                $crate::plots::PlotRef::from(self)
             }
         }
     };
@@ -396,6 +408,18 @@ macro_rules! plot_common {
                         st.plots[id.index as usize] = None;
                     }
                 });
+            }
+        }
+
+        impl From<&$Handle> for $crate::plots::PlotRef {
+            fn from(p: &$Handle) -> $crate::plots::PlotRef {
+                $crate::plots::PlotRef { sh: p.sh.clone(), id: p.id }
+            }
+        }
+
+        impl From<$Handle> for $crate::plots::PlotRef {
+            fn from(p: $Handle) -> $crate::plots::PlotRef {
+                $crate::plots::PlotRef { sh: p.sh, id: p.id }
             }
         }
 

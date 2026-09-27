@@ -3,19 +3,19 @@
 <defs>
 <clipPath id="c1"><rect x="66" y="36" width="418" height="305"/></clipPath>
 <circle id="m2" r="8.46"/>
-<path id="m3" d="M-7.577 7.577L7.577 7.577L7.577 -7.577L-7.577 -7.577Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m3" d="M-7.577 7.577L7.577 7.577L7.577 -7.577L-7.577 -7.577Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <path id="m4" d="M0 10.716L10.716 0L0 -10.716L-10.716 0Z"/>
-<path id="m5" d="M2.988 -9L2.988 -2.988L9 -2.988L9 2.988L2.988 2.988L2.988 9L-2.988 9L-2.988 2.988L-9 2.988L-9 -2.988L-2.988 -2.988L-2.988 -9Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m5" d="M2.988 -9L2.988 -2.988L9 -2.988L9 2.988L2.988 2.988L2.988 9L-2.988 9L-2.988 2.988L-9 2.988L-9 -2.988L-2.988 -2.988L-2.988 -9Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <path id="m6" d="M-4.251 -8.477L0 -4.226L4.251 -8.477L8.477 -4.251L4.226 0L8.477 4.251L4.251 8.477L0 4.226L-4.251 8.477L-8.477 4.251L-4.226 0L-8.477 -4.251Z"/>
-<path id="m7" d="M0 -11.64L-8.73 5.82L8.73 5.82Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m7" d="M0 -11.64L-8.73 5.82L8.73 5.82Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <path id="m8" d="M0 11.64L8.73 -5.82L-8.73 -5.82Z"/>
-<path id="m9" d="M-11.64 0L5.82 8.73L5.82 -8.73Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m9" d="M-11.64 0L5.82 8.73L5.82 -8.73Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <path id="m10" d="M11.64 0L-5.82 -8.73L-5.82 8.73Z"/>
-<path id="m11" d="M0 -9L8.56 -2.781L5.29 7.281L-5.29 7.281L-8.56 -2.781Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m11" d="M0 -9L8.56 -2.781L5.29 7.281L-5.29 7.281L-8.56 -2.781Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <path id="m12" d="M0 -9L7.794 -4.5L7.794 4.5L0 9L-7.794 4.5L-7.794 -4.5Z"/>
-<path id="m13" d="M0 -10.8L2.962 -4.077L10.271 -3.337L4.793 1.557L6.348 8.737L0 5.04L-6.348 8.737L-4.793 1.557L-10.271 -3.337L-2.962 -4.077Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m13" d="M0 -10.8L2.962 -4.077L10.271 -3.337L4.793 1.557L6.348 8.737L0 5.04L-6.348 8.737L-4.793 1.557L-10.271 -3.337L-2.962 -4.077Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <circle id="m14" r="12"/>
-<path id="m15" d="M-12 12L12 12L12 -12L-12 -12Z" stroke="#000000" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>
+<path id="m15" d="M-12 12L12 12L12 -12L-12 -12Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="2"/>
 <path id="g16" d="M0.507 -0.341C0.507 -0.108 0.425 0.015 0.275 0.015C0.123 0.015 0.043 -0.108 0.043 -0.347C0.043 -0.585 0.122 -0.709 0.275 -0.709C0.429 -0.709 0.507 -0.587 0.507 -0.341ZM0.417 -0.349C0.417 -0.539 0.37 -0.631 0.275 -0.631C0.18 -0.631 0.133 -0.54 0.133 -0.346C0.133 -0.152 0.18 -0.058 0.273 -0.058C0.371 -0.058 0.417 -0.148 0.417 -0.349Z"/>
 <path id="g17" d="M0.347 0L0.259 0L0.259 -0.505L0.102 -0.505L0.102 -0.568C0.238 -0.585 0.258 -0.6 0.289 -0.709L0.347 -0.709Z"/>
 <path id="g18" d="M0.511 -0.501C0.511 -0.414 0.46 -0.34 0.361 -0.287L0.261 -0.233C0.174 -0.182 0.142 -0.145 0.133 -0.087L0.506 -0.087L0.506 0L0.034 0C0.042 -0.156 0.085 -0.223 0.233 -0.307L0.325 -0.359C0.388 -0.395 0.421 -0.443 0.421 -0.499C0.421 -0.575 0.361 -0.632 0.281 -0.632C0.194 -0.632 0.145 -0.582 0.138 -0.463L0.05 -0.463C0.055 -0.635 0.139 -0.709 0.284 -0.709C0.418 -0.709 0.511 -0.621 0.511 -0.501Z"/>

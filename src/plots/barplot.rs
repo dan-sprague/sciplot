@@ -1,6 +1,6 @@
 //! `barplot`: bars from a baseline (`fillto`) to heights, with dodge/stack and categorical x.
 
-use super::bars::{Bar, BarLayout, bars_bounds, emit_bars, layout_bars};
+use super::bars::{Bar, BarLayout, bars_bounds, emit_bar_strokes, emit_bars, layout_bars, pick_bar};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common};
 use crate::attrs::attributes;
 use crate::color::Color;
@@ -43,8 +43,11 @@ attributes! {
         offset: f64 = |_| 0.0, LIMITS;
         /// `Direction::Y` (vertical bars, default) or `Direction::X` (horizontal).
         direction: Direction = |_| Direction::Y, LIMITS;
+        /// Width of each bar's outline in units, centered on its edges (Makie default 0).
         strokewidth: f64 = |_| 0.0, STYLE;
+        /// Outline color (Makie default black).
         strokecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        /// Opacity multiplier for fill and outline.
         alpha: f64 = |_| 1.0, STYLE;
     }
 }
@@ -171,6 +174,15 @@ impl PlotImpl for BarPlotState {
             },
         };
         emit_bars(ctx, 0, &bars, &colors, r.direction);
+        let sc = r.strokecolor;
+        emit_bar_strokes(ctx, &bars, sc.with_alpha(sc.a * alpha), r.strokewidth, r.direction);
+    }
+
+    fn pick(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
+        let r = self.attrs.resolve(&ctx.theme.barplot, ctx.g);
+        let a = &ctx.axis.attrs;
+        let bars = self.bars(&r, if r.direction == Direction::Y { a.yscale } else { a.xscale });
+        pick_bar(ctx, &bars, r.direction, |i| Some([*self.x.get(i)?, *self.h.get(i)?]))
     }
 }
 

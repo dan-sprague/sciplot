@@ -146,17 +146,119 @@ fn marker_sdf(shape: u32, q: vec2<f32>) -> f32 {
     }
 }
 
+// Number of outline vertices of a polygon marker (0 for the circles).
+fn marker_nverts(shape: u32) -> u32 {
+    switch shape {
+        case 0u, 12u: { return 0u; }
+        case 3u, 4u: { return 12u; }
+        case 5u, 6u, 7u, 8u: { return 3u; }
+        case 9u: { return 5u; }
+        case 10u: { return 6u; }
+        case 11u: { return 10u; }
+        default: { return 4u; }            // Rect, Diamond, FullRect
+    }
+}
+
+fn ngon_vertex(i: u32, n: u32, r: f32) -> vec2<f32> {
+    let a = 6.28318530718 * f32(i) / f32(n);
+    return vec2<f32>(sin(a), cos(a)) * r;
+}
+
+// Vertex `i` (mod the vertex count) of a polygon marker's outline in units of markersize, y up:
+// the shapes of `marker_sdf` (and of `render/svg/marker.rs`).
+fn marker_vertex(shape: u32, i: u32) -> vec2<f32> {
+    let k = i % marker_nverts(shape);
+    switch shape {
+        case 2u: { return ngon_vertex(k, 4u, 0.446496); }     // Diamond: the Rect turned 45 degrees
+        case 3u, 4u: {
+            // One arm per three vertices, turned clockwise by 90 degrees per arm.
+            let t = k % 3u;
+            var v = vec2<f32>(0.1245, 0.375);
+            if (t == 1u) { v = vec2<f32>(0.1245); } else if (t == 2u) { v = vec2<f32>(0.375, 0.1245); }
+            v = rot(v, 1.57079632679 * f32(k / 3u));
+            if (shape == 4u) { v = rot(v, -0.785398163); }
+            return v;
+        }
+        case 5u, 6u, 7u, 8u: {
+            var tri = array<vec2<f32>, 3>(
+                vec2<f32>(0.0, 0.485), vec2<f32>(-0.36375, -0.2425), vec2<f32>(0.36375, -0.2425));
+            // D/L/R triangles are the U triangle turned by 180, 90 (ccw) and 90 (cw) degrees.
+            var a = 0.0;
+            if (shape == 6u) { a = 3.14159265359; } else if (shape == 7u) { a = -1.57079632679; } else if (shape == 8u) { a = 1.57079632679; }
+            return rot(tri[k], a);
+        }
+        case 9u: { return ngon_vertex(k, 5u, 0.375); }
+        case 10u: { return ngon_vertex(k, 6u, 0.375); }
+        case 11u: { return ngon_vertex(k, 10u, select(0.45, 0.21, (k & 1u) == 1u)); }
+        default: {
+            // Rect and FullRect: corners counter-clockwise from the bottom left.
+            let h = select(0.5, 0.315718, shape == 1u);
+            return h * vec2<f32>(select(-1.0, 1.0, k == 1u || k == 2u), select(-1.0, 1.0, k >= 2u));
+        }
+    }
+}
+
+const AA: f32 = 0.70710678;   // px, half-width of the AA ramp
+
+// Coverage of the region `s <= 0` for a signed distance `s` in device px.
+fn ramp(s: f32) -> f32 {
+    return 1.0 - smoothstep(-AA, AA, s);
+}
+
+// Cairo's bevel: a joint turning by more than 120 degrees (miter length over line width above
+// CairoMakie's miter limit 2) is cut perpendicular to its bisector, through the ends of the two
+// offset edges. `q` is relative to the joint; `d_in`, `d_out` are the edge directions.
+fn bevel(q: vec2<f32>, d_in: vec2<f32>, d_out: vec2<f32>, h: f32) -> f32 {
+    let c = dot(d_in, d_out);
+    if (c >= -0.5) { return 1.0; }
+    return ramp(dot(q, normalize(d_in - d_out)) - h * sqrt(0.5 * (1.0 + c)));
+}
+
+// Coverage of CairoMakie's marker stroke: the outline stroked centered with half width `h` (px),
+// miter joins, miter limit 2. The stroke is tiled by one piece per edge (the band along the edge,
+// cut at both joints along their bisectors), so the pieces' coverages add up without seams or
+// double blending, as Cairo fills the whole stroke at once. `p` and `size` in device px.
+fn poly_stroke(shape: u32, p: vec2<f32>, size: f32, h: f32) -> f32 {
+    let n = marker_nverts(shape);
+    var prev = marker_vertex(shape, n - 1u) * size;
+    var a = marker_vertex(shape, 0u) * size;
+    var b = marker_vertex(shape, 1u) * size;
+    var cover = 0.0;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let next = marker_vertex(shape, i + 2u) * size;
+        let d0 = normalize(a - prev);
+        let d = normalize(b - a);
+        let d2 = normalize(next - b);
+        let t = dot(p - a, vec2<f32>(-d.y, d.x));
+        var c = ramp(t - h) - ramp(t + h);
+        c = c * ramp(-dot(p - a, normalize(d0 + d))) * ramp(dot(p - b, normalize(d + d2)));
+        c = c * bevel(p - a, d0, d, h) * bevel(p - b, d, d2, h);
+        cover = cover + c;
+        prev = a;
+        a = b;
+        b = next;
+    }
+    return min(cover, 1.0);
+}
+
 @fragment
 fn fs_marker(in: MarkerV) -> @location(0) vec4<f32> {
     // The shape turns counter-clockwise by `rotation` (Makie, CairoMakie, the SVG backend): look
     // up the unrotated SDF at the point turned back clockwise.
     let q = rot(in.q, m.rotation);
     let d = marker_sdf(m.shape, q / in.size) * in.size;   // device px
-    let aa = 0.70710678;
-    let sw = m.stroke * g.ppu;
-    let cover = 1.0 - smoothstep(sw - aa, sw + aa, d);    // fill plus outer stroke
-    let k = select(0.0, smoothstep(-aa, aa, d), sw > 0.0); // fill -> stroke transition
-    let out = mix(in.fill, m.stroke_color, k) * cover;
+    var out = in.fill * ramp(d);
+    // CairoMakie: fill, then the stroke centered on the outline, painted over it.
+    let h = 0.5 * m.stroke * g.ppu;
+    if (h > 0.0) {
+        var cs: f32;
+        if (marker_nverts(m.shape) == 0u) {
+            cs = ramp(d - h) - ramp(d + h);
+        } else {
+            cs = poly_stroke(m.shape, q, in.size, h);
+        }
+        out = m.stroke_color * cs + out * (1.0 - m.stroke_color.a * cs);
+    }
     if (out.a <= 0.0) { discard; }
     return out;
 }

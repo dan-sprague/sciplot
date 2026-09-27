@@ -91,44 +91,9 @@ impl Pos {
     }
 }
 
-/// A type-erased reference to any plot, for building legend entries by hand:
-/// `PlotRef::from(&lines)`.
-#[derive(Clone)]
-pub struct PlotRef {
-    pub(crate) sh: Arc<FigShared>,
-    pub(crate) id: PlotId,
-}
-
-impl std::fmt::Debug for PlotRef {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "PlotRef#{}", self.id.index)
-    }
-}
-
-macro_rules! plot_ref_from {
-    ($($T:ty),*) => {$(
-        impl From<&$T> for PlotRef {
-            fn from(p: &$T) -> PlotRef {
-                PlotRef { sh: p.sh.clone(), id: p.id }
-            }
-        }
-        impl From<$T> for PlotRef {
-            fn from(p: $T) -> PlotRef {
-                PlotRef { sh: p.sh, id: p.id }
-            }
-        }
-    )*};
-}
-plot_ref_from!(
-    crate::Scatter,
-    crate::Lines,
-    crate::ScatterLines,
-    crate::BarPlot,
-    crate::Hist,
-    crate::Band,
-    crate::Heatmap,
-    crate::TextPlot
-);
+/// Legend entries name plots through the crate-wide [`PlotRef`] (re-exported here for the
+/// `blocks` API path).
+pub use crate::plots::PlotRef;
 
 /// One legend entry: a label with the plots (their elements are layered in one patch) and/or
 /// explicit [`LegendElement`]s.
@@ -1027,5 +992,21 @@ mod tests {
         axislegend(&ax);
         assert!(frames(&fig).is_empty());
         assert!(build(&fig).items.iter().any(|it| it.z == z::TEXT));
+    }
+
+    #[test]
+    fn plot_ref_is_shared_with_colorbars() {
+        // One `PlotRef` type for legend entries and colormapped plots; every plot handle converts.
+        let fig = Figure::new();
+        let ax = Axis::new(fig.at(1, 1));
+        let h = ax.hlines([0.5]);
+        let sl = ax.scatterlines([1.0, 2.0], [1.0, 2.0]);
+        let refs = [PlotRef::from(&h), PlotRef::from(h.clone()), PlotRef::from(&sl)];
+        assert_eq!(refs[0], refs[1]);
+        assert_ne!(refs[0], refs[2]);
+        assert_eq!(crate::plots::ColorMapped::plot_ref(&sl), refs[2]);
+        let leg = Legend::from_entries(fig.at(1, 2), [LegendEntry::new("h", &h), LegendEntry::merged("both", refs)]);
+        // Reference lines have no legend element yet; scatterlines has a line and a marker.
+        assert_eq!(legend_entries(&leg).iter().map(|e| e.elements.len()).collect::<Vec<_>>(), [0, 2]);
     }
 }

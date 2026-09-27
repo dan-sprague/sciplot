@@ -1,6 +1,6 @@
 //! `hist`: histogram (Makie's recipe on StatsBase semantics: equal-width bins, closed on the left).
 
-use super::bars::{Bar, BarLayout, bars_bounds, emit_bars, layout_bars};
+use super::bars::{Bar, BarLayout, bars_bounds, emit_bar_strokes, emit_bars, layout_bars, pick_bar};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common};
 use crate::attrs::{Conv, attributes};
 use crate::color::Color;
@@ -72,8 +72,11 @@ attributes! {
         offset: f64 = |_| 0.0, LIMITS;
         fillto: Option<f64> = |_| None, LIMITS;
         direction: Direction = |_| Direction::Y, LIMITS;
+        /// Width of each bar's outline in units, centered on its edges (Makie default 0).
         strokewidth: f64 = |_| 0.0, STYLE;
+        /// Outline color (Makie default black).
         strokecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        /// Opacity multiplier for fill and outline.
         alpha: f64 = |_| 1.0, STYLE;
     }
 }
@@ -137,13 +140,22 @@ pub(crate) fn normalize(w: &mut [f64], edges: &[f64], norm: Normalization, scale
 }
 
 impl HistState {
-    fn bars(&self, r: &HistResolved, value_scale: Scale) -> Vec<Bar> {
+    /// The bin edges and the (normalized) bar heights; both empty without bins.
+    fn bins(&self, r: &HistResolved) -> (Vec<f64>, Vec<f64>) {
         let edges = hist_edges(&self.values, &r.bins);
         if edges.len() < 2 {
-            return vec![];
+            return (vec![], vec![]);
         }
         let mut w = hist_counts(&self.values, self.weights.as_deref().map(|v| v.as_slice()), &edges);
         normalize(&mut w, &edges, r.normalization, r.scale_to);
+        (edges, w)
+    }
+
+    fn bars(&self, r: &HistResolved, value_scale: Scale) -> Vec<Bar> {
+        let (edges, w) = self.bins(r);
+        if edges.len() < 2 {
+            return vec![];
+        }
         let centers: Vec<f64> = edges.windows(2).map(|e| 0.5 * (e[0] + e[1])).collect();
         let fillto = r.fillto.unwrap_or_else(|| {
             if value_scale.is_log() {
@@ -206,6 +218,17 @@ impl PlotImpl for HistState {
             },
         };
         emit_bars(ctx, 0, &bars, &colors, r.direction);
+        let sc = r.strokecolor;
+        emit_bar_strokes(ctx, &bars, sc.with_alpha(sc.a * alpha), r.strokewidth, r.direction);
+    }
+
+    /// Makie's hist is a barplot of (bin center, height): the same inspection.
+    fn pick(&self, ctx: &mut super::pick::PickCtx<'_>) -> Option<super::pick::Hover> {
+        let r = self.attrs.resolve(&ctx.theme.hist, ctx.g);
+        let a = &ctx.axis.attrs;
+        let bars = self.bars(&r, if r.direction == Direction::Y { a.yscale } else { a.xscale });
+        let (edges, w) = self.bins(&r);
+        pick_bar(ctx, &bars, r.direction, |i| Some([0.5 * (edges.get(i)? + edges.get(i + 1)?), *w.get(i)?]))
     }
 }
 
@@ -257,14 +280,7 @@ impl Hist {
     pub fn heights(&self) -> Vec<f64> {
         match self.sh.state.lock().plot(self.id).map(|p| &p.kind) {
             Some(PlotKind::Hist(s)) => {
-                let r = s.attrs.resolve(&Default::default(), &crate::theme::Globals::default());
-                let e = hist_edges(&s.values, &r.bins);
-                if e.len() < 2 {
-                    return vec![];
-                }
-                let mut w = hist_counts(&s.values, s.weights.as_deref().map(|v| v.as_slice()), &e);
-                normalize(&mut w, &e, r.normalization, r.scale_to);
-                w
+                s.bins(&s.attrs.resolve(&Default::default(), &crate::theme::Globals::default())).1
             }
             _ => vec![],
         }

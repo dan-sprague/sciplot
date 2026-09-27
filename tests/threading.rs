@@ -1,6 +1,7 @@
 use ezviz::prelude::*;
 
 /// The test harness runs tests off the main thread, which is exactly the case we must reject.
+#[cfg(feature = "window")]
 #[test]
 fn show_off_main_thread_is_an_error() {
     let fig = Figure::new();
