@@ -6,7 +6,7 @@
 //! at once; `web.rs` binds canvases and creates the GPU context asynchronously (the window
 //! draws nothing until [`App::gpu_ready`] delivers it).
 
-use super::animate::{Anim, Frame};
+use super::animate::{Anim, AnimFn};
 use super::input::{Touches, translate};
 use super::interact::{self, AxisView, Effect, Input, InteractState};
 use super::live::LiveShared;
@@ -34,7 +34,7 @@ pub(crate) struct OpenReq<'f> {
     /// Web: id of the `<canvas>` to draw into (`None`: append a new canvas to `<body>`).
     pub canvas: Option<String>,
     /// Per-frame callback ([`Figure::animate`]).
-    pub anim: Option<Box<dyn FnMut(&mut Frame) + 'f>>,
+    pub anim: Option<AnimFn<'f>>,
 }
 
 impl<'f> OpenReq<'f> {
@@ -126,8 +126,11 @@ pub(crate) struct Freeze {
     /// App time (seconds) at which the attributes are restored.
     until: f64,
     /// Frozen axes with their `xticklabelspace` and `yticklabelspace` attributes before the burst.
-    saved: Vec<(BlockId, Option<Option<f64>>, Option<Option<f64>>)>,
+    saved: Vec<(BlockId, LabelSpace, LabelSpace)>,
 }
+
+/// A `x/yticklabelspace` attribute as stored (unset, automatic or fixed).
+type LabelSpace = Option<Option<f64>>;
 
 /// How long the tick-label space stays frozen after the last zoom or pan event (Makie: 0.2 s).
 pub(crate) const FREEZE_SECS: f64 = 0.2;
@@ -709,18 +712,17 @@ fn dump_request() -> Option<(std::path::PathBuf, u64)> {
 
 impl ApplicationHandler<UserEvent> for App<'_> {
     fn new_events(&mut self, el: &ActiveEventLoop, _cause: StartCause) {
-        if let Some(t) = self.autoclose {
-            if Instant::now() >= t {
-                let ids: Vec<WindowId> = self.anims.keys().copied().collect();
-                for id in ids {
-                    self.write_anim_dump(id);
-                }
-                self.wins.clear();
-                if self.exit_when_empty {
-                    el.exit();
-                }
-                return;
+        // `EZVIZ_AUTOCLOSE`: `about_to_wait` wakes the loop at the deadline.
+        if self.autoclose.is_some_and(|t| Instant::now() >= t) {
+            let ids: Vec<WindowId> = self.anims.keys().copied().collect();
+            for id in ids {
+                self.write_anim_dump(id);
             }
+            self.wins.clear();
+            if self.exit_when_empty {
+                el.exit();
+            }
+            return;
         }
         if !self.to_open.is_empty() {
             self.open_pending(el);

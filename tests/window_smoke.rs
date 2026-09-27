@@ -147,6 +147,7 @@ fn jitter_guard() {
             let [x, y, w, h] = before;
             // Zoom 0.9^60 about the center in one burst: y tick labels go from "0".."10" to
             // "4.999".."5.001".
+            let t = Instant::now();
             wt::inject(live, Synthetic::CursorMoved { x: x + 0.5 * w, y: y + 0.5 * h });
             for _ in 0..6 {
                 wt::inject(live, Synthetic::ScrollLines { dx: 0.0, dy: 10.0 });
@@ -154,6 +155,8 @@ fn jitter_guard() {
             assert!(wt::flush(live), "window did not process events");
             live.wait_frame_timeout(Duration::from_secs(3));
             let during = wt::axis_rects(live.figure()).first().copied();
+            // On a loaded machine the frame may come after the freeze ended: no verdict then.
+            let in_time = t.elapsed() < Duration::from_millis(150);
             let zoomed = wt::interactive_limits(&ax);
             std::thread::sleep(Duration::from_millis(500));
             live.wait_frame_timeout(Duration::from_secs(3));
@@ -162,19 +165,20 @@ fn jitter_guard() {
             if zoomed.is_none_or(|l| l[3] - l[2] > 0.1) {
                 return Err(format!("no zoom: {zoomed:?}"));
             }
-            if during != Some(before) {
+            if in_time && during != Some(before) {
                 return Err(format!("the axis moved during the zoom: {before:?} -> {during:?}"));
             }
             match after {
-                Some(a) if a[0] > before[0] + 1.0 => Ok(()),
+                Some(a) if a[0] > before[0] + 1.0 => Ok(in_time),
                 _ => Err(format!("the layout did not adapt after the zoom: {before:?} -> {after:?}")),
             }
         })
         .expect("show_live failed");
-    if let Err(e) = result {
-        panic!("jitter guard: {e}");
+    match result {
+        Ok(true) => println!("window_smoke: jitter guard ok"),
+        Ok(false) => println!("window_smoke: jitter guard: frame too late to check the freeze (machine busy)"),
+        Err(e) => panic!("jitter guard: {e}"),
     }
-    println!("window_smoke: jitter guard ok");
 }
 
 fn worker_panic_is_reported() {

@@ -13,7 +13,7 @@
 //! it.
 
 use super::UserEvent;
-use super::animate::Frame;
+use super::animate::{AnimFn, Frame};
 use super::app::{App, Gfx, OpenReq};
 use crate::error::{Error, Result};
 use crate::figure::Figure;
@@ -28,7 +28,7 @@ use winit::window::{Window, WindowId};
 /// A message for the app, which the browser owns once spawned.
 enum Msg {
     Open(OpenReq<'static>),
-    GpuReady(WindowId, Result<Gfx>),
+    GpuReady(WindowId, Box<Result<Gfx>>),
 }
 
 thread_local! {
@@ -60,7 +60,7 @@ pub(super) fn drain_inbox(app: &mut App<'_>) {
     for m in msgs {
         match m {
             Msg::Open(req) => app.to_open.push(req),
-            Msg::GpuReady(id, gfx) => app.gpu_ready(id, gfx),
+            Msg::GpuReady(id, gfx) => app.gpu_ready(id, *gfx),
         }
     }
 }
@@ -146,7 +146,7 @@ pub(super) fn init_gpu(window: Arc<Window>) {
             Ok((gpu, surface)) => Gfx::new(gpu, surface),
             Err(e) => Err(e),
         };
-        if let Err(e) = post(Msg::GpuReady(id, gfx)) {
+        if let Err(e) = post(Msg::GpuReady(id, Box::new(gfx))) {
             log::error!("ezviz: {e}");
         }
     });
@@ -185,7 +185,7 @@ pub(super) fn remove_canvas(window: &Window) {
     }
 }
 
-fn mount(fig: &Figure, canvas: Option<&str>, anim: Option<Box<dyn FnMut(&mut Frame)>>) -> Result<()> {
+fn mount(fig: &Figure, canvas: Option<&str>, anim: Option<AnimFn<'static>>) -> Result<()> {
     if let Some(id) = canvas {
         find_canvas(id)?;
     }

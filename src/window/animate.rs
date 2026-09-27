@@ -104,9 +104,12 @@ impl Ticker {
     }
 }
 
+/// A per-frame callback ([`Figure::animate`](crate::Figure::animate)).
+pub(crate) type AnimFn<'f> = Box<dyn FnMut(&mut Frame) + 'f>;
+
 /// The animation of one window.
 pub(crate) struct Anim<'f> {
-    f: Box<dyn FnMut(&mut Frame) + 'f>,
+    f: AnimFn<'f>,
     ticker: Ticker,
     /// `EZVIZ_WINDOW_DUMP` without `EZVIZ_WINDOW_DUMP_FRAME`: written from the last frame when the
     /// window closes (the first frame of an animation is rarely the interesting one).
@@ -114,7 +117,7 @@ pub(crate) struct Anim<'f> {
 }
 
 impl<'f> Anim<'f> {
-    pub fn new(f: Box<dyn FnMut(&mut Frame) + 'f>, dump_last: Option<PathBuf>) -> Anim<'f> {
+    pub fn new(f: AnimFn<'f>, dump_last: Option<PathBuf>) -> Anim<'f> {
         Anim { f, ticker: Ticker::default(), dump_last }
     }
 }
