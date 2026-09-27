@@ -58,5 +58,13 @@ sed 's|out/web/|out/web/gl/|' tools/web/input_actions.json > "$OUT/gl/actions.js
 webgl "$URL/web_static.html" "$OUT/gl/input_final.png" --dpr=0 --width=720 --height=720 --extra-ms=300 \
   --actions="$OUT/gl/actions.json" | tee -a "$OUT/console.log" | grep -v '^\[cdp\] action'
 
+echo "== a 2x3 px left drag is a click, not a zoom (expect no difference)"
+node tools/web/pngdiff.mjs "$OUT/input_6_rect_zoom.png" "$OUT/input_6b_tiny_drag_is_a_click.png"
+echo "== every interaction step: WebGPU vs WebGL2"
+for f in "$OUT"/input_[0-9]*.png; do
+  printf '%-40s ' "$(basename "$f")"
+  node tools/web/pngdiff.mjs "$f" "$OUT/gl/$(basename "$f")"
+done
+
 echo "== console errors"
 grep -E '^\[(exception|console\.error|log\.error)\]|timeout' "$OUT/console.log" || echo "(none)"
