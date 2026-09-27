@@ -98,3 +98,10 @@ renders on a device with WebGL2 limits and translates every shader to GLSL ES 3.
 - Windows: `EZVIZ_AUTOCLOSE=<secs>` closes windows automatically; `EZVIZ_WINDOW_DUMP=out/x.png` writes
   the first presented window frame. **Never take desktop screenshots.**
 - `ezviz::testing::Offscreen` renders headless frames with upload stats (`RenderStats`).
+- Browser (`src/window/web.rs`; the app core `src/window/app.rs` is shared with native windows):
+  `tools/web/build.sh <example>...` builds wasm examples into `examples/web/pkg/` (wasm-bindgen CLI
+  0.2.129 in `.tools/`); `tools/web/check.sh [--no-build]` serves `examples/web/`, captures every
+  page in headless Chrome on WebGPU and WebGL2 (`tools/web/cdp_shot.mjs`), pixel-diffs the static
+  page against the native PNG (`tools/web/pngdiff.mjs`) and replays scripted input
+  (`tools/web/input_actions.json`). Pages set `document.title = "done:<backend>"` when rendered
+  (`examples/web/harness.js`).
