@@ -8,8 +8,8 @@
 //! |---|---|
 //! | scroll zoom about the cursor | wheel: `0.9^Δ`; hold `x` / `y` to zoom one dimension |
 //! | pan | right drag (or Option/Alt + left drag); hold `x` / `y` to pan one dimension |
-//! | rectangle zoom | left drag (starts after 2 px); hold `x` / `y` to restrict it |
-//! | reset limits | Ctrl + click, or double-click |
+//! | rectangle zoom | left drag (starts after 2 px; under 4 px in a zoomed dimension it is a click); hold `x` / `y` to restrict it |
+//! | reset limits | Ctrl + click, or double-click (0.4 s, within 4 px) |
 //! | full autolimits | Ctrl + Shift + click |
 //! | pinch zoom (trackpads) | magnify gesture about the cursor |
 //!
@@ -21,7 +21,12 @@ use crate::transform::Scale;
 /// Movement (units) before a press becomes a drag (Makie's `drag_threshold`).
 pub const DRAG_THRESHOLD: f64 = 2.0;
 /// Maximum interval between the clicks of a double-click, in seconds.
-pub const DOUBLE_CLICK: f64 = 0.2;
+pub const DOUBLE_CLICK: f64 = 0.4;
+/// Maximum distance (units) between the clicks of a double-click.
+pub const DOUBLE_CLICK_SLOP: f64 = 4.0;
+/// Rectangle zooms narrower than this (units) in a zoomed dimension are clicks: a shaky click
+/// must not zoom into a sliver.
+pub const MIN_RECT_ZOOM: f64 = 4.0;
 /// Makie's `ScrollZoom` speed: each wheel step scales the visible width by `1 - SCROLL_SPEED`.
 pub const SCROLL_SPEED: f64 = 0.1;
 
@@ -219,7 +224,8 @@ pub struct InteractState {
     press: Option<Press>,
     /// Rectangle zoom: the current clamped data point.
     to: [f64; 2],
-    last_click: Option<f64>,
+    /// Time and position of the last plain click (double-click detection).
+    last_click: Option<(f64, [f64; 2])>,
 }
 
 impl InteractState {
@@ -248,6 +254,28 @@ impl InteractState {
             (y0, y1) = (l[2], l[3]);
         }
         [x0.clamp(l[0], l[1]), x1.clamp(l[0], l[1]), y0.clamp(l[2], l[3]), y1.clamp(l[2], l[3])]
+    }
+
+    /// Whether the selection `l` of axis `v` is under [`MIN_RECT_ZOOM`] units wide or tall in a
+    /// dimension it zooms (holding `x` zooms only x, holding `y` only y).
+    fn rect_too_small(&self, v: &AxisView, l: [f64; 4]) -> bool {
+        let (Some(a), Some(b)) = (v.to_units(l[0], l[2]), v.to_units(l[1], l[3])) else { return true };
+        let (w, h) = ((b[0] - a[0]).abs(), (b[1] - a[1]).abs());
+        (!self.y_held && w < MIN_RECT_ZOOM) || (!self.x_held && h < MIN_RECT_ZOOM)
+    }
+
+    /// A left click at `at` on `axis` (Makie's `LimitReset` on Ctrl + click; a double-click also
+    /// resets, which suits macOS where Ctrl + click is a right click).
+    fn click(&mut self, axis: usize, at: [f64; 2], time: f64, fx: &mut Vec<Effect>) {
+        if self.mods.ctrl {
+            fx.push(if self.mods.shift { Effect::AutoLimits { axis } } else { Effect::ResetLimits { axis } });
+            self.last_click = None;
+        } else if self.last_click.is_some_and(|(t, p)| time - t <= DOUBLE_CLICK && dist(at, p) <= DOUBLE_CLICK_SLOP) {
+            fx.push(Effect::ResetLimits { axis });
+            self.last_click = None;
+        } else {
+            self.last_click = Some((time, at));
+        }
     }
 }
 
@@ -304,26 +332,20 @@ pub fn handle(st: &mut InteractState, input: Input, views: &[AxisView]) -> Vec<E
         }
         Input::Button { button, pressed: false, time } => {
             let Some(press) = st.press.filter(|p| p.button == button) else { return fx };
-            if press.dragging {
-                if press.action == Action::RectZoom {
-                    if let Some((a, l)) = st.selection(views)
-                        && views[a].valid(l)
-                    {
-                        set_limits(views, a, l, &mut fx);
-                    }
-                    fx.push(Effect::Overlay);
+            let mut click = !press.dragging;
+            if press.dragging && press.action == Action::RectZoom {
+                match st.selection(views) {
+                    Some((a, l)) if st.rect_too_small(&views[a], l) => click = true,
+                    Some((a, l)) if views[a].valid(l) => set_limits(views, a, l, &mut fx),
+                    _ => {}
                 }
-            } else if let (Button::Left, Some(axis)) = (button, press.axis) {
-                // A click (Makie's LimitReset; double-click reset is a macOS-friendly extra).
-                if st.mods.ctrl {
-                    fx.push(if st.mods.shift { Effect::AutoLimits { axis } } else { Effect::ResetLimits { axis } });
-                    st.last_click = None;
-                } else if st.last_click.is_some_and(|t| time - t <= DOUBLE_CLICK) {
-                    fx.push(Effect::ResetLimits { axis });
-                    st.last_click = None;
-                } else {
-                    st.last_click = Some(time);
-                }
+                fx.push(Effect::Overlay);
+            }
+            if click
+                && button == Button::Left
+                && let Some(axis) = press.axis
+            {
+                st.click(axis, press.at, time, &mut fx);
             }
             st.press = None;
         }

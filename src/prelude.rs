@@ -20,7 +20,7 @@ pub use crate::{Contour, Contourf, ContourfMode, Extend, Levels, contour, contou
 pub use crate::{HLines, RefLines, VLines, ablines, hlines, vlines};
 pub use crate::{Legend, LegendElement, LegendEntry, Orientation, PlotRef, Pos, axislegend};
 pub use crate::{Lines, PointData, ScatterLines, lines, lines_points, scatterlines, scatterlines_points};
-#[cfg(feature = "window")]
+#[cfg(all(feature = "window", not(target_arch = "wasm32")))]
 pub use crate::{Live, Screen};
 pub use crate::{MinorSpec, TickFormat, TickSpec, Wilkinson};
 pub use crate::{colored, rich, tex};

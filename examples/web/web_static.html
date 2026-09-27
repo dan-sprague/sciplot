@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>ezviz: static figure</title>
+  <style>html, body { margin: 0; background: #fff; overflow: hidden; } #ezviz { display: block; }
+    /* The second figure (fig.show() appends its canvas): right of the captured 720 px. */
+    canvas:not(#ezviz) { position: absolute; left: 760px; top: 0; }</style>
+</head>
+<body>
+  <!-- No CSS size on purpose: fig.show_in("ezviz") gives the canvas the figure's size. -->
+  <canvas id="ezviz"></canvas>
+  <!-- The example appends <img id="png"> with Figure::to_png_bytes_async's output below. -->
+  <script type="module">
+    import init from './pkg/web_static.js';
+    import { signalDone } from './harness.js';
+    await init();
+    signalDone({ frames: 10, waitFor: 'png', canvases: 2 });
+  </script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 //! `fig.show_live(|live| ...)`: a simulation on a scoped worker thread, the window on the main
 //! thread.
 
-use super::{App, UserEvent, with_event_loop};
+use super::UserEvent;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::error::{Error, Result};
 use crate::figure::Figure;
 use parking_lot::{Condvar, Mutex};
@@ -10,7 +11,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use web_time::Instant;
 use winit::event_loop::EventLoopProxy;
-use winit::platform::run_on_demand::EventLoopExtRunOnDemand;
 
 /// State shared by the worker (`Live`) and the event loop.
 pub(crate) struct LiveShared {
@@ -137,7 +137,7 @@ impl Live {
             match deadline {
                 None => self.sh.cv.wait(&mut r),
                 Some(d) => {
-                    if self.sh.cv.wait_until(&mut r, d).timed_out() {
+                    if self.sh.cv.wait_for(&mut r, d.saturating_duration_since(Instant::now())).timed_out() {
                         return *r >= target;
                     }
                 }
@@ -163,6 +163,8 @@ fn panic_text(p: &(dyn std::any::Any + Send)) -> String {
         .unwrap_or_else(|| "(non-string panic payload)".into())
 }
 
+/// Native only: the browser has no threads to run the simulation on (use `Figure::animate`).
+#[cfg(not(target_arch = "wasm32"))]
 impl Figure {
     /// Shows the figure in a window while `sim` runs on a worker thread; returns `sim`'s result
     /// once the window is closed.
@@ -202,7 +204,7 @@ impl Figure {
         R: Send,
     {
         let gpu = crate::render::gpu::gpu()?;
-        with_event_loop(|el| {
+        super::native::with_event_loop(|el| {
             let sh = Arc::new(LiveShared {
                 session: crate::figure::next_uid(),
                 fig_uid: self.sh.uid,
@@ -214,8 +216,8 @@ impl Figure {
                 panic: Mutex::new(None),
             });
             let live = Live { sh: sh.clone(), fig: self.clone() };
-            let mut app = App::new(gpu, el.create_proxy(), true, Some(sh.clone()));
-            app.to_open.push((self.clone(), 0));
+            let mut app = super::app::App::new(Some(gpu), el.create_proxy(), true, Some(sh.clone()));
+            app.to_open.push(super::app::OpenReq::new(self, 0));
             std::thread::scope(|s| {
                 let worker = std::thread::Builder::new()
                     .name("ezviz-sim".into())
@@ -232,6 +234,7 @@ impl Figure {
                     .map_err(Error::Io)?;
                 let run = {
                     let _guard = OpenGuard(&sh);
+                    use winit::platform::run_on_demand::EventLoopExtRunOnDemand;
                     let r = el.run_app_on_demand(&mut app).map_err(|e| Error::EventLoop(e.to_string()));
                     app.wins.clear();
                     r

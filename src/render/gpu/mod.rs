@@ -84,6 +84,11 @@ impl Gpu {
         self.layouts.clone()
     }
 
+    /// The backend the device runs on (`BrowserWebGpu` or `Gl` in the browser).
+    pub(crate) fn backend(&self) -> wgpu::Backend {
+        self.adapter.get_info().backend
+    }
+
     pub(crate) fn max_texture_size(&self) -> u32 {
         self.device.limits().max_texture_dimension_2d
     }
@@ -94,10 +99,28 @@ impl Gpu {
     }
 }
 
+/// The format a window surface is configured with: [`TARGET_FORMAT`] when the surface offers it,
+/// else the first non-sRGB 8-bit format it lists. WebGL2 canvases list `Rgba8UnormSrgb` first and
+/// have no BGRA, so never take `formats[0]`.
+pub(crate) fn surface_format(formats: &[wgpu::TextureFormat]) -> Option<wgpu::TextureFormat> {
+    use wgpu::TextureFormat::{Bgra8Unorm, Rgba8Unorm};
+    if formats.contains(&TARGET_FORMAT) {
+        return Some(TARGET_FORMAT);
+    }
+    formats.iter().copied().find(|f| matches!(f, Rgba8Unorm | Bgra8Unorm))
+}
+
 /// A wgpu instance for every backend this build supports. On the web it checks for WebGPU and
 /// falls back to WebGL2 when the browser has none.
 pub(crate) async fn new_instance() -> wgpu::Instance {
-    let desc = wgpu::InstanceDescriptor::new_without_display_handle();
+    new_instance_with(wgpu::Backends::all()).await
+}
+
+/// A wgpu instance restricted to `backends`. On the web WebGPU is kept only if the browser really
+/// provides an adapter (`navigator.gpu` may exist without one).
+pub(crate) async fn new_instance_with(backends: wgpu::Backends) -> wgpu::Instance {
+    let mut desc = wgpu::InstanceDescriptor::new_without_display_handle();
+    desc.backends = backends;
     #[cfg(target_arch = "wasm32")]
     {
         wgpu::util::new_instance_with_webgpu_detection(desc).await
@@ -128,21 +151,58 @@ pub(crate) async fn gpu_async(surface: Option<(wgpu::Instance, &wgpu::Surface<'_
     if let Some(g) = GPU.with(|g| g.borrow().clone()) {
         return Ok(g);
     }
-    let (instance, surface) = match surface {
-        Some((i, s)) => (i, Some(s)),
-        None => (new_instance().await, None),
-    };
-    let made = Gpu::create(instance, surface, None).await.map(Arc::new);
     #[cfg(not(target_arch = "wasm32"))]
     {
+        let (instance, surface) = match surface {
+            Some((i, s)) => (i, Some(s)),
+            None => (new_instance().await, None),
+        };
+        let made = Gpu::create(instance, surface, None).await.map(Arc::new);
         let _ = GPU.set(made);
         GPU.get().cloned().unwrap_or_else(|| Err("GPU initialization raced".into())).map_err(Error::NoGpuAdapter)
     }
     #[cfg(target_arch = "wasm32")]
     {
-        let g = made.map_err(Error::NoGpuAdapter)?;
+        let made = match surface {
+            Some((i, s)) => Gpu::create(i, Some(s), None).await,
+            None => web_offscreen_gpu().await,
+        };
+        let g = Arc::new(made.map_err(Error::NoGpuAdapter)?);
         Ok(GPU.with(|slot| slot.borrow_mut().get_or_insert(g).clone()))
     }
+}
+
+/// Browser: whether the page URL forces WebGL2 (`?backend=gl`).
+#[cfg(target_arch = "wasm32")]
+pub(crate) fn web_force_gl() -> bool {
+    web_sys::window()
+        .and_then(|w| w.location().search().ok())
+        .is_some_and(|q| q.trim_start_matches('?').split('&').any(|kv| matches!(kv, "backend=gl" | "backend=webgl2")))
+}
+
+/// The backends a new browser context may use.
+#[cfg(target_arch = "wasm32")]
+fn web_backends(force_gl: bool) -> wgpu::Backends {
+    if force_gl { wgpu::Backends::GL } else { wgpu::Backends::BROWSER_WEBGPU | wgpu::Backends::GL }
+}
+
+/// A context for offscreen rendering in the browser. WebGPU needs no surface; WebGL2 has no
+/// adapter without a canvas, so it gets a detached one.
+#[cfg(target_arch = "wasm32")]
+async fn web_offscreen_gpu() -> std::result::Result<Gpu, String> {
+    use wasm_bindgen::JsCast;
+    let instance = new_instance_with(web_backends(web_force_gl())).await;
+    let first = match Gpu::create(instance.clone(), None, None).await {
+        Ok(g) => return Ok(g),
+        Err(e) => e,
+    };
+    let canvas = web_sys::window()
+        .and_then(|w| w.document())
+        .and_then(|d| d.create_element("canvas").ok())
+        .and_then(|e| e.dyn_into::<web_sys::HtmlCanvasElement>().ok())
+        .ok_or(first)?;
+    let surface = instance.create_surface(wgpu::SurfaceTarget::Canvas(canvas)).map_err(|e| e.to_string())?;
+    Gpu::create(instance, Some(&surface), None).await
 }
 
 /// The shared GPU context (created on first use; blocks until the device exists).
@@ -153,9 +213,51 @@ pub(crate) fn gpu() -> Result<Arc<Gpu>> {
         .map_err(Error::NoGpuAdapter)
 }
 
+/// A GPU context and a surface presenting to `target` (a winit window's canvas).
+///
+/// On WebGPU one device serves every canvas, so the shared context is reused. On WebGL2 a device
+/// belongs to the GL context of one canvas, so every canvas gets a context of its own (the first
+/// one also becomes the shared context that exports use). `?backend=gl` in the page URL
+/// restricts canvases to WebGL2. The backend is chosen before the surface exists: a canvas that
+/// handed out a `webgpu` context can't give a `webgl2` one.
+#[cfg(target_arch = "wasm32")]
+pub(crate) async fn gpu_for_surface(
+    target: impl Into<wgpu::SurfaceTarget<'static>>,
+) -> Result<(Arc<Gpu>, wgpu::Surface<'static>)> {
+    let force_gl = web_force_gl();
+    let shared = GPU.with(|g| g.borrow().clone());
+    if let Some(g) = shared.filter(|g| !force_gl && g.backend() == wgpu::Backend::BrowserWebGpu) {
+        let surface = g.instance.create_surface(target).map_err(|e| Error::Gpu(e.to_string()))?;
+        return Ok((g, surface));
+    }
+    let instance = new_instance_with(web_backends(force_gl)).await;
+    let surface = instance.create_surface(target).map_err(|e| Error::Gpu(e.to_string()))?;
+    let gpu = Arc::new(Gpu::create(instance, Some(&surface), None).await.map_err(Error::NoGpuAdapter)?);
+    GPU.with(|slot| {
+        slot.borrow_mut().get_or_insert_with(|| gpu.clone());
+    });
+    Ok((gpu, surface))
+}
+
 /// The shared GPU context, if [`gpu_async`] already created it (the browser can't block).
 #[cfg(target_arch = "wasm32")]
 pub(crate) fn gpu() -> Result<Arc<Gpu>> {
     GPU.with(|g| g.borrow().clone())
         .ok_or_else(|| Error::NoGpuAdapter("the GPU context is created asynchronously in the browser".into()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::surface_format;
+    use wgpu::TextureFormat::*;
+
+    #[test]
+    fn surface_format_is_never_srgb() {
+        // Native Metal / Chrome WebGPU: BGRA preferred.
+        assert_eq!(surface_format(&[Bgra8UnormSrgb, Bgra8Unorm, Rgba8Unorm]), Some(Bgra8Unorm));
+        assert_eq!(surface_format(&[Bgra8Unorm, Rgba8Unorm, Rgba16Float]), Some(Bgra8Unorm));
+        // WebGL2 lists sRGB first and has no BGRA.
+        assert_eq!(surface_format(&[Rgba8UnormSrgb, Rgba8Unorm, Rgba16Float]), Some(Rgba8Unorm));
+        assert_eq!(surface_format(&[Rgba8UnormSrgb, Rgba16Float]), None);
+    }
 }
