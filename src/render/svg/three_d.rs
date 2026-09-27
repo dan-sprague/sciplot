@@ -8,7 +8,8 @@
 //! runs of equal style. Content outside the limits box is dropped (segments are cut at the box;
 //! triangles and markers with a vertex or centre outside are left out, like CairoMakie).
 //!
-//! This approximates the GPU's per-pixel depth test: intersecting triangles and segments
+//! Triangles are grown by [`SEAM`] units to hide antialiasing seams between them. This
+//! approximates the GPU's per-pixel depth test: intersecting triangles and segments
 //! crossing a surface are ordered as a whole, not per pixel.
 
 use super::field::Mapper;
@@ -28,6 +29,9 @@ pub(super) fn group(p: &Prim) -> Option<u64> {
         _ => None,
     }
 }
+
+/// How far (units) triangle edges are pushed out to hide antialiasing seams.
+const SEAM: f64 = 0.35;
 
 #[derive(Clone, Copy, PartialEq)]
 struct MarkStyle {
@@ -256,8 +260,28 @@ pub(super) fn flatten(items: &[Item]) -> Vec<Prim> {
             El::Tri(p, c) => {
                 flush_segs(&mut out, &mut segs);
                 flush_marks(&mut out, &mut marks);
+                // Grown by a fraction of a unit (edges offset outward, miters capped), so
+                // antialiased edges of neighbouring triangles leave no hairline seams (nearer
+                // triangles cover the overlaps).
+                let area = (p[1][0] - p[0][0]) * (p[2][1] - p[0][1]) - (p[1][1] - p[0][1]) * (p[2][0] - p[0][0]);
+                let sgn = if area < 0.0 { -1.0 } else { 1.0 };
+                let normal = |a: [f64; 2], b: [f64; 2]| {
+                    let (dx, dy) = (b[0] - a[0], b[1] - a[1]);
+                    let l = dx.hypot(dy);
+                    if l > 0.0 { [sgn * dy / l, -sgn * dx / l] } else { [0.0, 0.0] }
+                };
                 for k in 0..3 {
-                    tris.push(MeshVertex { pos: f32p(p[k]), color: c[k].to_premul_u32() });
+                    let (prev, next) = (p[(k + 2) % 3], p[(k + 1) % 3]);
+                    let (na, nb) = (normal(prev, p[k]), normal(p[k], next));
+                    let m = [na[0] + nb[0], na[1] + nb[1]];
+                    let den = 1.0 + na[0] * nb[0] + na[1] * nb[1];
+                    let mut o = if den > 1e-6 { [SEAM * m[0] / den, SEAM * m[1] / den] } else { [0.0, 0.0] };
+                    let ol = o[0].hypot(o[1]);
+                    if ol > 3.0 * SEAM {
+                        o = [o[0] * 3.0 * SEAM / ol, o[1] * 3.0 * SEAM / ol];
+                    }
+                    let q = [p[k][0] + o[0], p[k][1] + o[1]];
+                    tris.push(MeshVertex { pos: f32p(q), color: c[k].to_premul_u32() });
                 }
             }
             El::Seg(p, c, w) => {
