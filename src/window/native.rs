@@ -1,9 +1,9 @@
 //! Native entry points: `show()` and `animate()` block on the main thread until the windows
 //! close (winit `run_app_on_demand`, one event loop per thread, reused across calls).
 
+use super::UserEvent;
 use super::animate::Frame;
 use super::app::{App, Gfx, OpenReq};
-use super::UserEvent;
 use crate::error::{Error, Result};
 use crate::figure::Figure;
 use crate::render::gpu::{Gpu, gpu};

@@ -265,11 +265,8 @@ mod tests {
         // Spread to twice the distance, symmetric: midpoint unchanged, pinch +100 %.
         let a = t.handle(1, TouchPhase::Moved, [50.0, 100.0], 0.1);
         let b = t.handle(2, TouchPhase::Moved, [250.0, 100.0], 0.1);
-        let pinch: f64 = a
-            .iter()
-            .chain(&b)
-            .filter_map(|i| if let Input::Pinch(d) = i { Some(1.0 + d) } else { None })
-            .product();
+        let pinch: f64 =
+            a.iter().chain(&b).filter_map(|i| if let Input::Pinch(d) = i { Some(1.0 + d) } else { None }).product();
         assert!((pinch - 2.0).abs() < 1e-9, "{a:?} {b:?}");
         // Lifting one finger continues as a one-finger pan; no tap at the end.
         let lift = t.handle(1, TouchPhase::Ended, [50.0, 100.0], 0.2);

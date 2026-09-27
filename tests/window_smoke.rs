@@ -19,6 +19,7 @@ fn main() {
         return;
     }
     scripted_interactions();
+    jitter_guard();
     worker_panic_is_reported();
     pump_mode();
     println!("window_smoke: ok");
@@ -128,6 +129,52 @@ fn scripted_interactions() {
         .expect("show_live failed");
     assert!(failures.is_empty(), "scripted interactions failed: {failures:#?}");
     println!("window_smoke: scripted interactions ok ({:.1} s)", t0.elapsed().as_secs_f64());
+}
+
+/// While the user zooms, the axis keeps its tick-label space (the axis does not move under the
+/// cursor); 0.2 s after the last event the layout adapts to the new, wider labels.
+fn jitter_guard() {
+    let fig = Figure::new();
+    let ax = Axis::new(fig.at(1, 1)).limits(0.0, 10.0, 0.0, 10.0);
+    ax.scatter([5.0], [5.0]);
+    let result = fig
+        .show_live(|live| {
+            live.wait_frame_timeout(Duration::from_secs(5));
+            let Some(before) = wt::axis_rects(live.figure()).first().copied() else {
+                live.close();
+                return Err("no axis frame".to_string());
+            };
+            let [x, y, w, h] = before;
+            // Zoom 0.9^60 about the center in one burst: y tick labels go from "0".."10" to
+            // "4.999".."5.001".
+            wt::inject(live, Synthetic::CursorMoved { x: x + 0.5 * w, y: y + 0.5 * h });
+            for _ in 0..6 {
+                wt::inject(live, Synthetic::ScrollLines { dx: 0.0, dy: 10.0 });
+            }
+            assert!(wt::flush(live), "window did not process events");
+            live.wait_frame_timeout(Duration::from_secs(3));
+            let during = wt::axis_rects(live.figure()).first().copied();
+            let zoomed = wt::interactive_limits(&ax);
+            std::thread::sleep(Duration::from_millis(500));
+            live.wait_frame_timeout(Duration::from_secs(3));
+            let after = wt::axis_rects(live.figure()).first().copied();
+            live.close();
+            if zoomed.is_none_or(|l| l[3] - l[2] > 0.1) {
+                return Err(format!("no zoom: {zoomed:?}"));
+            }
+            if during != Some(before) {
+                return Err(format!("the axis moved during the zoom: {before:?} -> {during:?}"));
+            }
+            match after {
+                Some(a) if a[0] > before[0] + 1.0 => Ok(()),
+                _ => Err(format!("the layout did not adapt after the zoom: {before:?} -> {after:?}")),
+            }
+        })
+        .expect("show_live failed");
+    if let Err(e) = result {
+        panic!("jitter guard: {e}");
+    }
+    println!("window_smoke: jitter guard ok");
 }
 
 fn worker_panic_is_reported() {

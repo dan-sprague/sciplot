@@ -9,7 +9,6 @@
 use super::app::App;
 use std::path::PathBuf;
 use std::time::Duration;
-use winit::event_loop::ActiveEventLoop;
 use winit::window::WindowId;
 
 /// How often an occluded (hidden, minimized) animated native window checks whether it is visible
@@ -155,9 +154,10 @@ impl App<'_> {
 
     /// Native: an occluded window gets no vsync-paced redraws, so animated windows probe for
     /// visibility at a low rate instead of spinning. (Browsers report visibility changes.)
-    pub(super) fn poll_occluded(&mut self, el: &ActiveEventLoop) {
+    /// Returns the app time of the next probe, if any window needs one.
+    pub(super) fn poll_occluded(&mut self, now: f64) -> Option<f64> {
         if cfg!(target_arch = "wasm32") {
-            return;
+            return None;
         }
         let occluded: Vec<WindowId> = self
             .anims
@@ -166,10 +166,10 @@ impl App<'_> {
             .map(|(id, _)| *id)
             .collect();
         if occluded.is_empty() {
-            return;
+            return None;
         }
-        let now = self.now();
-        if now - self.occluded_poll >= OCCLUDED_POLL.as_secs_f64() {
+        let period = OCCLUDED_POLL.as_secs_f64();
+        if now - self.occluded_poll >= period {
             self.occluded_poll = now;
             for id in &occluded {
                 if let Some(w) = self.wins.get(id) {
@@ -177,9 +177,7 @@ impl App<'_> {
                 }
             }
         }
-        let wake = web_time::Instant::now() + OCCLUDED_POLL;
-        let wake = self.autoclose.map_or(wake, |t| t.min(wake));
-        el.set_control_flow(winit::event_loop::ControlFlow::WaitUntil(wake));
+        Some(self.occluded_poll + period)
     }
 }
 

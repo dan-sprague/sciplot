@@ -9,8 +9,14 @@ cd "$(dirname "$0")/../.."
 [ $# -ge 1 ] || { echo "usage: tools/web/build.sh <example>..." >&2; exit 2; }
 
 WB=.tools/bin/wasm-bindgen
+# In a git worktree, reuse the CLI installed in the main checkout's .tools/.
+MAIN_WB="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || echo .git)/../.tools/bin/wasm-bindgen"
 if ! "$WB" --version 2>/dev/null | grep -q '0\.2\.129'; then
-  cargo install wasm-bindgen-cli --version 0.2.129 --locked --root .tools
+  if "$MAIN_WB" --version 2>/dev/null | grep -q '0\.2\.129'; then
+    WB=$MAIN_WB
+  else
+    cargo install wasm-bindgen-cli --version 0.2.129 --locked --root .tools
+  fi
 fi
 
 for ex in "$@"; do

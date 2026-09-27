@@ -229,6 +229,66 @@ fn double_click_resets() {
 }
 
 #[test]
+fn double_click_needs_the_clicks_close_together() {
+    let mut views = [view()];
+    let mut st = InteractState::default();
+    let click_at =
+        |p: [f64; 2], t: f64| [Input::CursorMoved(p), press(Button::Left, t), release(Button::Left, t + 0.05)];
+    assert!(run(&mut st, &mut views, &click_at([300.0, 200.0], 0.0)).is_empty());
+    // 0.35 s later but 10 units away: two single clicks.
+    assert!(run(&mut st, &mut views, &click_at([310.0, 200.0], 0.35)).is_empty(), "too far apart");
+    // Within 4 units and 0.4 s of the previous click: a double-click.
+    assert_eq!(run(&mut st, &mut views, &click_at([313.0, 202.0], 0.7)), vec![Effect::ResetLimits { axis: 0 }]);
+}
+
+#[test]
+fn tiny_rectangle_zooms_are_clicks() {
+    let mut views = [view()];
+    let mut st = InteractState::default();
+    // A shaky click: the cursor moves 3 units while pressed (a drag, but a 3x3 selection).
+    let shaky = |t: f64| {
+        [
+            Input::CursorMoved([300.0, 200.0]),
+            press(Button::Left, t),
+            Input::CursorMoved([303.0, 203.0]),
+            release(Button::Left, t + 0.05),
+        ]
+    };
+    let fx = run(&mut st, &mut views, &shaky(0.0));
+    assert!(limits(&fx).is_empty() && fx.last() == Some(&Effect::Overlay), "no zoom, the shade goes away: {fx:?}");
+    assert_lims(views[0].limits, [0.0, 10.0, 0.0, 10.0]);
+    // ... and two of them make a double-click.
+    let fx = run(&mut st, &mut views, &shaky(0.2));
+    assert!(fx.contains(&Effect::ResetLimits { axis: 0 }), "{fx:?}");
+    // Wide but only 3 units tall: too small in y, which it zooms.
+    let fx = run(
+        &mut st,
+        &mut views,
+        &[
+            Input::CursorMoved([200.0, 200.0]),
+            press(Button::Left, 5.0),
+            Input::CursorMoved([400.0, 203.0]),
+            release(Button::Left, 5.1),
+        ],
+    );
+    assert!(limits(&fx).is_empty());
+    // Holding x zooms only x: the height no longer matters.
+    let fx = run(
+        &mut st,
+        &mut views,
+        &[
+            Input::Key { key: Key::X, pressed: true },
+            Input::CursorMoved([200.0, 200.0]),
+            press(Button::Left, 6.0),
+            Input::CursorMoved([400.0, 203.0]),
+            release(Button::Left, 6.1),
+            Input::Key { key: Key::X, pressed: false },
+        ],
+    );
+    assert_lims(limits(&fx)[0].1, [2.5, 7.5, 0.0, 10.0]);
+}
+
+#[test]
 fn log_axes_zoom_in_scaled_space() {
     let mut v = view();
     v.xscale = Scale::Log10;

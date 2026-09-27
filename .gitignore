@@ -5,3 +5,4 @@
 !tests/**/*.png
 /.claude
 /.tools
+/examples/web/pkg

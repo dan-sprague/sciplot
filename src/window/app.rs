@@ -12,7 +12,7 @@ use super::interact::{self, AxisView, Effect, Input, InteractState};
 use super::live::LiveShared;
 use super::{UserEvent, overlay};
 use crate::error::{Error, Result};
-use crate::figure::{Dirty, FigState, Figure};
+use crate::figure::{BlockId, Dirty, FigState, Figure};
 use crate::plots::pick::{Hover, PickCache};
 use crate::render::gpu::{Gpu, Renderer, surface_format};
 use crate::scene::AxisFrame;
@@ -118,6 +118,20 @@ pub(crate) fn clamp_size(phys: [u32; 2], max: u32) -> ([u32; 2], f64) {
     ([side(phys[0]), side(phys[1])], k)
 }
 
+/// Makie's layout jitter guard (`timed_ticklabelspace_reset`): while the user zooms or pans,
+/// the tick-label space of the axes involved stays at its value when the burst started, so the
+/// axis does not move under the cursor as the labels change width; [`FREEZE_SECS`] after the
+/// last event the attributes are restored and the layout adapts once.
+pub(crate) struct Freeze {
+    /// App time (seconds) at which the attributes are restored.
+    until: f64,
+    /// Frozen axes with their `xticklabelspace` and `yticklabelspace` attributes before the burst.
+    saved: Vec<(BlockId, Option<Option<f64>>, Option<Option<f64>>)>,
+}
+
+/// How long the tick-label space stays frozen after the last zoom or pan event (Makie: 0.2 s).
+pub(crate) const FREEZE_SECS: f64 = 0.2;
+
 /// The last built frame of a window.
 pub(crate) struct Built {
     pub dl: DrawList,
@@ -152,11 +166,14 @@ pub(crate) struct Win {
     pub phys: [u32; 2],
     /// Web: the canvas was created by ezviz and is removed with the window.
     pub owns_canvas: bool,
+    /// Tick-label space frozen by an ongoing zoom or pan.
+    freeze: Option<Freeze>,
 }
 
 impl Drop for Win {
     fn drop(&mut self) {
         self.fig.sh.wake.detach(self.wake_id);
+        self.thaw();
         if let Some(l) = &self.live {
             l.set_closed();
         }
@@ -288,6 +305,7 @@ impl<'f> App<'f> {
             occluded: false,
             phys: [phys.width, phys.height],
             owns_canvas,
+            freeze: None,
         };
         let scale = win.scale();
         if let Some(g) = win.gfx.as_mut() {
@@ -380,8 +398,9 @@ impl Win {
         self.window.request_redraw();
     }
 
-    /// Feeds one input to the interaction state machine and applies its effects.
-    pub fn input(&mut self, input: Input) {
+    /// Feeds one input to the interaction state machine and applies its effects (`now`: app
+    /// time in seconds).
+    pub fn input(&mut self, input: Input, now: f64) {
         // While frames are skipped (occluded window) nothing rebuilds the scene, so bring the
         // hit-test geometry up to date here.
         if self.occluded || self.built.is_none() {
@@ -390,6 +409,12 @@ impl Win {
         let mut redraw = false;
         if let Some(b) = self.built.as_mut() {
             let fx = interact::handle(&mut self.ui, input, &b.views);
+            // Scroll, pinch and pan moves come in bursts: freeze the layout (rectangle zooms
+            // and resets are single steps and relayout at once, like Makie).
+            let burst = matches!(input, Input::Scroll(_) | Input::Pinch(_) | Input::CursorMoved(_));
+            if burst && fx.iter().any(|e| matches!(e, Effect::SetLimits { .. })) {
+                freeze_layout(&self.fig, &mut self.freeze, b, &fx, now);
+            }
             if !fx.is_empty() {
                 redraw |= apply_effects(&self.fig, b, &fx);
             }
@@ -402,6 +427,30 @@ impl Win {
         if redraw {
             self.window.request_redraw();
         }
+    }
+
+    /// Restores the frozen tick-label space once its time is up; returns when it will be
+    /// (app seconds) while it is still frozen.
+    pub fn thaw_if_due(&mut self, now: f64) -> Option<f64> {
+        let until = self.freeze.as_ref()?.until;
+        if now < until {
+            return Some(until);
+        }
+        self.thaw();
+        None
+    }
+
+    /// Restores the tick-label space attributes saved by [`freeze_layout`].
+    fn thaw(&mut self) {
+        let Some(f) = self.freeze.take() else { return };
+        self.fig.sh.update(Dirty::LAYOUT, |st| {
+            for (id, x, y) in f.saved {
+                if let Some(a) = st.block_mut(id).and_then(|b| b.as_axis_mut()) {
+                    a.attrs.xticklabelspace = x;
+                    a.attrs.yticklabelspace = y;
+                }
+            }
+        });
     }
 
     /// Re-picks the hovered element; returns whether the tooltip changed.
@@ -534,6 +583,38 @@ impl Win {
     }
 }
 
+/// Freezes the tick-label space of the axes the effects move at its value in the built frame
+/// (only axes not frozen yet) and extends the freeze to [`FREEZE_SECS`] from `now`.
+fn freeze_layout(fig: &Figure, freeze: &mut Option<Freeze>, b: &Built, fx: &[Effect], now: f64) {
+    let f = freeze.get_or_insert_with(|| Freeze { until: now, saved: Vec::new() });
+    f.until = now + FREEZE_SECS;
+    let new: Vec<(BlockId, [f64; 2])> = fx
+        .iter()
+        .filter_map(|e| match e {
+            Effect::SetLimits { axis, .. } => b.frames.get(*axis),
+            _ => None,
+        })
+        .filter(|fr| f.saved.iter().all(|(id, ..)| *id != fr.id))
+        .map(|fr| (fr.id, crate::scene::axis::actual_ticklabelspace(fr)))
+        .collect();
+    if new.is_empty() {
+        return;
+    }
+    fig.sh.update(Dirty::LAYOUT, |st| {
+        for (id, [x, y]) in new {
+            if f.saved.iter().any(|(s, ..)| *s == id) {
+                continue;
+            }
+            if let Some(a) = st.block_mut(id).and_then(|b| b.as_axis_mut()) {
+                let prev = (a.attrs.xticklabelspace, a.attrs.yticklabelspace);
+                a.attrs.xticklabelspace = Some(Some(x));
+                a.attrs.yticklabelspace = Some(Some(y));
+                f.saved.push((id, prev.0, prev.1));
+            }
+        }
+    });
+}
+
 /// Writes the effects into the figure state (short locks) and into the frame's views.
 /// Returns whether the overlay needs a redraw (limit changes wake the window by themselves).
 fn apply_effects(fig: &Figure, b: &mut Built, fx: &[Effect]) -> bool {
@@ -640,7 +721,6 @@ impl ApplicationHandler<UserEvent> for App<'_> {
                 }
                 return;
             }
-            el.set_control_flow(ControlFlow::WaitUntil(t));
         }
         if !self.to_open.is_empty() {
             self.open_pending(el);
@@ -692,7 +772,7 @@ impl ApplicationHandler<UserEvent> for App<'_> {
                     match &op {
                         super::testing::Op::Input(s) => {
                             let input = super::testing::translate_synthetic(*s, w.scale(), t);
-                            w.input(input);
+                            w.input(input, t);
                         }
                         super::testing::Op::Minimize(on) => w.window.set_minimized(*on),
                         super::testing::Op::Dump(path, tx) => {
@@ -739,7 +819,7 @@ impl ApplicationHandler<UserEvent> for App<'_> {
                     let s = w.scale();
                     let p = [t.location.x / s, t.location.y / s];
                     for input in w.touches.handle(t.id, t.phase, p, now) {
-                        w.input(input);
+                        w.input(input, now);
                     }
                 }
             }
@@ -748,14 +828,27 @@ impl ApplicationHandler<UserEvent> for App<'_> {
                 if let Some(w) = self.wins.get_mut(&id)
                     && let Some(input) = translate(ev, w.scale(), t, w.ui.mods)
                 {
-                    w.input(input);
+                    w.input(input, t);
                 }
             }
         }
     }
 
+    /// Sleeps until the next event, or until the earliest timer: the autoclose deadline, a
+    /// frozen layout to restore, the occluded-window poll.
     fn about_to_wait(&mut self, el: &ActiveEventLoop) {
-        self.poll_occluded(el);
+        let now = self.now();
+        let mut wake = self.poll_occluded(now);
+        for w in self.wins.values_mut() {
+            if let Some(t) = w.thaw_if_due(now) {
+                wake = Some(wake.map_or(t, |w: f64| w.min(t)));
+            }
+        }
+        let mut deadline = wake.map(|t| self.epoch + Duration::from_secs_f64(t.max(0.0)));
+        if let Some(a) = self.autoclose {
+            deadline = Some(deadline.map_or(a, |d| d.min(a)));
+        }
+        el.set_control_flow(deadline.map_or(ControlFlow::Wait, ControlFlow::WaitUntil));
     }
 }
 

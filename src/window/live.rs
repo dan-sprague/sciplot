@@ -12,7 +12,6 @@ use std::time::Duration;
 use web_time::Instant;
 use winit::event_loop::EventLoopProxy;
 
-
 /// State shared by the worker (`Live`) and the event loop.
 pub(crate) struct LiveShared {
     /// Identifies this `show_live` call in user events.

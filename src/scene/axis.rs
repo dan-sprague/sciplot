@@ -339,6 +339,14 @@ fn side(a: &AxisResolved, t: &Ticks, lo: f64, hi: f64, x: bool) -> Side {
     }
 }
 
+/// Makie's `actual_ticklabelspace` of a built axis, `[x, y]` in units (what the window freezes
+/// while the user zooms, so the layout does not jitter).
+pub(crate) fn actual_ticklabelspace(a: &AxisFrame) -> [f64; 2] {
+    let x = side(&a.attrs, &a.xticks, a.limits[0], a.limits[1], true).labelspace;
+    let y = side(&a.attrs, &a.yticks, a.limits[2], a.limits[3], false).labelspace;
+    [x, y]
+}
+
 /// Height (x label) or width (rotated y label) of an axis label's box.
 fn label_extent(t: &RichText, size: f64, font: crate::text::Font) -> f64 {
     crate::text::layout(t, size, font, crate::color::Color::TRANSPARENT).height()
