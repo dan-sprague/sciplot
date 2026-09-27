@@ -1,11 +1,11 @@
-//! # ezviz: Makie-style plotting for Rust
+//! # sciplot: Makie-style plotting for Rust
 //!
 //! A small, Makie-flavored plotting API: a `Figure` holds a grid layout, blocks like [`Axis`] sit
 //! in grid cells, and plots are drawn into axes. Rendering is GPU-accelerated (wgpu) for both
 //! interactive windows and PNG export; SVG export is a separate vector backend.
 //!
 //! ```no_run
-//! use ezviz::prelude::*;
+//! use sciplot::prelude::*;
 //!
 //! let x: Vec<f64> = (0..200).map(|i| i as f64 / 20.0).collect();
 //! // One-liner: new Figure + Axis + plot.
@@ -60,18 +60,12 @@ pub use attrs::Conv;
 pub use blocks::Colorbar;
 pub use blocks::axis::AxisTheme;
 pub use blocks::axis::{Aspect, AxisAspect, DataAspect};
+pub use blocks::axis3::Axis3Theme;
 pub use blocks::colorbar::ColorbarTheme;
 pub use blocks::label::LabelTheme;
 pub use blocks::legend::LegendTheme;
-pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
 pub use blocks::{Aspect3, Axis3, ViewMode};
-pub use blocks::axis3::Axis3Theme;
-pub use plots::lines3d::{Lines3dTheme, lines3d};
-pub use plots::scatter3d::{Scatter3dTheme, scatter3d};
-pub use plots::surface::{SurfaceTheme, surface};
-pub use plots::{Lines3d, Scatter3d, Surface};
-#[doc(hidden)]
-pub use scene::axis3::{Axis3Geometry, DimGeometry};
+pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
 pub use blocks::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
 pub use color::{Color, IntoColor, WONG, colors};
 pub use color::{Colormap, IntoColormap};
@@ -90,18 +84,24 @@ pub use plots::contourf::{ContourfTheme, contourf, contourf_xy};
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
 pub use plots::hist::{HistTheme, hist};
 pub use plots::lines::{LinesTheme, lines, lines_points};
+pub use plots::lines3d::{Lines3dTheme, lines3d};
 pub use plots::reflines::RefLinesTheme;
 pub use plots::scatter::{ScatterTheme, scatter};
+pub use plots::scatter3d::{Scatter3dTheme, scatter3d};
 pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
 pub use plots::streamplot::{StreamPlotTheme, streamplot};
-pub use plots::{ArrowAlign, Arrows, Interval, Magnitude, ScalarFn, StreamPlot, VectorColor, VectorFieldFn};
+pub use plots::surface::{SurfaceTheme, surface};
 pub use plots::{ABLines, HLines, RefLines, RefValues, VLines};
+pub use plots::{ArrowAlign, Arrows, Interval, Magnitude, ScalarFn, StreamPlot, VectorColor, VectorFieldFn};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
 pub use plots::{ColorMapped, ResolvedColormap};
 pub use plots::{Contour, Contourf, ContourfMode, Extend, Levels};
 pub use plots::{Lines, ScatterLines};
+pub use plots::{Lines3d, Scatter3d, Surface};
 #[doc(hidden)]
 pub use scene::axis::AxisGeometry;
+#[doc(hidden)]
+pub use scene::axis3::{Axis3Geometry, DimGeometry};
 pub use style::{Direction, HAlign, JoinStyle, LineCap, Linestyle, Marker, Normalization, VAlign};
 pub use text::{Font, RichText, TextSpan, subscript, superscript};
 pub use text::{colored, tex};
@@ -133,8 +133,8 @@ pub(crate) fn warn_once(msg: &'static str) {
     use std::collections::HashSet;
     static SEEN: Mutex<Option<HashSet<&'static str>>> = Mutex::new(None);
     if SEEN.lock().get_or_insert_with(HashSet::new).insert(msg) {
-        log::warn!("ezviz: {msg}");
-        eprintln!("ezviz warning: {msg}");
+        log::warn!("sciplot: {msg}");
+        eprintln!("sciplot warning: {msg}");
     }
 }
 

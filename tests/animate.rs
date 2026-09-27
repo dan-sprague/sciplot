@@ -4,7 +4,7 @@
 //! smoke test.)
 #![cfg(feature = "window")]
 
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 #[test]
 fn animate_off_main_thread_is_an_error() {
@@ -18,7 +18,7 @@ fn animate_off_main_thread_is_an_error() {
         frame.stop();
     });
     match r {
-        Err(ezviz::Error::NotMainThread) | Err(ezviz::Error::NoGpuAdapter(_)) => {}
+        Err(sciplot::Error::NotMainThread) | Err(sciplot::Error::NoGpuAdapter(_)) => {}
         other => panic!("expected NotMainThread (or no GPU), got {other:?}"),
     }
     assert_eq!(calls, 0);

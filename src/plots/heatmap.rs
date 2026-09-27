@@ -365,7 +365,7 @@ impl crate::Axis {
     /// centres or `n + 1` edges gives each cell. `z[i, j]` is the cell at `(x_i, y_j)`.
     ///
     /// ```no_run
-    /// use ezviz::prelude::*;
+    /// use sciplot::prelude::*;
     /// let (nx, ny) = (64, 32);
     /// let v: Vec<f64> = (0..nx * ny).map(|k| ((k % nx) as f64 * 0.2).sin()).collect();
     /// let fig = Figure::new();
@@ -397,7 +397,7 @@ impl crate::GridPosition {
 ///
 /// ```no_run
 /// let z: Vec<f64> = (0..100 * 50).map(|k| (k as f64 * 0.01).sin()).collect();
-/// ezviz::heatmap(ezviz::Field::new(&z, 100, 50)).save("heatmap.png").unwrap();
+/// sciplot::heatmap(sciplot::Field::new(&z, 100, 50)).save("heatmap.png").unwrap();
 /// ```
 #[track_caller]
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]

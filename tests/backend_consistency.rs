@@ -2,8 +2,8 @@
 //! difference below 1.5 % per channel. Skipped when there is no GPU adapter.
 //! Both images and an amplified difference are written to `out/` for inspection.
 
-use ezviz::prelude::*;
-use ezviz::{Error, RgbaImage};
+use sciplot::prelude::*;
+use sciplot::{Error, RgbaImage};
 use std::path::PathBuf;
 
 fn rng(mut s: u64) -> impl FnMut() -> f64 {
@@ -16,7 +16,7 @@ fn rng(mut s: u64) -> impl FnMut() -> f64 {
 }
 
 fn has_gpu() -> bool {
-    match ezviz::testing::Offscreen::new(1.0) {
+    match sciplot::testing::Offscreen::new(1.0) {
         Ok(_) => true,
         Err(Error::NoGpuAdapter(_)) => false,
         Err(e) => panic!("{e}"),

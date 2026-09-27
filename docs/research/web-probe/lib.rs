@@ -384,7 +384,7 @@ impl ApplicationHandler<UserEvent> for App {
             return;
         }
         let canvas = document()
-            .get_element_by_id("ezviz")
+            .get_element_by_id("sciplot")
             .and_then(|e| e.dyn_into::<web_sys::HtmlCanvasElement>().ok());
         let attrs = Window::default_attributes()
             .with_canvas(canvas) // None -> winit creates one ...

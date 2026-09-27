@@ -2,7 +2,7 @@
 # out/legend_check_*_makie.png. Run: julia --project=tools tools/legend_check.jl
 #
 # With `dump = true` (default) it also prints each legend's computed bbox (Makie y-up units,
-# [x, y, w, h]) so placement can be compared numerically with ezviz's.
+# [x, y, w, h]) so placement can be compared numerically with sciplot's.
 using CairoMakie
 
 mkpath("out")

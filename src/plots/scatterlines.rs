@@ -16,7 +16,7 @@ use std::sync::Arc;
 /// methods as [`Lines`](crate::Lines).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// scatterlines!(ax, [1, 2, 3, 4], [1.0, 3.0, 2.0, 4.0]; markersize = 12, markercolor = RED);

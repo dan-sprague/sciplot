@@ -23,7 +23,7 @@ use std::sync::{Arc, OnceLock};
 /// A streamplot handle (Makie's `StreamPlot`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// // Van der Pol oscillator.
 /// let sp = streamplot(|x, y| (y, (1.0 - x * x) * y - x), -3.0..=3.0, -4.0..=4.0);
 /// sp.colormap(Colormap::MAGMA).density(0.8);

@@ -170,7 +170,7 @@ impl Figure {
     /// once the window is closed.
     ///
     /// The window (and its event loop) stay on the main thread, as macOS requires; `sim` runs on
-    /// a scoped thread named `ezviz-sim`, so it may borrow locals. Update plots through their
+    /// a scoped thread named `sciplot-sim`, so it may borrow locals. Update plots through their
     /// handles; each change wakes the window, and [`Live::batch`] groups changes into one frame.
     /// The window stays open after `sim` returns; [`Live::close`] closes it. Loop on
     /// [`Live::is_open`] so closing the window stops the simulation.
@@ -179,7 +179,7 @@ impl Figure {
     /// returns [`Error::WorkerPanicked`] after the window is closed.
     ///
     /// ```no_run
-    /// use ezviz::prelude::*;
+    /// use sciplot::prelude::*;
     /// let fig = Figure::new();
     /// let ax = Axis::new(fig.at(1, 1));
     /// let sc = ax.scatter([0.0], [0.0]);
@@ -196,7 +196,7 @@ impl Figure {
     ///     }
     ///     n
     /// })?;
-    /// # Ok::<(), ezviz::Error>(())
+    /// # Ok::<(), sciplot::Error>(())
     /// ```
     pub fn show_live<R, F>(&self, sim: F) -> Result<R>
     where
@@ -220,12 +220,12 @@ impl Figure {
             app.to_open.push(super::app::OpenReq::new(self, 0));
             std::thread::scope(|s| {
                 let worker = std::thread::Builder::new()
-                    .name("ezviz-sim".into())
+                    .name("sciplot-sim".into())
                     .spawn_scoped(s, || {
                         let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| sim(&live)));
                         if let Err(p) = &r {
                             let msg = panic_text(p.as_ref());
-                            log::error!("ezviz: the show_live simulation panicked: {msg}");
+                            log::error!("sciplot: the show_live simulation panicked: {msg}");
                             *live.sh.panic.lock() = Some(msg.clone());
                             live.sh.send(UserEvent::Panicked(live.sh.session, msg));
                         }

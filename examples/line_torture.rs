@@ -1,7 +1,7 @@
 //! Line pipeline stress page: widths, translucent joints, acute angles, degenerate input, caps,
-//! joins, dash styles and color modes. Writes `out/line_torture.png`, plus `out/lines_ezviz.png`
+//! joins, dash styles and color modes. Writes `out/line_torture.png`, plus `out/lines_sciplot.png`
 //! (the data of `tools/lines_check.jl`, for comparison with CairoMakie's `out/lines_makie.png`).
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 const NAN: f64 = f64::NAN;
 
@@ -18,7 +18,7 @@ fn vees(x: f64, y: f64, h: f64, angles: &[f64]) -> Vec<[f64; 2]> {
     pts
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
     let fig = Figure!(size = (1200, 1000));
     let half = (BLACK, 0.5);
@@ -110,7 +110,7 @@ fn main() -> ezviz::Result<()> {
     lines!(ax, &x, x.iter().map(|x| x.cos()); linewidth = 4);
     lines!(ax, &x, x.iter().map(|x| 0.5 * (2.0 * x).sin()); linestyle = Linestyle::Dash, linewidth = 2);
     scatterlines!(ax, [1.0, 3.0, 5.0, 7.0, 9.0], [-0.8, 0.6, -0.4, 0.9, -0.9]);
-    fig.save("out/lines_ezviz.png")?;
-    println!("wrote out/line_torture.png and out/lines_ezviz.png");
+    fig.save("out/lines_sciplot.png")?;
+    println!("wrote out/line_torture.png and out/lines_sciplot.png");
     Ok(())
 }

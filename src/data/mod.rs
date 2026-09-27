@@ -49,7 +49,7 @@ impl Num for isize {}
 #[diagnostic::on_unimplemented(
     message = "`{Self}` is not plottable 1D data",
     label = "expected a slice, Vec, array, integer range or iterator of numbers",
-    note = "wrap any other iterator of numbers in `ezviz::iter(..)`"
+    note = "wrap any other iterator of numbers in `sciplot::iter(..)`"
 )]
 pub trait Data1D {
     /// Appends the values (as f64) to `out`.
@@ -134,7 +134,7 @@ iter_adapters!(
     [T] std::vec::IntoIter<T>,
 );
 
-/// Wraps any iterator of numbers as plottable data: `ezviz::iter(my_iter)`.
+/// Wraps any iterator of numbers as plottable data: `sciplot::iter(my_iter)`.
 pub struct Iter<I>(pub I);
 
 /// Wraps any iterator of numbers as plottable data.

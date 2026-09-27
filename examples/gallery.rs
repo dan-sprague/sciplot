@@ -3,7 +3,7 @@
 //! Renders the plan's scenarios (S1–S4, S6–S8) and stress pages to `target/gallery/<name>.png`
 //! and `.svg`, and writes the exact input arrays to `target/gallery/data/<name>.json`, so
 //! `tools/makie_gallery.jl` can draw the same figures with CairoMakie. Then
-//! `examples/compare.rs` builds the ezviz | Makie | diff page.
+//! `examples/compare.rs` builds the sciplot | Makie | diff page.
 //!
 //! ```text
 //! cargo run --release --example gallery
@@ -15,7 +15,7 @@
 //! sums, so no libm is involved), and the Julia side reads the dumped arrays instead of
 //! recomputing them. `cargo run --example gallery -- s3 stress_text` renders only the pages
 //! whose names contain one of the arguments.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 use serde_json::{Map, Value, json};
 use std::path::{Path, PathBuf};
 
@@ -56,7 +56,7 @@ impl Data {
 }
 
 /// Saves `fig` as PNG (+ SVG) and the page data.
-fn save(name: &str, fig: &Figure, data: &Data, png: Option<Save>) -> ezviz::Result<()> {
+fn save(name: &str, fig: &Figure, data: &Data, png: Option<Save>) -> sciplot::Result<()> {
     let dir = PathBuf::from(OUT);
     std::fs::create_dir_all(dir.join("data"))?;
     let png_path = dir.join(format!("{name}.png"));
@@ -80,7 +80,7 @@ fn linspace_v(a: f64, b: f64, n: usize) -> Vec<f64> {
 // Scenarios
 
 /// S1: the one-liner scatter.
-fn s1_scatter() -> ezviz::Result<()> {
+fn s1_scatter() -> sciplot::Result<()> {
     let mut r = Rng(0x2545F4914F6CDD1D);
     let x: Vec<f64> = (0..1000).map(|_| r.u()).collect();
     let y: Vec<f64> = (0..1000).map(|_| r.u()).collect();
@@ -89,7 +89,7 @@ fn s1_scatter() -> ezviz::Result<()> {
 }
 
 /// S1b: titled axis, translucent markers, stroked stars.
-fn s1_axis() -> ezviz::Result<()> {
+fn s1_axis() -> sciplot::Result<()> {
     let mut r = Rng(0x2545F4914F6CDD1D);
     let x: Vec<f64> = (0..1000).map(|_| r.u()).collect();
     let y: Vec<f64> = (0..1000).map(|_| r.u()).collect();
@@ -105,7 +105,7 @@ fn s1_axis() -> ezviz::Result<()> {
 }
 
 /// S2: two lines, one dashed.
-fn s2_lines() -> ezviz::Result<()> {
+fn s2_lines() -> sciplot::Result<()> {
     let t = linspace_v(0.0, 4.0 * std::f64::consts::PI, 200);
     let s: Vec<f64> = t.iter().map(|t| t.sin()).collect();
     let c: Vec<f64> = t.iter().map(|t| t.cos()).collect();
@@ -119,7 +119,7 @@ fn s2_lines() -> ezviz::Result<()> {
 
 /// S3: 2×2 panels with a spanning bottom axis, linked axes, hidden inner decorations, panel
 /// labels.
-fn s3_panels() -> ezviz::Result<()> {
+fn s3_panels() -> sciplot::Result<()> {
     let t = linspace_v(0.0, 10.0, 300);
     let td: Vec<f64> = t.iter().step_by(15).copied().collect();
     let model = |w: f64| -> Vec<f64> { t.iter().map(|t| (w * t).sin() * (-0.1 * t).exp()).collect() };
@@ -157,7 +157,7 @@ fn density(x: f64, y: f64) -> f64 {
 }
 
 /// S4: heatmaps (outer edges and cell centres) and a value-colored scatter.
-fn s4_heatmap() -> ezviz::Result<()> {
+fn s4_heatmap() -> sciplot::Result<()> {
     let (nx, ny) = (400usize, 200usize);
     let (lx, ly) = (2.0, 1.0);
     let xc: Vec<f64> = (0..nx).map(|i| (i as f64 + 0.5) * lx / nx as f64).collect();
@@ -190,7 +190,7 @@ fn s4_heatmap() -> ezviz::Result<()> {
 }
 
 /// S6: log-log with minor ticks and minor grid, and semilog-y.
-fn s6_log() -> ezviz::Result<()> {
+fn s6_log() -> sciplot::Result<()> {
     let k = logspace(-1.0, 3.0, 81);
     let e: Vec<f64> = k.iter().map(|k| 2.0 * k.powf(-5.0 / 3.0)).collect();
     let t = linspace_v(0.0, 10.0, 60);
@@ -218,7 +218,7 @@ fn s6_log() -> ezviz::Result<()> {
 }
 
 /// S7: density histogram with a pdf overlay, categorical barplot, confidence band.
-fn s7_stats() -> ezviz::Result<()> {
+fn s7_stats() -> sciplot::Result<()> {
     let mut r = Rng(0x9E3779B97F4A7C15);
     let samples: Vec<f64> = (0..10_000).map(|_| r.normal()).collect();
     let xs = linspace_v(-4.0, 4.0, 200);
@@ -248,7 +248,7 @@ fn s7_stats() -> ezviz::Result<()> {
 }
 
 /// S8: a paper figure with a scoped theme, 4 in × 3 in at 12 pt, 300 dpi.
-fn s8_paper() -> ezviz::Result<()> {
+fn s8_paper() -> sciplot::Result<()> {
     let t = linspace_v(0.0, 5.0, 200);
     let n: Vec<f64> = t.iter().map(|t| 1e19 * (1.0 + 0.5 * (-t).exp() * (6.0 * t).cos())).collect();
     let paper = theme_minimal().fontsize(12.0 * PT).figure_padding(4.0 * PT).linewidth(1.0 * PT).axis(|a| {
@@ -269,7 +269,7 @@ fn s8_paper() -> ezviz::Result<()> {
 }
 
 /// Makie's `theme_minimal` on a simple figure.
-fn theme_minimal_page() -> ezviz::Result<()> {
+fn theme_minimal_page() -> sciplot::Result<()> {
     let x = linspace_v(0.0, 10.0, 100);
     let y1: Vec<f64> = x.iter().map(|x| (x * 0.8).sin() + 0.1 * x).collect();
     let y2: Vec<f64> = x.iter().map(|x| (x * 0.8).cos() - 0.1 * x).collect();
@@ -291,7 +291,7 @@ fn theme_minimal_page() -> ezviz::Result<()> {
 // Stress pages
 
 /// Every marker at three sizes; the largest row stroked.
-fn stress_markers() -> ezviz::Result<()> {
+fn stress_markers() -> sciplot::Result<()> {
     let markers = [
         Marker::Circle,
         Marker::Rect,
@@ -320,7 +320,7 @@ fn stress_markers() -> ezviz::Result<()> {
 }
 
 /// NaN gaps in lines, scatter and scatterlines.
-fn stress_nan() -> ezviz::Result<()> {
+fn stress_nan() -> sciplot::Result<()> {
     let x = linspace_v(0.0, 10.0, 101);
     let mut y: Vec<f64> = x.iter().map(|x| x.sin()).collect();
     for i in [20, 21, 22, 50, 80] {
@@ -345,7 +345,7 @@ fn stress_nan() -> ezviz::Result<()> {
 }
 
 /// Huge offsets and tiny spans (Float32 rebasing).
-fn stress_offset() -> ezviz::Result<()> {
+fn stress_offset() -> sciplot::Result<()> {
     let x: Vec<f64> = (0..200).map(|i| 1e9 + i as f64 * 0.01).collect();
     let y: Vec<f64> = (0..200).map(|i| (i as f64 * 0.1).sin()).collect();
     let x2: Vec<f64> = (0..100).map(|i| i as f64).collect();
@@ -361,7 +361,7 @@ fn stress_offset() -> ezviz::Result<()> {
 }
 
 /// A heatmap on log-scaled axes with irregular (log-spaced) edges.
-fn stress_logheatmap() -> ezviz::Result<()> {
+fn stress_logheatmap() -> sciplot::Result<()> {
     let (nx, ny) = (30usize, 20usize);
     let xe = logspace(0.0, 3.0, nx + 1);
     let ye = logspace(-2.0, 1.0, ny + 1);
@@ -380,7 +380,7 @@ fn stress_logheatmap() -> ezviz::Result<()> {
 }
 
 /// Line widths, dash styles, joins and caps, and a dense chirp.
-fn stress_lines() -> ezviz::Result<()> {
+fn stress_lines() -> sciplot::Result<()> {
     let fig = Figure::new().size((900, 700));
     let a = Axis::new(fig.at(1, 1)).title("linewidths 0.5 1 2 4 8");
     for (i, w) in [0.5, 1.0, 2.0, 4.0, 8.0].iter().enumerate() {
@@ -410,7 +410,7 @@ fn stress_lines() -> ezviz::Result<()> {
 }
 
 /// Text annotations: alignments, rotation, fonts and sizes.
-fn stress_text() -> ezviz::Result<()> {
+fn stress_text() -> sciplot::Result<()> {
     let fig = Figure::new();
     let ax = Axis::new(fig.at(1, 1)).title("text").limits(0.0, 4.0, 0.0, 4.0);
     let aligns = [(HAlign::Left, VAlign::Bottom), (HAlign::Center, VAlign::Center), (HAlign::Right, VAlign::Top)];
@@ -429,7 +429,7 @@ fn stress_text() -> ezviz::Result<()> {
 }
 
 /// Dodged, stacked and horizontal bars; a stroked histogram.
-fn stress_bars() -> ezviz::Result<()> {
+fn stress_bars() -> sciplot::Result<()> {
     let mut r = Rng(0xD1B54A32D192ED03);
     let samples: Vec<f64> = (0..2000).map(|_| 2.0 * r.normal() + 5.0).collect();
     let x = [1.0, 1.0, 2.0, 2.0, 3.0, 3.0];
@@ -450,7 +450,7 @@ fn stress_bars() -> ezviz::Result<()> {
 
 /// Every marker stroked: thin and thick strokes on opaque fills, a translucent fill with a
 /// translucent stroke, and small rotated markers (CairoMakie's centered, mitered stroke).
-fn stress_marker_strokes() -> ezviz::Result<()> {
+fn stress_marker_strokes() -> sciplot::Result<()> {
     let markers = [
         Marker::Circle,
         Marker::Rect,
@@ -474,12 +474,7 @@ fn stress_marker_strokes() -> ezviz::Result<()> {
         let x = (i + 1) as f64;
         ax.scatter([x], [4.0]).marker(*m).markersize(34).color(WONG[0]).strokewidth(1).strokecolor(BLACK);
         ax.scatter([x], [3.0]).marker(*m).markersize(34).color(WONG[2]).strokewidth(4).strokecolor(BLACK);
-        ax.scatter([x], [2.0])
-            .marker(*m)
-            .markersize(34)
-            .color((WONG[1], 0.4))
-            .strokewidth(3)
-            .strokecolor((BLACK, 0.6));
+        ax.scatter([x], [2.0]).marker(*m).markersize(34).color((WONG[1], 0.4)).strokewidth(3).strokecolor((BLACK, 0.6));
         ax.scatter([x], [1.0]).marker(*m).markersize(18).rotation(0.4).color(WONG[5]).strokewidth(2).strokecolor(RED);
     }
     save("stress_marker_strokes", &fig, &Data::default(), None)
@@ -487,7 +482,7 @@ fn stress_marker_strokes() -> ezviz::Result<()> {
 
 /// Bar, hist and band strokes (Makie: each rectangle stroked centered on its edges; a band's
 /// stroke runs along its lower and upper curves).
-fn stress_strokes() -> ezviz::Result<()> {
+fn stress_strokes() -> sciplot::Result<()> {
     let mut r = Rng(0x2545F4914F6CDD1D);
     let samples: Vec<f64> = (0..500).map(|_| r.normal()).collect();
     let x = linspace_v(0.0, 6.0, 40);
@@ -497,7 +492,12 @@ fn stress_strokes() -> ezviz::Result<()> {
     let a = Axis::new(fig.at(1, 1)).title("barplot, strokewidth 4");
     a.barplot([1.0, 2.0, 3.0, 4.0], [3.0, -1.0, 2.0, 0.0]).color((WONG[0], 0.6)).strokewidth(4).strokecolor(BLACK);
     let b = Axis::new(fig.at(1, 2)).title("direction = x, gap 0");
-    b.barplot([1.0, 2.0, 3.0], [2.0, 4.0, 3.0]).direction(Direction::X).gap(0).color(WONG[1]).strokewidth(2).strokecolor(RED);
+    b.barplot([1.0, 2.0, 3.0], [2.0, 4.0, 3.0])
+        .direction(Direction::X)
+        .gap(0)
+        .color(WONG[1])
+        .strokewidth(2)
+        .strokecolor(RED);
     let c = Axis::new(fig.at(2, 1)).title("hist, strokewidth 2");
     c.hist(&samples).bins(12).color(WONG[2]).strokewidth(2).strokecolor((BLACK, 0.7));
     let d = Axis::new(fig.at(2, 2)).title("band, strokewidth 3");
@@ -508,7 +508,7 @@ fn stress_strokes() -> ezviz::Result<()> {
 }
 
 /// 50 000 translucent points (blending and marker AA at small sizes).
-fn stress_dense() -> ezviz::Result<()> {
+fn stress_dense() -> sciplot::Result<()> {
     let mut r = Rng(0x94D049BB133111EB);
     let n = 50_000;
     let x: Vec<f64> = (0..n).map(|_| r.normal()).collect();
@@ -519,7 +519,7 @@ fn stress_dense() -> ezviz::Result<()> {
     save("stress_dense", &fig, Data::default().put("x", &x).put("y", &y), None)
 }
 
-type PageFn = fn() -> ezviz::Result<()>;
+type PageFn = fn() -> sciplot::Result<()>;
 
 const PAGES: &[(&str, PageFn)] = &[
     ("s1_scatter", s1_scatter),
@@ -543,7 +543,7 @@ const PAGES: &[(&str, PageFn)] = &[
     ("stress_strokes", stress_strokes),
 ];
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let filters: Vec<String> = std::env::args().skip(1).collect();
     std::fs::create_dir_all(Path::new(OUT).join("data"))?;
     let mut names = Vec::new();

@@ -38,8 +38,8 @@ pub(crate) mod surface;
 pub use lines::Lines;
 pub use lines3d::Lines3d;
 pub use scatter3d::Scatter3d;
-pub use surface::Surface;
 pub use scatterlines::ScatterLines;
+pub use surface::Surface;
 
 use crate::attrs::Conv;
 use crate::color::{Color, Colormap, IntoColor};

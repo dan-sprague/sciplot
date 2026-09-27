@@ -9,9 +9,9 @@
 //! the model that also works in the browser. The window stays interactive: scroll to zoom,
 //! drag to pan or zoom into a rectangle, hover for values.
 //!
-//! `EZVIZ_AUTOCLOSE=4 EZVIZ_WINDOW_DUMP=out/s5_animate.png cargo run --release --example
+//! `SCIPLOT_AUTOCLOSE=4 SCIPLOT_WINDOW_DUMP=out/s5_animate.png cargo run --release --example
 //! s5_animate` closes after 4 s and writes the last frame.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 const N: usize = 256;
 /// Simulation steps per displayed frame.
@@ -113,8 +113,8 @@ impl Lorenz {
     }
 }
 
-fn main() -> ezviz::Result<()> {
-    let fig = Figure::new().size((1300, 460)).window_title("ezviz: animate (Gray–Scott, Lorenz)");
+fn main() -> sciplot::Result<()> {
+    let fig = Figure::new().size((1300, 460)).window_title("sciplot: animate (Gray–Scott, Lorenz)");
     let ax_gs = Axis::new(fig.at(1, 1)).title("step 0").xlabel("x").ylabel("y");
     let mut gs = GrayScott::new();
     let hm = ax_gs.heatmap(Field::new(&gs.v, N, N)).colormap(Colormap::MAGMA).colorrange((0.0, 0.45));

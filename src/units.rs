@@ -1,7 +1,7 @@
 //! Makie's unitless size model: 1 unit = 1 CSS pixel = 1/96 inch = 0.75 pt.
 //!
 //! ```
-//! use ezviz::units::*;
+//! use sciplot::units::*;
 //! assert_eq!(12.0 * PT, 16.0);
 //! assert_eq!(4.0 * INCH, 384.0);
 //! ```

@@ -2,7 +2,7 @@
 //! decorations and 3D plots.
 //!
 //! Coordinates: Makie computes the decorations in figure pixels with y up; this module does the
-//! same ([`Axis3Frame::project_up`]) and flips to ezviz's y-down figure units when emitting.
+//! same ([`Axis3Frame::project_up`]) and flips to sciplot's y-down figure units when emitting.
 //! Plot data is stored as f32 *local* coordinates `(data - origin) * k` ([`Rebase3`], reused while
 //! the limits stay comparable, so live data growth doesn't reconvert or reupload everything);
 //! [`View3d`] maps local coordinates to the scene area.

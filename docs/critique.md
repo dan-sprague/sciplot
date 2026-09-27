@@ -1,4 +1,4 @@
-**Critique of the final ezviz design: prioritized issues and concrete fixes**
+**Critique of the final sciplot design: prioritized issues and concrete fixes**
 
 I checked two claims directly:
 - **Makie heatmap intervals.** `~/.julia/packages/Makie/Iy6pu/src/conversions.jl:419-438` shows that Makie does not treat a `0..1` interval as outer cell edges. The design says it does.
@@ -78,7 +78,7 @@ I also confirmed these in the local sources:
   - Only `Device`, `Queue`, pipelines and colormap LUTs are shared, behind `OnceLock` or `Mutex`.
   - Add a test that exports PNGs in a loop from the worker while S5 is displayed.
 
-**P1-8. Milestone order puts the user's main motivation last.** Live fields with pan and zoom (S5) are the reason ezviz exists, yet interaction arrives in M8 and live updates in M9. M2 ("full API surface: every attribute table, every macro, themes, trybuild for everything") is also too large, and it will churn as M3–M7 reveal what is actually needed.
+**P1-8. Milestone order puts the user's main motivation last.** Live fields with pan and zoom (S5) are the reason sciplot exists, yet interaction arrives in M8 and live updates in M9. M2 ("full API surface: every attribute table, every macro, themes, trybuild for everything") is also too large, and it will churn as M3–M7 reveal what is actually needed.
 - **Fix:**
   - Split M2:
     - **M2a:** data traits, the attribute-table macro for Axis, Lines, Scatter and Heatmap, the plot macros, handles and `batch`.
@@ -92,7 +92,7 @@ I also confirmed these in the local sources:
 - An automatic colorrange on a live heatmap causes the same problem through the Colorbar tick labels.
 - **Fix:**
   - Expose `yticklabelspace`/`xticklabelspace` (Makie's attributes) explicitly and use `yticklabelspace = 50` in S5.
-  - Optionally add an ezviz live mode in which ticklabelspace only grows (monotone), with a doc note.
+  - Optionally add an sciplot live mode in which ticklabelspace only grows (monotone), with a doc note.
 
 **P1-10. The macOS colorspace shim must survive reconfiguration.**
 - Walking the NSView's sublayers is fragile, and `surface.configure` on resize may reset the layer.
@@ -130,7 +130,7 @@ I also confirmed these in the local sources:
 10. **Log minors, D2.** "When majors skip decades, only the skipped decades" is ambiguous. Specify it: minors go at 10ⁿ for the skipped n (matplotlib-like). Add fixtures for 1e-3..1e9.
 11. **Value range in f32.** Densities up to 1e21 m⁻³ are fine in f32, but astrophysical 1e40 or cross-sections of 1e-40 overflow or go subnormal. Store values as `(v − off)·k` in f32 with the colorrange mapped the same way (as in P0-2a). Makie clamps at floatmax.
 12. **Verification additions:**
-    - gate `window_smoke` behind `EZVIZ_WINDOW_TESTS=1`;
+    - gate `window_smoke` behind `SCIPLOT_WINDOW_TESTS=1`;
     - inject scale factors 1.0 and 2.0 under the `testing` feature;
     - inspector tests on log and reversed axes;
     - a Makie golden fixture for the interval semantics (P0-1);

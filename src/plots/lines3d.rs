@@ -17,7 +17,7 @@ use std::sync::Arc;
 /// A 3D line plot handle (Makie's `lines!(ax3, x, y, z)`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis3::new(fig.at(1, 1));
 /// let t = linspace(0.0, 30.0, 1000);

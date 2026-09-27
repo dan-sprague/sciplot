@@ -1,4 +1,4 @@
-# Layout reference fixtures for ezviz's GridLayoutBase port (tests/layout.rs).
+# Layout reference fixtures for sciplot's GridLayoutBase port (tests/layout.rs).
 #
 #     julia --project=tools tools/gen_layout_fixtures.jl
 #

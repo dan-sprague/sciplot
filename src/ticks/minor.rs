@@ -1,5 +1,5 @@
 //! Minor ticks: Makie's `IntervalsBetween(n)` (exact port of `get_minor_tickvalues`,
-//! `Makie/src/makielayout/lineaxis.jl:880-948`) and the ezviz log-axis default (plan D2).
+//! `Makie/src/makielayout/lineaxis.jl:880-948`) and the sciplot log-axis default (plan D2).
 
 use super::julia;
 use super::log::LogBase;

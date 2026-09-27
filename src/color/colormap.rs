@@ -17,7 +17,7 @@ pub const LUT_SIZE: usize = 256;
 /// [`Colormap::from_colors`], and `.reversed()` flips a map (Makie's `Reverse(:viridis)`).
 ///
 /// ```
-/// use ezviz::color::Colormap;
+/// use sciplot::color::Colormap;
 /// let c = Colormap::VIRIDIS.sample(0.0);
 /// assert!((c.r - 0.267004).abs() < 1e-6);
 /// assert_eq!(Colormap::named("magma"), Some(Colormap::MAGMA));

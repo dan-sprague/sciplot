@@ -58,7 +58,7 @@ impl Frame {
     }
 
     /// Closes the window after this frame (natively `animate` then returns; in the browser the
-    /// figure is unmounted and a canvas ezviz created is removed).
+    /// figure is unmounted and a canvas sciplot created is removed).
     pub fn close(&mut self) {
         self.control = Control::Close;
     }
@@ -111,7 +111,7 @@ pub(crate) type AnimFn<'f> = Box<dyn FnMut(&mut Frame) + 'f>;
 pub(crate) struct Anim<'f> {
     f: AnimFn<'f>,
     ticker: Ticker,
-    /// `EZVIZ_WINDOW_DUMP` without `EZVIZ_WINDOW_DUMP_FRAME`: written from the last frame when the
+    /// `SCIPLOT_WINDOW_DUMP` without `SCIPLOT_WINDOW_DUMP_FRAME`: written from the last frame when the
     /// window closes (the first frame of an animation is rarely the interesting one).
     dump_last: Option<PathBuf>,
 }
@@ -151,7 +151,7 @@ impl App<'_> {
         let Some(path) = self.anims.get_mut(&id).and_then(|a| a.dump_last.take()) else { return };
         let Some(w) = self.wins.get_mut(&id) else { return };
         if let Err(e) = w.dump_current(&path) {
-            log::error!("ezviz: window dump failed: {e}");
+            log::error!("sciplot: window dump failed: {e}");
         }
     }
 

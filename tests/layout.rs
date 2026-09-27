@@ -6,8 +6,8 @@
 //! We feed exactly those inputs to the solver and require every bbox within 0.01 units, every Axis
 //! viewport exactly (after rounding) and the `resize_to_layout!` size exactly.
 
-use ezviz::testing::layout::{AlignMode, BBox, BlockSize, Content, Gap, Grid, LayoutItem, MixedSide, Protrusion};
-use ezviz::{GridSize, Side};
+use sciplot::testing::layout::{AlignMode, BBox, BlockSize, Content, Gap, Grid, LayoutItem, MixedSide, Protrusion};
+use sciplot::{GridSize, Side};
 use serde_json::Value;
 
 const TOL: f64 = 0.01;

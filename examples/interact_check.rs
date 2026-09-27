@@ -11,10 +11,10 @@
 //! the frames, overlays included, to `out/interact_*.png`:
 //!
 //! `cargo run --example interact_check --features testing`
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
-    let fig = Figure::new().size((900, 700)).window_title("ezviz: interaction check");
+fn main() -> sciplot::Result<()> {
+    let fig = Figure::new().size((900, 700)).window_title("sciplot: interaction check");
     let x: Vec<f64> = (0..40).map(|i| 0.25 * i as f64).collect();
     let y: Vec<f64> = x.iter().map(|v| v.sin()).collect();
 
@@ -45,8 +45,8 @@ fn main() -> ezviz::Result<()> {
 /// and dumps the frames.
 #[cfg(feature = "testing")]
 fn script(live: &Live, x: &[f64], y: &[f64]) -> Result<(), String> {
-    use ezviz::interact::{Button, Key};
-    use ezviz::window_testing::{self as wt, Synthetic as S};
+    use sciplot::interact::{Button, Key};
+    use sciplot::window_testing::{self as wt, Synthetic as S};
     use std::time::Duration;
 
     std::fs::create_dir_all("out").map_err(|e| e.to_string())?;

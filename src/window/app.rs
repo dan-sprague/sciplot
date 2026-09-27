@@ -157,7 +157,7 @@ pub(crate) struct Win {
     pub built: Option<Built>,
     /// Frames rendered so far (presented, or built while occluded for the dump).
     pub frames: u64,
-    /// `EZVIZ_WINDOW_DUMP` path and the frame number to write (`EZVIZ_WINDOW_DUMP_FRAME`, 1).
+    /// `SCIPLOT_WINDOW_DUMP` path and the frame number to write (`SCIPLOT_WINDOW_DUMP_FRAME`, 1).
     pub dump: Option<(std::path::PathBuf, u64)>,
     pub ui: InteractState,
     touches: Touches,
@@ -167,7 +167,7 @@ pub(crate) struct Win {
     pub occluded: bool,
     /// Latest inner size in device pixels (0x0 for a canvas until the browser laid it out).
     pub phys: [u32; 2],
-    /// Web: the canvas was created by ezviz and is removed with the window.
+    /// Web: the canvas was created by sciplot and is removed with the window.
     pub owns_canvas: bool,
     /// Tick-label space frozen by an ongoing zoom or pan.
     freeze: Option<Freeze>,
@@ -218,7 +218,7 @@ impl<'f> App<'f> {
         exit_when_empty: bool,
         live: Option<Arc<LiveShared>>,
     ) -> App<'f> {
-        let autoclose = std::env::var("EZVIZ_AUTOCLOSE")
+        let autoclose = std::env::var("SCIPLOT_AUTOCLOSE")
             .ok()
             .and_then(|s| s.parse::<f64>().ok())
             .map(|s| Instant::now() + Duration::from_secs_f64(s.max(0.0)));
@@ -248,7 +248,7 @@ impl<'f> App<'f> {
             match self.open(el, req) {
                 Ok(id) => self.opened.push((token, id)),
                 Err(e) => {
-                    log::error!("ezviz: could not open a window: {e}");
+                    log::error!("sciplot: could not open a window: {e}");
                     self.error = Some(e);
                     if self.exit_when_empty {
                         el.exit();
@@ -263,7 +263,7 @@ impl<'f> App<'f> {
         let OpenReq { fig, token: _, canvas, anim } = req;
         let (size, title) = {
             let st = fig.sh.state.lock();
-            (st.theme.globals().size, st.window_title.clone().unwrap_or_else(|| "ezviz".into()))
+            (st.theme.globals().size, st.window_title.clone().unwrap_or_else(|| "sciplot".into()))
         };
         #[cfg(not(target_arch = "wasm32"))]
         let (window, gfx, owns_canvas) = {
@@ -316,8 +316,8 @@ impl<'f> App<'f> {
         }
         if let Some(f) = anim {
             // An animation's first frame is rarely the interesting one: without
-            // `EZVIZ_WINDOW_DUMP_FRAME` the dump is written from the last frame.
-            let dump_last = if std::env::var_os("EZVIZ_WINDOW_DUMP_FRAME").is_none() {
+            // `SCIPLOT_WINDOW_DUMP_FRAME` the dump is written from the last frame.
+            let dump_last = if std::env::var_os("SCIPLOT_WINDOW_DUMP_FRAME").is_none() {
                 win.dump.take().map(|(p, _)| p)
             } else {
                 None
@@ -340,7 +340,7 @@ impl<'f> App<'f> {
                 w.window.request_redraw();
             }
             Err(e) => {
-                log::error!("ezviz: GPU initialization failed: {e}");
+                log::error!("sciplot: GPU initialization failed: {e}");
                 #[cfg(target_arch = "wasm32")]
                 super::web::mark_failed(&w.window, &e.to_string());
                 self.error = Some(e);
@@ -538,7 +538,7 @@ impl Win {
                 return;
             }
             wgpu::CurrentSurfaceTexture::Validation => {
-                log::error!("ezviz: surface validation error");
+                log::error!("sciplot: surface validation error");
                 return;
             }
         };
@@ -557,14 +557,14 @@ impl Win {
         if let Some(l) = &self.live {
             l.presented(built_rev);
         }
-        // `EZVIZ_WINDOW_DUMP`: write the n-th frame, as rendered for this window, to a PNG.
+        // `SCIPLOT_WINDOW_DUMP`: write the n-th frame, as rendered for this window, to a PNG.
         self.frames += 1;
         if self.dump.as_ref().is_some_and(|(_, nth)| self.frames == *nth) {
             let dl = dl.into_owned();
             if let Some((path, _)) = self.dump.take()
                 && let Err(e) = self.dump_png(&dl, &path)
             {
-                log::error!("ezviz: window dump failed: {e}");
+                log::error!("sciplot: window dump failed: {e}");
             }
         }
     }
@@ -705,14 +705,14 @@ fn axis_mut<'a>(
 
 /// The window dump requested through the environment, if any.
 fn dump_request() -> Option<(std::path::PathBuf, u64)> {
-    let path = std::env::var_os("EZVIZ_WINDOW_DUMP")?;
-    let nth = std::env::var("EZVIZ_WINDOW_DUMP_FRAME").ok().and_then(|s| s.parse().ok()).unwrap_or(1u64);
+    let path = std::env::var_os("SCIPLOT_WINDOW_DUMP")?;
+    let nth = std::env::var("SCIPLOT_WINDOW_DUMP_FRAME").ok().and_then(|s| s.parse().ok()).unwrap_or(1u64);
     Some((path.into(), nth.max(1)))
 }
 
 impl ApplicationHandler<UserEvent> for App<'_> {
     fn new_events(&mut self, el: &ActiveEventLoop, _cause: StartCause) {
-        // `EZVIZ_AUTOCLOSE`: `about_to_wait` wakes the loop at the deadline.
+        // `SCIPLOT_AUTOCLOSE`: `about_to_wait` wakes the loop at the deadline.
         if self.autoclose.is_some_and(|t| Instant::now() >= t) {
             let ids: Vec<WindowId> = self.anims.keys().copied().collect();
             for id in ids {
@@ -756,7 +756,7 @@ impl ApplicationHandler<UserEvent> for App<'_> {
             }
             UserEvent::Panicked(session, msg) => {
                 for w in self.wins.values().filter(|w| w.live.as_ref().is_some_and(|l| l.session == session)) {
-                    let title = w.fig.sh.state.lock().window_title.clone().unwrap_or_else(|| "ezviz".into());
+                    let title = w.fig.sh.state.lock().window_title.clone().unwrap_or_else(|| "sciplot".into());
                     w.window.set_title(&format!("{title} — simulation panicked: {msg}"));
                 }
             }

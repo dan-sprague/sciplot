@@ -279,8 +279,8 @@ pub(crate) fn warn_missing_glyph(ch: char) {
     }
     if SEEN.lock().get_or_insert_with(HashSet::new).insert(ch) {
         let msg = format!("no glyph for {ch:?} (U+{:04X}) in the bundled fonts; drawing .notdef", ch as u32);
-        log::warn!("ezviz: {msg}");
-        eprintln!("ezviz warning: {msg}");
+        log::warn!("sciplot: {msg}");
+        eprintln!("sciplot warning: {msg}");
     }
 }
 

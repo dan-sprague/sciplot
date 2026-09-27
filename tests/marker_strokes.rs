@@ -1,7 +1,7 @@
 //! Marker strokes follow CairoMakie on the GPU and in SVG: centered on the outline, painted over
 //! the fill, with sharp (mitered) corners.
-use ezviz::prelude::*;
-use ezviz::{Error, RgbaImage};
+use sciplot::prelude::*;
+use sciplot::{Error, RgbaImage};
 
 /// One `FullRect` marker (40 units) with an 8 unit black stroke on a white figure at 1 px/unit.
 fn figure() -> Figure {

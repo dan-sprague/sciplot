@@ -6,12 +6,12 @@
 //! - every shader translates to GLSL ES 3.00 for WebGL2 (naga's writer, as wgpu's GL backend
 //!   does in the browser).
 //!
-//! GPU parts are skipped when there is no adapter. Set `EZVIZ_TEST_DUMP=1` to write the renders
+//! GPU parts are skipped when there is no adapter. Set `SCIPLOT_TEST_DUMP=1` to write the renders
 //! to `out/portability_*.png`.
 
-use ezviz::gpu_testing::{GpuContext, wgsl_sources};
-use ezviz::prelude::*;
-use ezviz::{Error, RgbaImage};
+use sciplot::gpu_testing::{GpuContext, wgsl_sources};
+use sciplot::prelude::*;
+use sciplot::{Error, RgbaImage};
 
 fn rng(mut s: u64) -> impl FnMut() -> f64 {
     move || {
@@ -154,7 +154,7 @@ fn close_fraction(a: &RgbaImage, b: &RgbaImage) -> (f64, u8) {
 }
 
 fn dump(img: &RgbaImage, name: &str) {
-    if std::env::var_os("EZVIZ_TEST_DUMP").is_none() {
+    if std::env::var_os("SCIPLOT_TEST_DUMP").is_none() {
         return;
     }
     let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("out");

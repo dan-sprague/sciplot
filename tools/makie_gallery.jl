@@ -1,11 +1,11 @@
 # CairoMakie reference renders for the side-by-side gallery (plan §7).
 #
-#   cargo run --release --example gallery          # ezviz PNG/SVG + target/gallery/data/*.json
+#   cargo run --release --example gallery          # sciplot PNG/SVG + target/gallery/data/*.json
 #   julia --project=tools tools/makie_gallery.jl   # -> target/gallery/makie/*.png
 #   cargo run --release --example compare          # -> target/gallery/index.html
 #
 # Each function below mirrors the page of the same name in examples/gallery.rs and draws the
-# arrays dumped by it (never recomputed here), at px_per_unit = 2 like ezviz's default PNG.
+# arrays dumped by it (never recomputed here), at px_per_unit = 2 like sciplot's default PNG.
 # Optional arguments filter pages by substring, like the gallery example.
 
 using CairoMakie

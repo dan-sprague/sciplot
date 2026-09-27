@@ -229,7 +229,7 @@ impl FigShared {
 /// A figure: the root of a Makie-style layout. Create one with [`Figure::new`] or [`Figure!`].
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new().size((800, 600));
 /// let ax = Axis::new(fig.at(1, 1)).title("hello");
 /// ax.scatter([1.0, 2.0, 3.0], [1.0, 4.0, 9.0]);
@@ -305,7 +305,7 @@ impl Figure {
     /// or aspect-constrained columns and rows leave no empty margins.
     ///
     /// ```
-    /// # use ezviz::prelude::*;
+    /// # use sciplot::prelude::*;
     /// let fig = Figure::new();
     /// Axis::new(fig.at(1, 1)).width(300).height(200);
     /// fig.resize_to_layout();
@@ -333,7 +333,7 @@ impl Figure {
     /// Makie's `fig[row, col]`: a 1-based, inclusive grid position.
     ///
     /// ```
-    /// # use ezviz::prelude::*;
+    /// # use sciplot::prelude::*;
     /// let fig = Figure::new();
     /// let top = Axis::new(fig.at(1, 1));
     /// let bottom = Axis::new(fig.at(2, 1..=2));   // spans two columns

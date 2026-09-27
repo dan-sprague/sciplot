@@ -3,9 +3,6 @@
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
 use crate::blocks::axis3::{Axis3Attrs, Axis3Theme};
-use crate::plots::lines3d::{Lines3dAttrs, Lines3dTheme};
-use crate::plots::scatter3d::{Scatter3dAttrs, Scatter3dTheme};
-use crate::plots::surface::{SurfaceAttrs, SurfaceTheme};
 use crate::blocks::colorbar::{ColorbarAttrs, ColorbarTheme};
 use crate::blocks::label::{LabelAttrs, LabelTheme};
 use crate::blocks::legend::{LegendAttrs, LegendTheme};
@@ -18,10 +15,13 @@ use crate::plots::contourf::{ContourfAttrs, ContourfTheme};
 use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
 use crate::plots::hist::{HistAttrs, HistTheme};
 use crate::plots::lines::{LinesAttrs, LinesTheme};
+use crate::plots::lines3d::{Lines3dAttrs, Lines3dTheme};
 use crate::plots::reflines::{RefLinesAttrs, RefLinesTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
+use crate::plots::scatter3d::{Scatter3dAttrs, Scatter3dTheme};
 use crate::plots::scatterlines::{ScatterLinesAttrs, ScatterLinesTheme};
 use crate::plots::streamplot::{StreamPlotAttrs, StreamPlotTheme};
+use crate::plots::surface::{SurfaceAttrs, SurfaceTheme};
 use crate::plots::textplot::TextAttrs;
 use parking_lot::RwLock;
 use std::cell::RefCell;

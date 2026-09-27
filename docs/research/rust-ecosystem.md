@@ -1,11 +1,11 @@
-# ezviz dependency research (Rust ecosystem as of 2026-09-26)
+# sciplot dependency research (Rust ecosystem as of 2026-09-26)
 
 ## 0. Summary
 
 - **GPU and windowing:** use wgpu **30.0.1** with winit **0.30.13**. That is the pair wgpu's own v30 examples use. winit 0.31 is still `0.31.0-beta.3` and changes the API a lot, so avoid it for now.
 - **Text:** use **ab_glyph 0.2.32**. It rasterises coverage bitmaps at any size, gives glyph outlines for SVG, reads CFF `.otf` files, and has a small dependency tree.
   - Its kerning only reads the old `kern` table. That does not matter here: the font Makie actually ships (TeXGyreHerosMakie) has no `kern`/GPOS/GSUB tables, and Makie's layout never kerns (`x += hadvance`).
-- **Existing crates:** none already does what ezviz aims to do (Makie object model + GPU + interactive + SVG/PNG).
+- **Existing crates:** none already does what sciplot aims to do (Makie object model + GPU + interactive + SVG/PNG).
   - Closest in spirit: **ruviz** (CPU tiny-skia, one builder chain, no Figure/Axis model) and **pluot** (wgpu layers that render to both pixels and SVG, experimental).
   - Best interaction ideas: **egui_plot** and **rerun**.
 - **Font:** embed Makie's **TeXGyreHerosMakie-{Regular,Bold}.otf** (~171 KB each). The GUST Font License is legally LPPL‑1.3c, which is OSI-approved. Embedding and redistributing unmodified files is fine; renaming is only *requested* if you modify them.
@@ -39,7 +39,7 @@ Other versions checked: glam 0.33.10, crossbeam-channel 0.5.17 (std `mpsc` is en
 ### 2.1 Cargo.toml
 ```toml
 [package]
-name = "ezviz"
+name = "sciplot"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"          # bump to 1.89 if the nalgebra feature is on
@@ -85,7 +85,7 @@ impl Gpu {
         }))
         .expect("no GPU adapter"); // returns Result<Adapter, RequestAdapterError>
         let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
-            label: Some("ezviz"),
+            label: Some("sciplot"),
             required_limits: adapter.limits(), // default Limits cap 2D textures at 8192; M3 supports 16384
             ..Default::default()               // required_features, experimental_features, memory_hints, trace
         }))
@@ -128,7 +128,7 @@ impl App {
     fn ensure_window(&mut self, el: &ActiveEventLoop) {
         if !self.want_window || self.screen.is_some() { return; }
         let attrs = Window::default_attributes()
-            .with_title("ezviz")
+            .with_title("sciplot")
             .with_inner_size(LogicalSize::new(600.0, 450.0)); // Makie `size` is logical (CSS) px
         let window = Arc::new(el.create_window(attrs).expect("create_window"));
         // On macOS, create_surface panics if not called on the main thread.
@@ -495,7 +495,7 @@ None of these provides a Makie-style Figure/GridLayout/Axis model, GPU rendering
   - The GUST Font License is "legally identical to LPPL 1.3c or later". The SPDX id is `LPPL-1.3c`, which is OSI-approved.
   - It adds one *non-binding* request: rename derived fonts and list them in a `MANIFEST-<id>.txt`.
   - Embedding with `include_bytes!` and redistributing unmodified files is allowed. Ship the license text alongside.
-  - Put `(MIT OR Apache-2.0) AND LPPL-1.3c` in `license`, or isolate the fonts in an `ezviz-fonts` crate.
+  - Put `(MIT OR Apache-2.0) AND LPPL-1.3c` in `license`, or isolate the fonts in an `sciplot-fonts` crate.
   - If you subset or modify the files, rename them (Makie already renamed its version "TeX Gyre Heros Makie").
 - **Use Makie's version (local path `~/.julia/artifacts/ad4e594b35357bcfafa2ed97db3137382a3f09bb/fonts/`):**
   - Files and sizes: `TeXGyreHerosMakie-Regular.otf` 170,996 B, `-Bold` 172,208, `-Italic` 177,112, `-BoldItalic` 178,612.
@@ -505,7 +505,7 @@ None of these provides a Makie-style Figure/GridLayout/Axis model, GPU rendering
 - **Glyph coverage of Regular:**
   - Present: U+2212 minus, Greek (49 codepoints), × ° ± ≈ ≤ √ ∑ ∞ ∂ ·, and superscripts ² ¹.
   - Missing: ⁻ ⁴ (most of the superscript block), ∇, ℏ, ∫, and thin space U+2009.
-  - That is why Makie's `tick_format.jl` draws log-tick exponents as rich-text **superscript spans** (smaller size plus a baseline offset), not Unicode superscripts. ezviz needs the same rich-text span support.
+  - That is why Makie's `tick_format.jl` draws log-tick exponents as rich-text **superscript spans** (smaller size plus a baseline offset), not Unicode superscripts. sciplot needs the same rich-text span support.
 - **Fallbacks:**
   - Liberation Sans or Arimo: OFL-1.1 / Apache-2.0, Helvetica-metric-compatible.
   - DejaVu Sans (757 KB; Makie's old default; broad math and Greek coverage) or Noto Sans Math (OFL) as a symbol fallback.

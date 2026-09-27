@@ -15,7 +15,7 @@ use std::sync::Arc;
 /// A 3D scatter plot handle (Makie's `scatter!(ax3, x, y, z)`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis3::new(fig.at(1, 1));
 /// ax.scatter([0.0, 1.0, 2.0], [1.0, 0.0, 1.0], [0.0, 0.5, 1.0]).markersize(12);

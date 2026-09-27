@@ -1,9 +1,9 @@
 //! Legends: axislegend (S2), a shared unique Legend over three axes (S3), a horizontal legend with
 //! a title under an axis, and bar/band/marker entries. Writes out/legend_check_*.png (+ .svg);
 //! tools/legend_check.jl renders the same figures with CairoMakie (out/legend_check_*_makie.png).
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
     let t = linspace(0.0, 10.0, 200);
     let td = linspace(0.25, 9.75, 20);
@@ -54,7 +54,7 @@ fn main() -> ezviz::Result<()> {
     save(&fig, "bars")
 }
 
-fn save(fig: &Figure, name: &str) -> ezviz::Result<()> {
+fn save(fig: &Figure, name: &str) -> sciplot::Result<()> {
     fig.save(format!("out/legend_check_{name}.png"))?;
     fig.save(format!("out/legend_check_{name}.svg"))?;
     println!("wrote out/legend_check_{name}.png");

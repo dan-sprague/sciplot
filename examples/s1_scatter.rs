@@ -1,7 +1,7 @@
 //! S1: one-liner scatter to PNG.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     // Deterministic pseudo-random points (xorshift) so the example needs no extra crates.
     let mut s: u64 = 0x2545F4914F6CDD1D;
     let mut rnd = move || {

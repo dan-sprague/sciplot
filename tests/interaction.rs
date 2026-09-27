@@ -1,8 +1,8 @@
 //! The window interaction state machine against Makie's formulas (`interactions.jl`).
 #![cfg(feature = "window")]
 
-use ezviz::Scale;
-use ezviz::interact::{AxisView, Button, Effect, Input, InteractState, Key, Modifiers, apply_to_views, handle};
+use sciplot::Scale;
+use sciplot::interact::{AxisView, Button, Effect, Input, InteractState, Key, Modifiers, apply_to_views, handle};
 
 /// A 400 × 300 axis at (100, 50) showing [0, 10] × [0, 10].
 fn view() -> AxisView {

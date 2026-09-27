@@ -5,7 +5,7 @@
 //! horizontal colorbar below an axis; then lowclip/highclip triangles, `flipaxis = false` and a
 //! horizontal colorbar on top. Pass `--svg` to also write SVGs and `--cpu` to also render with the
 //! CPU fallback.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// Two Gaussian bumps, shared with tools/colorbar_check.jl.
 fn bumps(x: f64, y: f64) -> f64 {
@@ -13,7 +13,7 @@ fn bumps(x: f64, y: f64) -> f64 {
         + 0.6 * (-(3.0 * (x + 0.9).powi(2) + 10.0 * (y + 0.3).powi(2))).exp()
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
     let svg = std::env::args().any(|a| a == "--svg");
     let cpu = std::env::args().any(|a| a == "--cpu");

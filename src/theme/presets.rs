@@ -1,4 +1,4 @@
-//! Makie's built-in themes (`Makie/src/themes/theme_*.jl`), restricted to the blocks ezviz has.
+//! Makie's built-in themes (`Makie/src/themes/theme_*.jl`), restricted to the blocks sciplot has.
 
 use super::Theme;
 use crate::color::Color;
@@ -12,7 +12,7 @@ const GRAY50: Color = Color::hex(0x7F7F7F);
 /// spines, no ticks, label padding 3.
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// with_theme(theme_minimal(), || Figure::new().at(1, 1).lines([1.0, 2.0], [3.0, 1.0]));
 /// ```
 pub fn theme_minimal() -> Theme {

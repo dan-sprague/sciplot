@@ -1,12 +1,12 @@
 //! Lines / ScatterLines: API, live appends (upload only the tail), and translucent joints.
 
-use ezviz::prelude::*;
-use ezviz::testing::{Offscreen, set_interactive_limits};
+use sciplot::prelude::*;
+use sciplot::testing::{Offscreen, set_interactive_limits};
 
 fn offscreen() -> Option<Offscreen> {
     match Offscreen::new(2.0) {
         Ok(o) => Some(o),
-        Err(ezviz::Error::NoGpuAdapter(_)) => None, // no GPU on this machine
+        Err(sciplot::Error::NoGpuAdapter(_)) => None, // no GPU on this machine
         Err(e) => panic!("{e}"),
     }
 }
@@ -125,7 +125,7 @@ fn translucent_joints_blend_once() {
     }
     ax.limits(0.0, 30.0, 0.0, 7.2);
     let Some(_) = offscreen() else { return };
-    if std::env::var_os("EZVIZ_TEST_DUMP").is_some() {
+    if std::env::var_os("SCIPLOT_TEST_DUMP").is_some() {
         std::fs::create_dir_all("out").ok();
         fig.save("out/test_translucent_joints.png").unwrap();
     }

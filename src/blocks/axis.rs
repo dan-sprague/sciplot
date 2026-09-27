@@ -11,7 +11,7 @@ use std::sync::Arc;
 /// Makie's `Axis`. Create one at a grid position; plot into it with its methods or the `!` macros.
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1)).title("damped").xlabel("t (s)").ylabel("u (V)");
 /// ax.scatter(&[0.0, 1.0, 2.0], &[1.0, 0.5, 0.25]);

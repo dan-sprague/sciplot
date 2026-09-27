@@ -1,6 +1,6 @@
 use std::fmt;
 
-/// `ezviz::Result<T>`.
+/// `sciplot::Result<T>`.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 /// Failures that come from the environment (I/O, GPU, window system), not from misuse.

@@ -4,7 +4,7 @@
 //! (c) labelled contour lines, dashed; (d) FitzHugh–Nagumo nullclines (`levels = [0]`) with
 //! labels and a trajectory. Also writes `out/contour_check.svg` and
 //! `out/contour_check_extend.png` (explicit levels with `extendlow`/`extendhigh`).
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// Three Gaussian bumps, shared with tools/contour_check.jl.
 fn mixture(x: f64, y: f64) -> f64 {
@@ -38,7 +38,7 @@ fn trajectory(mut v: f64, mut w: f64, dt: f64, n: usize) -> (Vec<f64>, Vec<f64>)
     (vs, ws)
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
 
     let (nx, ny) = (120, 100);

@@ -2,7 +2,7 @@
 //!
 //! Reads `target/gallery/<name>.png` (from `examples/gallery.rs`) and
 //! `target/gallery/makie/<name>.png` (from `tools/makie_gallery.jl`), writes a diff image per
-//! page to `target/gallery/diff/`, a contact sheet `target/gallery/index.html` (ezviz | Makie |
+//! page to `target/gallery/diff/`, a contact sheet `target/gallery/index.html` (sciplot | Makie |
 //! diff) and prints per-page pixel statistics:
 //!
 //! - `mean`: mean absolute difference over all pixels and RGB channels, in % of full scale;
@@ -10,8 +10,8 @@
 //! - `>32±1`: the same, but a pixel only counts when no pixel of the other image within ±1 px
 //!   matches it (ignores antialiasing and sub-pixel offsets, so it measures real differences).
 //!
-//! In the diff image, white means equal; red marks pixels where ezviz is darker (ink only in
-//! ezviz), blue where Makie is darker.
+//! In the diff image, white means equal; red marks pixels where sciplot is darker (ink only in
+//! sciplot), blue where Makie is darker.
 //!
 //! `cargo run --release --example compare [-- names...]`
 use std::fmt::Write as _;
@@ -103,7 +103,7 @@ fn compare(e: &Img, m: &Img) -> (Stats, usize, usize, Vec<u8>) {
                     n32s += 1;
                 }
             }
-            // Visualization: white = equal; red = ezviz darker; blue = Makie darker.
+            // Visualization: white = equal; red = sciplot darker; blue = Makie darker.
             let k = (d as f64 * 2.0).min(255.0) as u8;
             let o = (y * w + x) * 3;
             let px = if luma(a) <= luma(b) { [255, 255 - k, 255 - k] } else { [255 - k, 255 - k, 255] };
@@ -130,7 +130,7 @@ fn write_png(path: &Path, w: usize, h: usize, rgb: &[u8]) -> Result<(), String> 
     wr.write_image_data(rgb).map_err(|e| e.to_string())
 }
 
-/// Page names in gallery order (`data/pages.json`), else every ezviz PNG.
+/// Page names in gallery order (`data/pages.json`), else every sciplot PNG.
 fn page_names() -> Vec<String> {
     let listed = std::fs::read_to_string(Path::new(ROOT).join("data/pages.json"))
         .ok()
@@ -154,7 +154,7 @@ fn main() {
     let _ = std::fs::create_dir_all(root.join("diff"));
     let mut rows = String::new();
     let mut summary = String::new();
-    println!("{:<20} {:>11} {:>11} {:>7} {:>7} {:>7}", "page", "ezviz px", "makie px", "mean%", ">32%", ">32±1%");
+    println!("{:<20} {:>11} {:>11} {:>7} {:>7} {:>7}", "page", "sciplot px", "makie px", "mean%", ">32%", ">32±1%");
     for name in page_names() {
         if !filters.is_empty() && !filters.iter().any(|f| name.contains(f.as_str())) {
             continue;
@@ -194,29 +194,29 @@ fn main() {
             s.over32_shift
         );
         let svg = if root.join(format!("{name}.svg")).exists() {
-            format!(" · <a href=\"{name}.svg\">ezviz SVG</a>")
+            format!(" · <a href=\"{name}.svg\">sciplot SVG</a>")
         } else {
             String::new()
         };
         let _ = writeln!(
             rows,
             "<section id=\"{name}\"><h2>{name}</h2><p>mean {:.2}% · &gt;32: {:.2}% · &gt;32 (±1 px): {:.2}%{mismatch}{svg}</p>\
-             <div class=\"row\"><figure><a href=\"{name}.png\"><img src=\"{name}.png\"></a><figcaption>ezviz</figcaption></figure>\
+             <div class=\"row\"><figure><a href=\"{name}.png\"><img src=\"{name}.png\"></a><figcaption>sciplot</figcaption></figure>\
              <figure><a href=\"makie/{name}.png\"><img src=\"makie/{name}.png\"></a><figcaption>CairoMakie</figcaption></figure>\
-             <figure><a href=\"diff/{name}.png\"><img src=\"diff/{name}.png\"></a><figcaption>diff (red: ezviz darker, blue: Makie darker)</figcaption></figure></div></section>",
+             <figure><a href=\"diff/{name}.png\"><img src=\"diff/{name}.png\"></a><figcaption>diff (red: sciplot darker, blue: Makie darker)</figcaption></figure></div></section>",
             s.mean, s.over32, s.over32_shift
         );
     }
     let html = format!(
         "<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\">\
-         <title>ezviz vs CairoMakie</title><style>\
+         <title>sciplot vs CairoMakie</title><style>\
          body{{font-family:system-ui,sans-serif;margin:16px;background:#f4f4f4;color:#222}}\
          table{{border-collapse:collapse}}td,th{{padding:2px 10px;text-align:right}}td:first-child{{text-align:left}}\
          .row{{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}}figure{{margin:0;background:#fff;padding:4px}}\
          img{{width:100%;display:block}}figcaption{{font-size:12px;color:#666}}h2{{margin:24px 0 4px}}</style></head><body>\
-         <h1>ezviz vs CairoMakie</h1><p>Mean absolute difference (% of full scale); % of pixels differing by more than \
+         <h1>sciplot vs CairoMakie</h1><p>Mean absolute difference (% of full scale); % of pixels differing by more than \
          32/255, and the same ignoring ±1 px offsets.</p>\
-         <table><tr><th>page</th><th>ezviz</th><th>Makie</th><th>mean %</th><th>&gt;32 %</th><th>&gt;32 ±1 %</th></tr>{summary}</table>\
+         <table><tr><th>page</th><th>sciplot</th><th>Makie</th><th>mean %</th><th>&gt;32 %</th><th>&gt;32 ±1 %</th></tr>{summary}</table>\
          {rows}</body></html>"
     );
     let index = root.join("index.html");

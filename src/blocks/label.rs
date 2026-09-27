@@ -13,7 +13,7 @@ use std::sync::Arc;
 /// A text label occupying a grid cell (Makie's `Label`).
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// Axis::new(fig.at(1, 1));
 /// Label::new(fig.at(Prepend, ..), "Super title").fontsize(20).font(Font::Bold);

@@ -205,7 +205,7 @@ impl crate::GridPosition {
 ///
 /// ```no_run
 /// let x: Vec<f64> = (0..100).map(|i| i as f64).collect();
-/// ezviz::scatter(&x, x.iter().map(|v| v.sin())).save("scatter.png").unwrap();
+/// sciplot::scatter(&x, x.iter().map(|v| v.sin())).save("scatter.png").unwrap();
 /// ```
 #[track_caller]
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]

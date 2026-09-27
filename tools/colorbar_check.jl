@@ -3,7 +3,7 @@
 #   julia --project=tools tools/colorbar_check.jl
 #
 # Writes out/colorbar_check_makie.png and out/colorbar_check_clips_makie.png, and prints each
-# colorbar's frame box, protrusion and tick values/labels for comparison with the ezviz run.
+# colorbar's frame box, protrusion and tick values/labels for comparison with the sciplot run.
 
 using CairoMakie
 

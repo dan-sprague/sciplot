@@ -1,4 +1,4 @@
-# ezviz: final design (v1)
+# sciplot: final design (v1)
 
 This is the design to hand to implementation planning. I made no files. I did two web checks: the wgpu 30 `SurfaceColorSpace` docs and the winit 0.30.13 `EventLoopProxy` docs.
 
@@ -14,9 +14,9 @@ This is the design to hand to implementation planning. I made no files. I did tw
 | Conflict | Resolution |
 |---|---|
 | Grid index base: 1-based (A/C) or 0-based (B) | **1-based, inclusive, as in Makie.** `Span` does **not** implement half-open `Range`, so `fig.at(2, 1..2)` fails to compile with a custom `on_unimplemented` hint. `usize` is accepted alongside `i32`, which fixes the soundness complaint. Anything that indexes the user's own data (the inspector's `[i, j]`, `Field`) is 0-based. That rule is stated once, in the docs and in error messages. |
-| `Data1D` as a blanket over `IntoIterator` (C, ergonomics judge) or explicit impls only (B, soundness judge) | **Explicit impls, with the common std iterator adapters included:** `Map`, `Copied`, `Cloned`, `StepBy`, `Take`, `Skip`, `Rev`, `Chain`, `slice::Iter`, `vec::IntoIter`, each bounded `where Self: Iterator, Self::Item: Scalar`. So `t.iter().map(\|t\| t.sin())` works with no `.collect()`. There is no blanket impl, so future impls stay possible. Anything else goes through `ezviz::iter(it)`. |
+| `Data1D` as a blanket over `IntoIterator` (C, ergonomics judge) or explicit impls only (B, soundness judge) | **Explicit impls, with the common std iterator adapters included:** `Map`, `Copied`, `Cloned`, `StepBy`, `Take`, `Skip`, `Rev`, `Chain`, `slice::Iter`, `vec::IntoIter`, each bounded `where Self: Iterator, Self::Item: Scalar`. So `t.iter().map(\|t\| t.sin())` works with no `.collect()`. There is no blanket impl, so future impls stay possible. Anything else goes through `sciplot::iter(it)`. |
 | Setter shape | `fn attr(&self, v) -> Self` everywhere (A/C). One name serves construction, keyword macros and live updates. No `#[must_use]`. B's `x(self)` + `set_x(&self)` split is rejected. |
-| Data errors: panic (A), deferred (B), or panic (C) | Programmer errors at a call site (length or shape mismatch, unknown colormap name) **panic with `#[track_caller]`**, pointing at the user's line. Every live data setter has a `try_*` variant that returns `Result<(), DataError>`. A setter on a stale handle is a warn-once no-op, and its `try_*` returns `Err(Stale)`. Environment failures (I/O, GPU, window, thread) return `ezviz::Result`. Nothing is deferred to `save`. |
+| Data errors: panic (A), deferred (B), or panic (C) | Programmer errors at a call site (length or shape mismatch, unknown colormap name) **panic with `#[track_caller]`**, pointing at the user's line. Every live data setter has a `try_*` variant that returns `Result<(), DataError>`. A setter on a stale handle is a warn-once no-op, and its `try_*` returns `Err(Stale)`. Environment failures (I/O, GPU, window, thread) return `sciplot::Result`. Nothing is deferred to `save`. |
 | Live runner: A's `'static` `show_live`, B's scoped `run`, or C's `show_with` | **`fig.show_live(\|live\| …)` runs on a scoped thread (B's semantics under A's name).** The closure may borrow locals. A drop guard clears `open` before the join. A worker panic becomes `Err(WorkerPanicked)`. The window stays open after the simulation returns. The pump mode (`fig.display()` + `screen.pump()`) is kept as a secondary option (A/B keep it, C cut it). |
 | `batch`: A held a reentrant lock across the user closure | **`batch` is a gate, not a lock.** It raises `batch_depth` under a brief lock. Setters inside it each convert outside the lock and then lock briefly. While `batch_depth > 0` the renderer re-presents its last snapshot and does not take a new one. Batch end wakes it. There is no reentrant mutex and no `RefCell`. |
 | Lock scope | One non-reentrant `parking_lot::Mutex<FigState>` per figure. Only O(1) swaps and attribute writes happen under it. Rendering snapshots the state (Arc clones) and then computes limits, ticks, text, layout and the DrawList outside the lock. No user closure ever runs under the lock (B). |
@@ -29,7 +29,7 @@ This is the design to hand to implementation planning. I made no files. I did tw
 | Macro meaning | A `!` macro **always** draws into an explicit target. Positional arity only picks between Makie's overloads (`lines!(ax, y)` or `lines!(ax, x, y)`). The non-mutating keyword form is `kw!(scatter(&x, &y); …)`. |
 | Rich text | `rich!(…)` and `superscript()` / `subscript()`, plus the opt-in `tex("k^{-5/3}")`. Plain strings are never parsed as markup. |
 | Name collisions (A) | Grid span is `Span`, the rich-text run is `TextSpan`, the rich string is `RichText`, the text plot is `TextPlot`, and the grid size is `Aspect(i, r)`. Axis aspect uses `DataAspect` / `AxisAspect(r)`. |
-| Conversion traits | Only ezviz-local `Into*` traits with explicit impls (`IntoColorSpec`, `IntoPadding`, `IntoSize2`, `IntoSpan`, …). There is no blanket `From`, which avoids overlap with core's `impl<T> From<T> for T`. |
+| Conversion traits | Only sciplot-local `Into*` traits with explicit impls (`IntoColorSpec`, `IntoPadding`, `IntoSize2`, `IntoSpan`, …). There is no blanket `From`, which avoids overlap with core's `impl<T> From<T> for T`. |
 | macOS P3 oversaturation | Configure the surface with `SurfaceColorSpace::Srgb` explicitly (wgpu 30 has the variant; the docs do not say what it does on Metal). Check with Digital Color Meter in M1. The objc2 `CAMetalLayer.colorspace` shim is an **in-scope item** of the window milestone and is used if the layer's colorspace is still nil. |
 | `EventLoopProxy: Sync?` | The docs.rs page is platform-generic and did not settle this, so each proxy is stored in a `parking_lot::Mutex`. It is only touched on the false→true edge of `wake_pending`, so the cost is negligible. |
 | v1 scope | A/B's scope, not C's cut list. Kept: `colsize`, `rowsize`, `colgap`, `rowgap`, nested GridLayout, `hide*decorations`, `hlines`, `vlines`, `ablines`, text, tick-format closures, reversed axes, `lowclip`, `highclip`, `nan_color`, legend title, horizontal legend, `nbanks`, italic fonts. Explicit non-goals are in §8. |
@@ -42,7 +42,7 @@ User `Cargo.toml` for all scenarios:
 
 ```toml
 [dependencies]
-ezviz   = { version = "0.1", features = ["ndarray"] }   # "window" is a default feature
+sciplot   = { version = "0.1", features = ["ndarray"] }   # "window" is a default feature
 ndarray = "0.17"
 rand    = "0.9"
 ```
@@ -50,9 +50,9 @@ rand    = "0.9"
 ### S1: one-liners
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let x: Vec<f64> = (0..1000).map(|_| rand::random()).collect();
     let y: Vec<f64> = (0..1000).map(|_| rand::random()).collect();
 
@@ -70,10 +70,10 @@ fn main() -> ezviz::Result<()> {
 ### S2: two labelled lines, axislegend, SVG
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 use std::f64::consts::PI;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let t = linspace(0.0, 4.0 * PI, 200);                       // Vec<f64>
 
     let fig = Figure::new();
@@ -93,9 +93,9 @@ fn main() -> ezviz::Result<()> {
 ### S3: 2×2 panels with a spanning bottom axis, linked x, shared legend, hidden inner decorations, panel labels
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let t = linspace(0.0, 10.0, 300);
     let model = |w: f64| -> Vec<f64> { t.iter().map(|t| (w * t).sin() * (-0.1 * t).exp()).collect() };
     let td: Vec<f64> = t.iter().step_by(15).copied().collect();
@@ -130,12 +130,12 @@ fn main() -> ezviz::Result<()> {
 ### S4: heatmap from a flat Vec and from ndarray, value-coloured scatter, each with a Colorbar
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 use ndarray::Array2;
 
 fn density(x: f64, y: f64) -> f64 { 1.2 * (-(x - 1.0).powi(2) / 0.08 - (y - 0.5).powi(2) / 0.02).exp() }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let (nx, ny) = (400usize, 200usize);
     let (lx, ly) = (2.0, 1.0);                                    // mm
     let xc: Vec<f64> = (0..nx).map(|i| (i as f64 + 0.5) * lx / nx as f64).collect();
@@ -184,7 +184,7 @@ fn main() -> ezviz::Result<()> {
 **Recommended form.** The simulation runs on a scoped worker thread and may borrow locals. The event loop runs on the main thread.
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 struct GrayScott { n: usize, u: Vec<f64>, v: Vec<f64>, u2: Vec<f64>, v2: Vec<f64> }
 
@@ -211,7 +211,7 @@ impl GrayScott {
     fn mean_v(&self) -> f64 { self.v.iter().sum::<f64>() / self.v.len() as f64 }
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     const N: usize = 256;
     let mut sim = GrayScott::new(N);
 
@@ -265,9 +265,9 @@ fn main() -> ezviz::Result<()> {
 ### S6: log-log with minor ticks, and semilog-y
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let k = logspace(-1.0, 3.0, 81);                                        // 0.1 .. 1e3
     let t = linspace(0.0, 10.0, 60);
 
@@ -295,7 +295,7 @@ On log axes the majors fall on integer decades, labelled "10" with a superscript
 ### S7: density histogram with pdf overlay, categorical barplot, confidence band
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 use std::f64::consts::PI;
 
 fn randn() -> f64 {                                         // Box–Muller
@@ -303,7 +303,7 @@ fn randn() -> f64 {                                         // Box–Muller
     (-2.0 * (1.0 - u1).ln()).sqrt() * (2.0 * PI * u2).cos()
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let samples: Vec<f64> = (0..10_000).map(|_| randn()).collect();
     let xs = linspace(-4.0, 4.0, 200);
     let fig = Figure!(size = (1200, 400));
@@ -335,9 +335,9 @@ fn main() -> ezviz::Result<()> {
 ### S8: paper figure with a scoped theme, 4 in × 3 in, 12 pt, 300-dpi PNG and physically sized SVG
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let t = linspace(0.0, 5.0, 200);
     let n: Vec<f64> = t.iter().map(|t| 1e19 * (1.0 + 0.5 * (-t).exp() * (6.0 * t).cos())).collect();
 
@@ -350,7 +350,7 @@ fn main() -> ezviz::Result<()> {
                    .spinewidth(0.75 * PT).xtickwidth(0.75 * PT).ytickwidth(0.75 * PT)
                    .xticksize(3.0 * PT).yticksize(3.0 * PT));
 
-    with_theme(paper, || -> ezviz::Result<()> {               // thread-scoped; restored on exit or panic
+    with_theme(paper, || -> sciplot::Result<()> {               // thread-scoped; restored on exit or panic
         let fig = Figure!(size = (4.0 * INCH, 3.0 * INCH));   // 384 × 288 units
         let ax = Axis!(fig.at(1, 1); xlabel = "time t (ms)", ylabel = tex("n (m^{-3})"));
         lines!(ax, &t, &n);
@@ -490,7 +490,7 @@ impl Axis {
     pub fn ylims(&self, lo: impl LimVal, hi: impl LimVal) -> Self;
     pub fn set_limits(&self, x1: f64, x2: f64, y1: f64, y2: f64) -> Self;
     pub fn autolimits(&self) -> Self;  pub fn reset_limits(&self) -> Self;  pub fn tightlimits(&self) -> Self;
-    pub fn follow(&self, on: bool) -> Self;                          // ezviz extension (D5)
+    pub fn follow(&self, on: bool) -> Self;                          // sciplot extension (D5)
     pub fn finallimits(&self) -> Rect64;
     pub fn hidexdecorations(&self, o: HideDecorations) -> Self;  hideydecorations, hidedecorations
     pub fn hidespines(&self, which: &[Spine]) -> Self;               // Spine::{Left, Right, Bottom, Top}
@@ -566,7 +566,7 @@ impl Colorbar {
     // label, labelsize, labelpadding, vertical, flipaxis, size (12), ticks, tickformat, minorticksvisible, minorticks,
     // ticklabelsize, ticklabelpad, ticksize, spinewidth, nsteps, width, height, tellwidth, tellheight, halign, valign
 }
-// A plot-backed colorbar that is given colormap/limits/clip setters: warn once and ignore (Makie errors; ezviz never panics on live paths).
+// A plot-backed colorbar that is given colormap/limits/clip setters: warn once and ignore (Makie errors; sciplot never panics on live paths).
 // A solid-coloured plot: draws that plot's colormap over its colorrange (default (0,1)) and warns once. No creation-order panic.
 
 impl Legend {
@@ -663,14 +663,14 @@ pub trait Scalar: Copy + Send + Sync + 'static + sealed::Sealed { fn to_f64(self
 // (i64/u64 > 2^53 are lossy; documented.)
 pub trait Num: Scalar {}   // f64 f32 i32 i64 u32 usize — for setters, so `linewidth = 2` works (literals fall back to i32)
 
-#[diagnostic::on_unimplemented(message = "`{Self}` is not plottable data; pass a slice/Vec/array/range/iterator-adapter, or wrap any iterator in `ezviz::iter(..)`")]
+#[diagnostic::on_unimplemented(message = "`{Self}` is not plottable data; pass a slice/Vec/array/range/iterator-adapter, or wrap any iterator in `sciplot::iter(..)`")]
 pub trait Data1D { fn write_f64(self, out: &mut Vec<f64>); fn len_hint(&self) -> Option<usize> { None } }
 ```
 
 **`Data1D`: every impl is explicit and generated by one macro.**
 - `&[T]`, `&Vec<T>`, `Vec<T>`, `[T; N]`, `&[T; N]` for `T: Scalar`.
 - `Range<I>` and `RangeInclusive<I>` for `I` in {i32, i64, u32, usize}. Integer ranges are data; there is no f64 range as Data1D.
-- `Iter<I>` from `ezviz::iter(it)`, where `I: Iterator, I::Item: Scalar`.
+- `Iter<I>` from `sciplot::iter(it)`, where `I: Iterator, I::Item: Scalar`.
 - These std adapters, each with `where Self: Iterator, <Self as Iterator>::Item: Scalar`: `Map<I, F>`, `Copied<I>`, `Cloned<I>`, `StepBy<I>`, `Take<I>`, `Skip<I>`, `Rev<I>`, `Chain<A, B>`, `Zip`-free, `slice::Iter<'a, T>`, `vec::IntoIter<T>`.
 - Feature `ndarray`: `&ArrayBase<S, Ix1>` where `S: Data<Elem = T>, T: Scalar`, and `Array1<T>`.
 - Feature `nalgebra`: `&DVector<T>`.
@@ -716,7 +716,7 @@ impl<'a, T: Scalar> Field<'a, T> {
 
 **Helpers:** `linspace(a, b, n) -> Vec<f64>`, `logspace(exp_a, exp_b, n) -> Vec<f64>`, `iter(it) -> Iter<I>`.
 
-**Conversion traits** (`IntoSize2`, `IntoPadding`, `IntoLimits`, `IntoTicks`, `IntoBins`, `IntoSizes`, …) are all ezviz-local with explicit impls. Tuple impls use generic `Num` components, so `(900, 650)` and `(0, 5, 5, 0)` infer through integer fallback.
+**Conversion traits** (`IntoSize2`, `IntoPadding`, `IntoLimits`, `IntoTicks`, `IntoBins`, `IntoSizes`, …) are all sciplot-local with explicit impls. Tuple impls use generic `Num` components, so `(900, 650)` and `(0, 5, 5, 0)` infer through integer fallback.
 
 ### 2.10 Macros (`macro_rules!`, each written by hand — none generated by another macro)
 
@@ -1016,7 +1016,7 @@ Ported: `compute_rowcols`, `compute_col_row_sizes`, `align_to_bbox!`, `determine
 | call | mechanism |
 |---|---|
 | `fig.show()` / `show_all` | `run_app_on_demand` with `ControlFlow::Wait` (0% CPU when idle). Returns when all windows close. Repeatable. Windows and surfaces are dropped before return. |
-| `fig.show_live(f)` | `std::thread::scope`: `spawn_scoped` the simulation (thread name `ezviz-sim`), then run the loop on main. A drop guard sets `open = false`, then an explicit join. A worker panic becomes `Err(WorkerPanicked)` once the window closes. A main-thread panic or error trips the guard so the join cannot hang. The window stays open after the simulation returns; `live.close()` closes it. |
+| `fig.show_live(f)` | `std::thread::scope`: `spawn_scoped` the simulation (thread name `sciplot-sim`), then run the loop on main. A drop guard sets `open = false`, then an explicit join. A worker panic becomes `Err(WorkerPanicked)` once the window closes. A main-thread panic or error trips the guard so the join cannot hang. The window stays open after the simulation returns; `live.close()` closes it. |
 | `fig.display()` + `screen.pump()` | `pump_app_events(Some(ZERO))`, self-throttled: calls closer than 8 ms apart only check a timestamp. Never calls `el.exit()`. Renders only inside `RedrawRequested`. Documented caveat: it stalls during macOS modal live-resize. |
 
 **Redraw**
@@ -1106,7 +1106,7 @@ Ported: `compute_rowcols`, `compute_col_row_sizes`, `align_to_bbox!`, `determine
 ## 5. File layout and Cargo.toml
 
 ```
-ezviz/
+sciplot/
   Cargo.toml  README.md  LICENSE-MIT  LICENSE-APACHE
   assets/fonts/TeXGyreHerosMakie-{Regular,Bold,Italic,BoldItalic}.otf  GUST-FONT-LICENSE.txt  README.md (provenance: Makie artifact ad4e594b…, unmodified)
   src/
@@ -1139,7 +1139,7 @@ ezviz/
 
 ```toml
 [package]
-name = "ezviz"
+name = "sciplot"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.89"
@@ -1229,7 +1229,7 @@ harness = false
 - The developer runs them; the JSON is committed, so `cargo test` never needs Julia.
 - `gen_colormaps.jl` writes `cmap_data.rs`.
 
-**SVG snapshots.** `tests/svg_snapshots.rs` covers S2, S3, S4, S6, S7, S8 and gallery figures with seeded data (xorshift), compared byte-for-byte. `EZVIZ_BLESS=1` rewrites them.
+**SVG snapshots.** `tests/svg_snapshots.rs` covers S2, S3, S4, S6, S7, S8 and gallery figures with seeded data (xorshift), compared byte-for-byte. `SCIPLOT_BLESS=1` rewrites them.
 
 **Gallery.** `cargo run --release --example gallery` writes `target/gallery/*.png|svg` for S1–S8 (S5 as a still after 500 steps) plus stress figures:
 - line torture, every marker with strokes, dashed lines on log axes;
@@ -1241,17 +1241,17 @@ It also writes an `index.html` contact sheet.
 
 **CairoMakie side-by-side**
 - `examples/dump_data.rs` writes each scenario's exact arrays. `tools/makie_gallery.jl` renders the Julia twins at ppu 2 (PNG and SVG) and dumps `layout.json`.
-- `examples/compare.rs` writes `target/compare/index.html` with ezviz | Makie | diff heatmap (plotted with ezviz itself).
+- `examples/compare.rs` writes `target/compare/index.html` with sciplot | Makie | diff heatmap (plotted with sciplot itself).
 - Pass criteria:
   - layout numbers and tick strings exactly equal;
   - pixels differing by ΔRGB > 24 < 0.5%, after excluding a 1 px dilation of reference edges;
   - no connected region above 10% difference larger than 6 px in the 4× downsampled diff.
 - Known deviations (§8, D-list) are masked and listed.
 
-**Cross-backend.** `tests/backend_consistency.rs`: resvg rasterises the ezviz SVG at the same ppu; mean abs diff against the GPU PNG must be < 1.5% per channel.
+**Cross-backend.** `tests/backend_consistency.rs`: resvg rasterises the sciplot SVG at the same ppu; mean abs diff against the GPU PNG must be < 1.5% per channel.
 
 **Window checks**
-- Automated: `tests/window_smoke.rs` (`harness = false`, main thread, feature `testing`) opens S1 and S5, injects scroll, drag, rect-drag with `x`, Ctrl-click, a hover over a known cell, then Close. It asserts `finallimits`, linked propagation, the tooltip string, frame count and clean exit. `EZVIZ_AUTOCLOSE=3` smoke-runs every windowed example.
+- Automated: `tests/window_smoke.rs` (`harness = false`, main thread, feature `testing`) opens S1 and S5, injects scroll, drag, rect-drag with `x`, Ctrl-click, a hover over a known cell, then Close. It asserts `finallimits`, linked propagation, the tooltip string, frame count and clean exit. `SCIPLOT_AUTOCLOSE=3` smoke-runs every windowed example.
 - Manual on the M3, with trackpad and mouse, on the built-in P3 panel and an external display:
   - colours match the PNG;
   - 1 px spines are crisp at ppu 1 and 2;
@@ -1324,6 +1324,6 @@ It also writes an `index.html` contact sheet.
 
 ## 9. Open questions for the user
 
-1. **Log-axis defaults.** Should D1 and D2 (integer-decade majors, 2..9 minors) be the default as recommended, or should ezviz default to Makie-exact `LogTicks`/`IntervalsBetween(2)` and make the readable form opt-in?
-2. **Font packaging.** Ship the four GUST-licensed fonts inside `ezviz` (licence `(MIT OR Apache-2.0) AND LPPL-1.3c`, as recommended), or split them into an `ezviz-fonts` crate so the core crate is purely MIT/Apache?
+1. **Log-axis defaults.** Should D1 and D2 (integer-decade majors, 2..9 minors) be the default as recommended, or should sciplot default to Makie-exact `LogTicks`/`IntervalsBetween(2)` and make the readable form opt-in?
+2. **Font packaging.** Ship the four GUST-licensed fonts inside `sciplot` (licence `(MIT OR Apache-2.0) AND LPPL-1.3c`, as recommended), or split them into an `sciplot-fonts` crate so the core crate is purely MIT/Apache?
 3. **Default pan gesture on macOS.** Keep Makie's right-drag as primary, with Option-drag and pinch as extras (recommended), or make `InteractionScheme::Trackpad` (two-finger scroll pans, pinch zooms) the default on macOS?

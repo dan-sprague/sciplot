@@ -1,5 +1,5 @@
 //! CPU PNG fallback: rasterizes the SVG backend's output with resvg when no GPU adapter exists
-//! (or when forced with `Save::cpu(true)` / `EZVIZ_FORCE_CPU=1`).
+//! (or when forced with `Save::cpu(true)` / `SCIPLOT_FORCE_CPU=1`).
 //!
 //! resvg is built without raster-image decoding, so regular heatmaps (embedded PNGs in the SVG)
 //! are composited directly with tiny-skia in painter's order; everything else goes through the
@@ -15,9 +15,9 @@ use resvg::{tiny_skia, usvg};
 /// Largest image side, as for GPU exports.
 const MAX_SIDE: u32 = 16384;
 
-/// Whether `EZVIZ_FORCE_CPU=1` asks for the CPU rasterizer.
+/// Whether `SCIPLOT_FORCE_CPU=1` asks for the CPU rasterizer.
 pub(crate) fn forced_by_env() -> bool {
-    std::env::var_os("EZVIZ_FORCE_CPU").is_some_and(|v| v == "1")
+    std::env::var_os("SCIPLOT_FORCE_CPU").is_some_and(|v| v == "1")
 }
 
 /// Renders `dl` at `ppu` device pixels per unit to straight-alpha RGBA8 (top row first).

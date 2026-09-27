@@ -57,7 +57,7 @@ impl<C: IntoColor> Conv<Option<Extend>> for C {
 /// A filled-contour plot handle (Makie's `Contourf`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let (nx, ny) = (120, 90);
 /// let xs = linspace(-3.0, 3.0, nx);
 /// let ys = linspace(-2.0, 2.0, ny);
@@ -107,7 +107,7 @@ attributes! {
         extendhigh: Option<Extend> = |_| None, STYLE;
         /// Colormap sampled once per band (default viridis).
         colormap: Colormap = |_| Colormap::VIRIDIS, STYLE;
-        /// Opacity multiplier (an ezviz addition).
+        /// Opacity multiplier (an sciplot addition).
         alpha: f64 = |_| 1.0, STYLE;
     }
 }

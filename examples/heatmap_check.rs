@@ -1,6 +1,6 @@
 //! Visual check of the `field` pipeline against CairoMakie (`tools/heatmap_check.jl` renders the
 //! same data to `out/heatmap_check_makie.png` and `out/heatmap_check_irregular_makie.png`).
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// Two Gaussian bumps, shared with tools/heatmap_check.jl.
 fn bumps(x: f64, y: f64) -> f64 {
@@ -8,7 +8,7 @@ fn bumps(x: f64, y: f64) -> f64 {
         + 0.6 * (-(3.0 * (x + 0.9).powi(2) + 10.0 * (y + 0.3).powi(2))).exp()
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
 
     // 1. A 400x200 field (x fastest), magma with an explicit colorrange, next to a value-colored

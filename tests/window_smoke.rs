@@ -1,20 +1,20 @@
 //! Real-window smoke test (needs a display): scripted interactions through `show_live`, a worker
 //! panic, and pump mode. Windows need the main thread, hence `harness = false`.
 //!
-//! `EZVIZ_WINDOW_TESTS=1 cargo test --features testing --test window_smoke`
+//! `SCIPLOT_WINDOW_TESTS=1 cargo test --features testing --test window_smoke`
 
-use ezviz::Error;
-use ezviz::interact::{Button, Key, Modifiers};
-use ezviz::prelude::*;
-use ezviz::window_testing::{self as wt, Synthetic};
+use sciplot::Error;
+use sciplot::interact::{Button, Key, Modifiers};
+use sciplot::prelude::*;
+use sciplot::window_testing::{self as wt, Synthetic};
 use std::time::{Duration, Instant};
 
 fn main() {
-    if std::env::var("EZVIZ_WINDOW_TESTS").as_deref() != Ok("1") {
-        println!("window_smoke: skipped (set EZVIZ_WINDOW_TESTS=1 to open windows)");
+    if std::env::var("SCIPLOT_WINDOW_TESTS").as_deref() != Ok("1") {
+        println!("window_smoke: skipped (set SCIPLOT_WINDOW_TESTS=1 to open windows)");
         return;
     }
-    if matches!(ezviz::testing::Offscreen::new(1.0), Err(Error::NoGpuAdapter(_))) {
+    if matches!(sciplot::testing::Offscreen::new(1.0), Err(Error::NoGpuAdapter(_))) {
         println!("window_smoke: skipped (no GPU adapter)");
         return;
     }

@@ -1,5 +1,5 @@
 [package]
-name = "ezviz"
+name = "sciplot"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
@@ -65,12 +65,12 @@ name = "window_smoke"
 harness = false
 required-features = ["testing"]
 
-# Plain `cargo run` / the editor's Run button builds the dev profile. Unoptimized, ezviz spends
+# Plain `cargo run` / the editor's Run button builds the dev profile. Unoptimized, sciplot spends
 # ~10x longer per frame (scene build ~4.5 ms vs 0.45 ms) and the examples' simulations ~15x
 # longer, so live windows stutter. Optimize this package (its examples and tests too) and all
 # dependencies; debug assertions and overflow checks stay on. Downstream crates need the same
-# lines in their own Cargo.toml (`[profile.dev.package.ezviz]` or `"*"`).
-[profile.dev.package.ezviz]
+# lines in their own Cargo.toml (`[profile.dev.package.sciplot]` or `"*"`).
+[profile.dev.package.sciplot]
 opt-level = 2
 
 [profile.dev.package."*"]

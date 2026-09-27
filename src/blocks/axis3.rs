@@ -27,7 +27,7 @@ pub use crate::scene::axis3::camera::{Aspect3, ViewMode};
 /// [`Axis3::rotate_by`], what dragging does).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis3::new(fig.at(1, 1)).title("helix").azimuth(0.3 * std::f64::consts::PI);
 /// let t = linspace(0.0, 20.0, 500);

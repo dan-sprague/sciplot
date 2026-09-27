@@ -1,10 +1,10 @@
 //! Byte-for-byte SVG snapshots of whole figures (`tests/snapshots/<case>.svg`).
 //!
-//! `EZVIZ_BLESS=1 cargo test --test svg_snapshots` rewrites the snapshots. A mismatch writes the
+//! `SCIPLOT_BLESS=1 cargo test --test svg_snapshots` rewrites the snapshots. A mismatch writes the
 //! new output to `out/snapshots/<case>.svg` for diffing. Documents are also checked with
 //! `xmllint --noout` when it is installed. Data is seeded (xorshift), so output is OS-independent.
 
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 use std::path::{Path, PathBuf};
 
 /// Deterministic uniform numbers in [0, 1).
@@ -71,17 +71,17 @@ fn check(name: &str, fig: Figure) {
     let svg = fig.to_svg_string(&Save::new()).unwrap();
     assert_eq!(svg, fig.to_svg_string(&Save::new()).unwrap(), "{name}: output is not deterministic");
     let path = repo_path("tests/snapshots", name);
-    if std::env::var_os("EZVIZ_BLESS").is_some_and(|v| v == "1") {
+    if std::env::var_os("SCIPLOT_BLESS").is_some_and(|v| v == "1") {
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         std::fs::write(&path, &svg).unwrap();
     }
     let want = std::fs::read_to_string(&path)
-        .unwrap_or_else(|_| panic!("missing snapshot {}; run with EZVIZ_BLESS=1", path.display()));
+        .unwrap_or_else(|_| panic!("missing snapshot {}; run with SCIPLOT_BLESS=1", path.display()));
     if want != svg {
         let new = repo_path("out/snapshots", name);
         std::fs::create_dir_all(new.parent().unwrap()).unwrap();
         std::fs::write(&new, &svg).unwrap();
-        panic!("SVG snapshot {name} changed; new output in {}; rerun with EZVIZ_BLESS=1 if intended", new.display());
+        panic!("SVG snapshot {name} changed; new output in {}; rerun with SCIPLOT_BLESS=1 if intended", new.display());
     }
     xmllint(&path);
 }

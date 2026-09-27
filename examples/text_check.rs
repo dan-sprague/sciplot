@@ -1,9 +1,9 @@
 //! Text fidelity check: a default 600×450 figure with a title, axis labels and a few points,
 //! rendered at px_per_unit 2 to `out/text_check.png`. `tools/text_check.jl` renders the same
 //! figure with CairoMakie to `out/text_check_makie.png` for side-by-side comparison.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let t: Vec<f64> = (0..11).map(|i| i as f64).collect();
     let x: Vec<f64> = t.iter().map(|t| 5.0 * (0.8 * t).cos() * (-0.1 * t).exp()).collect();
 

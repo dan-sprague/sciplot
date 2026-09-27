@@ -1,13 +1,13 @@
 //! Heatmap orientation: `z[i, j]` is the cell at `(x_i, y_j)` for every 2D input form, so a field
 //! that is nonzero only at `(nx - 1, 0)` lights the bottom-right cell.
 
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 const NX: usize = 4;
 const NY: usize = 3;
 
 /// Bounding box `[x0, y0, x1, y1]` (inclusive px) of the pixels matching `pred`.
-fn bbox(img: &ezviz::RgbaImage, pred: impl Fn(&[u8]) -> bool) -> Option<[u32; 4]> {
+fn bbox(img: &sciplot::RgbaImage, pred: impl Fn(&[u8]) -> bool) -> Option<[u32; 4]> {
     let mut b: Option<[u32; 4]> = None;
     for (k, px) in img.data.as_chunks::<4>().0.iter().enumerate() {
         if pred(px) {
@@ -23,7 +23,7 @@ fn bbox(img: &ezviz::RgbaImage, pred: impl Fn(&[u8]) -> bool) -> Option<[u32; 4]
 fn assert_bottom_right(what: &str, hm: Heatmap) {
     let img = match hm.figure().render_rgba(&Save::new().px_per_unit(1)) {
         Ok(img) => img,
-        Err(ezviz::Error::NoGpuAdapter(_)) => return,
+        Err(sciplot::Error::NoGpuAdapter(_)) => return,
         Err(e) => panic!("{e}"),
     };
     // Viridis ends: dark purple (68, 1, 84) for 0, yellow (253, 231, 37) for 1.
@@ -82,7 +82,7 @@ fn value_colored_scatter_renders() {
     let sc = scatter([1.0, 2.0, 3.0], [1.0, 2.0, 3.0]).color(&v[..]).markersize(40).colormap("magma");
     let img = match sc.figure().render_rgba(&Save::new().px_per_unit(1)) {
         Ok(img) => img,
-        Err(ezviz::Error::NoGpuAdapter(_)) => return,
+        Err(sciplot::Error::NoGpuAdapter(_)) => return,
         Err(e) => panic!("{e}"),
     };
     // magma's last color (252, 253, 191) is drawn; the NaN point is transparent (nan_color).

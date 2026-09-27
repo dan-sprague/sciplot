@@ -11,7 +11,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 /// - any 1D data ([`Data1D`]), taken as y values with x = 1..=n (Makie's `lines(y)`).
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// ax.lines_points(&[[0.0, 1.0], [1.0, 3.0], [2.0, 2.0]]);

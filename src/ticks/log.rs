@@ -2,7 +2,7 @@
 //!
 //! - [`log_makie`]: Makie's `LogTicks(WilkinsonTicks(5, k_min = 3))`, exact. Wilkinson runs on
 //!   the exponents, so the ticks can land on `10^0.5`.
-//! - [`log_integer`]: the ezviz default (plan deviation D1). Majors sit on whole decades
+//! - [`log_integer`]: the sciplot default (plan deviation D1). Majors sit on whole decades
 //!   whenever at least two of them are visible; Wilkinson picks the decade step.
 
 use super::format::{format_ticks_plain, log_label};

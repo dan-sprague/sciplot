@@ -3,10 +3,10 @@
 //!
 //! Native: `cargo run --example web_static` writes `out/web_static_native.png` at
 //! 2 px per unit (the capture's device pixel ratio).
-//! Browser: mounts the figure into `<canvas id="ezviz">` (`examples/web/web_static.html`), then
+//! Browser: mounts the figure into `<canvas id="sciplot">` (`examples/web/web_static.html`), then
 //! renders it again offscreen with `Figure::to_png_bytes_async` and shows that PNG in an `<img
 //! id="png">` below the canvas, so one page capture checks both paths.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// The figure: lines, scatter, legend and text on the left, a heatmap with a colorbar on the
 /// right. Deterministic data.
@@ -33,7 +33,7 @@ fn figure() -> Figure {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out")?;
     figure().save_with("out/web_static_native.png", Save::new().px_per_unit(2))?;
     println!("wrote out/web_static_native.png");
@@ -41,10 +41,10 @@ fn main() -> ezviz::Result<()> {
 }
 
 #[cfg(target_arch = "wasm32")]
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let fig = figure();
-    fig.show_in("ezviz")?;
-    // A second figure on the same page, in a canvas ezviz appends (the page's CSS moves it out
+    fig.show_in("sciplot")?;
+    // A second figure on the same page, in a canvas sciplot appends (the page's CSS moves it out
     // of the captured area): it reaches the running event loop through its proxy and gets its
     // own GPU context on WebGL2.
     let small = Figure::new().size((300, 200));

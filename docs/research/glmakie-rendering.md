@@ -1,4 +1,4 @@
-# GLMakie rendering and a wgpu/WGSL port plan for ezviz
+# GLMakie rendering and a wgpu/WGSL port plan for sciplot
 
 Every claim about GLMakie or Makie below comes from the local sources. Paths are under `~/.julia/packages/GLMakie/hxEgI` (GLMakie) and `~/.julia/packages/Makie/Iy6pu/src` (Makie). A few wgpu and winit facts come from web lookups, listed under Sources at the end. No files were created or changed.
 
@@ -165,7 +165,7 @@ The theme default is `markersize = 9`. The quad (`quad_scale`) is enlarged by th
 - No pixel snapping anywhere.
 - `FastPixel` uses `GL_POINTS` with `gl_PointSize`. wgpu points are always 1 px.
 
-### For ezviz
+### For sciplot
 
 - Instanced quads with analytic SDFs (exact Euclidean distance, AA of 1/√2 px), using Makie's exact geometry in marker units. Analytic is cheaper and sharper than the atlas and looks identical.
 - Primitives: circle, box, rotated box, cross as the union of two boxes, and iq's `sdTriangle`. Add a generic polygon SDF with ≤12 vertices from a uniform for stars and n-gons.
@@ -197,7 +197,7 @@ Files: `heatmap.vert`, `heatmap.frag`, `glshaders/image_like.jl`, `plot-primitiv
 
 **Large data.** GLMakie does nothing: `glTexImage` errors past `GL_MAX_TEXTURE_SIZE` (`GLExtendedFunctions.jl:211`). Its docs say "heatmap is slower than image".
 
-### For ezviz (fragment-driven lookup, one quad)
+### For sciplot (fragment-driven lookup, one quad)
 
 - **Quad:** draw one quad = heatmap bbox ∩ axis rect, computed in f64 on the CPU, so vertices stay bounded.
 - **Regular edges:** the fragment maps its pixel center to a fractional cell index with one FMA per axis. The coefficients `frag*a + b` are computed in f64 per frame. This is precision-proof at any zoom, and the cost is O(pixels), not O(cells).
@@ -231,7 +231,7 @@ Files: `heatmap.vert`, `heatmap.frag`, `glshaders/image_like.jl`, `plot-primitiv
 - There is no MSAA option. The only supersampling comes from `px_per_unit` (2 on Retina).
 - CairoMakie uses analytic coverage, so adjacent shapes show conflation seams (see the comment around `CairoMakie/overrides.jl:432` about band gaps).
 
-### For ezviz
+### For sciplot
 
 - **Fills:** use a `mesh2d` pipeline (indexed TriangleList; vertex `{pos: Float32x2 local, color: Unorm8x4 or f32 value}`) with 4x MSAA for AA. On Apple GPUs a tile-resolved MSAA target is nearly free when it is transient. MSAA gives no seams between adjacent bars or hist bins, and polygons that share an edge rasterize correctly.
 - **Geometry sources:**
@@ -294,7 +294,7 @@ Yes, and it is better for us. Plot text is a handful of fixed sizes (tick labels
 - Blending is `glBlendFuncSeparate(SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ZERO, ONE)` (`GLRender.jl`), with depth test LEQUAL and depth writes on. `transparency = true` switches to weighted-blended OIT, which is only relevant in 3D.
 - The framebuffer is RGBA8 (N0f8) without sRGB conversion. Blending, FXAA and colormap interpolation all happen on sRGB-encoded values, which is also what Cairo does.
 
-**For ezviz.**
+**For sciplot.**
 - The viewport is the full target. Call `set_scissor_rect` per draw item: the axis rect for plots and grid, the figure rect for decorations. Everything goes in one pass.
 - Painter's order: `(z, seq)`, no depth buffer. The GPU blends in primitive order within a draw, so overlapping translucent markers composite in index order, like Cairo.
 - Use premultiplied "over" for both color and alpha. On an opaque background it matches GLMakie exactly. It is also correct for transparent-background PNGs (un-premultiply on readback), and it is the correct input for MSAA resolve.
@@ -315,7 +315,7 @@ Yes, and it is better for us. Plot text is a handful of fixed sizes (tick labels
 - `markerspace = :data` sizes are scaled by `f32c_scale`.
 - Colors and values are converted to Float32 (`smallfloat_convert`, clamped to ±floatmax).
 
-**For ezviz:**
+**For sciplot:**
 - Use the same per-axis rebase criterion and hysteresis. Store `local_f32 = f32((T(x) - origin) * scale)`, computed in f64.
 - Per frame, compute the final `local → fb_px` affine `(sx, sy, tx, ty)` in f64 from the axis limits, axis pixel rect and ppu, then upload it as f32. This is strictly better than Makie's f32 projection, because translation never loses bits.
 - Rebasing is rare. Live simulation data is re-converted on every upload anyway.
@@ -336,7 +336,7 @@ Yes, and it is better for us. Plot text is a handful of fixed sizes (tick labels
 - Scene observables (camera, viewport, background) also set `requires_update`.
 - The vsync and fps loops render unconditionally.
 
-**For ezviz:**
+**For sciplot:**
 - Event-driven winit loop: 0.30.13 is the latest stable (`ApplicationHandler`); 0.31 is in beta.
   - Use `ControlFlow::Wait`, which is 0% CPU when idle.
   - Plot setters write the latest data into a per-plot mailbox (a latest-wins slot or triple buffer) and set dirty bits. If no wake is pending (one AtomicBool), they call `EventLoopProxy::send_event(Wake)`, and the handler calls `request_redraw()`.
@@ -357,7 +357,7 @@ Yes, and it is better for us. Plot text is a handful of fixed sizes (tick labels
 - Makie attaches `dpi = 96*ppu` to PNGs (`display.jl:503`).
 - CairoMakie defaults: `px_per_unit = 2`, `pt_per_unit = 0.75`.
 
-**For ezviz:**
+**For sciplot:**
 - True headless: `request_adapter(compatible_surface: None)`, with one shared device reused for export.
 - Render target: Rgba8Unorm with `RENDER_ATTACHMENT | COPY_SRC`, size `round(size*ppu)`, as the MSAA resolve target.
 - Readback: `copy_texture_to_buffer` with `bytes_per_row = align_up(w*4, 256)`, `map_async` plus a device poll, then strip the padding. Un-premultiply if the background is transparent.

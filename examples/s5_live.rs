@@ -6,8 +6,8 @@
 //! simulation runs on a worker thread; the window stays interactive (scroll to zoom, drag to
 //! pan or zoom into a rectangle, hover a cell for its coordinates).
 //!
-//! `EZVIZ_AUTOCLOSE=3 cargo run --example s5_live` closes the window after 3 s.
-use ezviz::prelude::*;
+//! `SCIPLOT_AUTOCLOSE=3 cargo run --example s5_live` closes the window after 3 s.
+use sciplot::prelude::*;
 
 const N: usize = 64;
 
@@ -71,8 +71,8 @@ impl Heat {
     }
 }
 
-fn main() -> ezviz::Result<()> {
-    let fig = Figure::new().size((900, 450)).window_title("ezviz: live 2D heat equation");
+fn main() -> sciplot::Result<()> {
+    let fig = Figure::new().size((900, 450)).window_title("sciplot: live 2D heat equation");
     let field = Axis::new(fig.at(1, 1)).title("step 0").xlabel("x").ylabel("y").limits(0.0, 1.0, 0.0, 1.0);
     let levels = [(0.05, Color::hex(0x56B4E9)), (0.2, Color::hex(0xE69F00)), (0.5, Color::hex(0xD55E00))];
     let bands: Vec<Scatter> = levels

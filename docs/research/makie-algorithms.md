@@ -1,4 +1,4 @@
-# Makie algorithms to port to ezviz: ticks, label formatting, autolimits, layout, interaction, legend, colorbar, hist/bar/band
+# Makie algorithms to port to sciplot: ticks, label formatting, autolimits, layout, interaction, legend, colorbar, hist/bar/band
 
 I read everything below from the local sources. I did not run Julia, because loading packages can write compile caches and logs, and this task was read-only. The tick test vectors in §1.4 come from a line-by-line Python port of the PlotUtils code that I ran locally. That port reproduces PlotUtils' own unit tests. Before using them as golden tests, confirm them in Julia (§1.4 has the command).
 
@@ -152,7 +152,7 @@ labels       = rich(base_str, superscript(format_ticks_plain(ticks_scaled), offs
 - `get_tickvalues(l::LogTicks, scale, vmin, vmax)` is the same without labels (`:805-808`).
 - A custom formatter on a log axis skips the rich `10^n` labels.
 
-**ezviz note (my suggestion, not Makie behaviour):**
+**sciplot note (my suggestion, not Makie behaviour):**
 - When the log range spans at least 1 decade, force integer exponent steps. Use step `ceil(n_decades / k_ideal)` or run Wilkinson restricted to integer `tickspan`, i.e. Makie's unused `is_log_scale` branch, which sets qscore to 0 for non-integer spans.
 - Below 1 decade, fall back to linear Wilkinson in data space with plain labels.
 
@@ -175,7 +175,7 @@ then filter to within limits (is_within_limits, ±100 eps)
   - With `IntervalsBetween(9)` and majors at consecutive decades you get the classic 2..9 × 10^k.
   - Makie's actual default, `IntervalsBetween(2)`, puts one minor tick at 5.5 between 1 and 10.
   - The docs examples use `IntervalsBetween(5)` (`ML/blocks/axis.jl:1804-1810`).
-  - **ezviz:** add a `LogMinor` default. For each decade `d` from `floor(log10 lo)` to `ceil(log10 hi)`, place `k·10^d` for k = 2..9 inside the limits. When majors skip decades, place minors only at the skipped decades.
+  - **sciplot:** add a `LogMinor` default. For each decade `d` from `floor(log10 lo)` to `ceil(log10 hi)`, place `k·10^d` for k = 2..9 inside the limits. When majors skip decades, place minors only at the skipped decades.
 
 ### 1.7 Filtering, positions and reversed axes
 - Tick values outside the limits (±100·eps) are dropped (`ML/lineaxis.jl:193, 212-214`).
@@ -228,7 +228,7 @@ Scientific (:39-45, :67-88, :100-118):
 
 - Nothing explicitly checks that labels are distinct. Distinct labels follow from nice tick values plus the shortest-representation precision.
   - The precision is computed from f32, but the digits are printed from the f64 value, so `1e8+1` and `1e8+2` still print distinctly.
-  - **ezviz:** compute the shortest representation in f64. f32 is only needed to match Makie's rounding of noise.
+  - **sciplot:** compute the shortest representation in f64. f32 is only needed to match Makie's rounding of noise.
 - **Rich-text superscript** (`MK/basic_recipes/text.jl:1132-1143`):
   - size = 0.66 × parent size;
   - baseline raised by 0.4 × parent size;
@@ -277,7 +277,7 @@ if lims.1 - lims.0 == 0 (isapprox atol=0 ⇒ exactly 0):      // single point / 
    zd = |scale(lims.0)|
    if zd == 0 && scale==identity { (-1, 1) }                  // x=0 → (-1,1)
    else { inv(scale(v)-zd), inv(scale(v)+zd) }                // x=5 → (0,10); x=-3 → (-6,0); log10 v=100 → (1,1e4)
-// Edge case bug: log10 with v=1 gives zd=0 and stays singular. ezviz: fall back to (v/10, v*10).
+// Edge case bug: log10 with v=1 gives zd=0 and stays singular. sciplot: fall back to (v/10, v*10).
 ```
 
 **Defaults and domains**
@@ -289,7 +289,7 @@ if lims.1 - lims.0 == 0 (isapprox atol=0 ⇒ exactly 0):      // single point / 
 **When limits update**
 - Adding a plot calls `reset_limits!` only if the scene is already open. Otherwise it runs once before display via `update_state_before_display!` (`MK/figureplotting.jl:567-588`).
 - Changing plot data does **not** re-autoscale. Makie users call `autolimits!(ax)` (which sets `limits = (nothing, nothing)`) or `reset_limits!`.
-- **ezviz:** add an opt-in `ax.follow(true)` mode for live simulations.
+- **sciplot:** add an opt-in `ax.follow(true)` mode for live simulations.
 
 **`autolimitaspect`** (`:964-1011`)
 - `correction = asp / ((dx/dy)/(w/h))`.
@@ -500,13 +500,13 @@ reject if limits invalid (non-finite, zero width, outside domain)
 - **Ctrl + Shift + left click** → `autolimits!`: clears the user limits.
 - On macOS this is Control, not Cmd.
 
-**ezviz notes for macOS:**
+**sciplot notes for macOS:**
 - Trackpad right-drag is awkward. Consider mapping winit `PinchGesture` to zoom and two-finger scroll to pan as an alternative scheme. That is a deviation from Makie, so make it configurable.
 
 ### 5.2 DataInspector (`MK/interaction/inspector.jl`)
 
 **Activation:** off by default. You must call `DataInspector(fig)` explicitly (it is not referenced anywhere in GLMakie `src`).
-- ezviz: the user asked for hover readout in `show()`, so turn it on by default there.
+- sciplot: the user asked for hover readout in `show()`, so turn it on by default there.
 
 **Defaults** (`:240-260`):
 - `range = 10` px, `offset = 10`, `apply_tooltip_offset = true`;
@@ -516,7 +516,7 @@ reject if limits invalid (non-finite, zero width, outside domain)
 **Hover:** triggered on mouse move or scroll; stale requests are dropped via a channel (`:283-293`).
 - `pick_sorted(root, mouse_px, range)` (`MK/interaction/interactive_api.jl:158-186`) reads the GPU pick buffer in a **square** of ±range px, collects unique `(plot, element_index)` pairs, and sorts them by the smallest pixel distance to the cursor.
 - The first inspectable plot whose `show_data` returns true is shown; otherwise the tooltip is hidden (`:306-326`).
-- ezviz on CPU: project the visible points into pixel space and search within 10 px (a uniform grid keeps this fast at 1M points), or use a GPU id buffer.
+- sciplot on CPU: project the visible points into pixel space and search within 10 px (a uniform grid keeps this fast at 1M points), or use a GPU id buffer.
 
 **Content by plot type**
 
@@ -529,7 +529,7 @@ reject if limits invalid (non-finite, zero width, outside domain)
 | band (`:981-1035`) | `"(%0.3f, %0.3f) .. (%0.3f, %0.3f)"` for the vertical segment through the cursor | mouse | red line segment |
 
 - NaN cells whose `nan_color` has alpha 0 hide the tooltip.
-- ezviz suggestion for simulation fields: show `x, y` coordinates as well as indices and value, and use the §2 formatter for the value.
+- sciplot suggestion for simulation fields: show `x, y` coordinates as well as indices and value, and use the §2 formatter for the value.
 
 **Tooltip placement** (`:461-470`): default placement is `:above`; if `py > 0.75·H` it goes `:below`; if `px < 0.25·W` it goes `:right`; if `px > 0.75·W` it goes `:left`.
 
@@ -615,7 +615,7 @@ reject if limits invalid (non-finite, zero width, outside domain)
 **Bar**
 - `size = 12` px thick; `vertical = true`; `flipaxis = true`, so ticks and label are on the right (bottom/top for horizontal) (`ML/types.jl:888-934`).
 - Continuous mode samples `nsteps = 100` values evenly over the colorrange and draws them as an interpolated 1×99 image of midpoints (`:220-320`).
-  - ezviz: sample the colormap LUT texture directly with linear filtering.
+  - sciplot: sample the colormap LUT texture directly with linear filtering.
 - Border: a 1 px line (`spinewidth`) around the bar and any triangles.
 
 **Ticks**
@@ -644,7 +644,7 @@ else edges = bins (must be sorted, error otherwise)
 ```
 
 **Binning:** StatsBase `fit(Histogram, v, edges)` with `closed = :left`. Bins are [e_i, e_{i+1}); the bin index is `searchsortedlast(edges, x)`; values outside the edges are dropped (`SB/hist.jl:243-258`).
-- ezviz: skip NaN values explicitly.
+- sciplot: skip NaN values explicitly.
 
 **Normalization** (`SB/hist.jl:462-510`, applied at `MK/stats/hist.jl:35-49`), with `w_i` = count or weight sum and `Δ_i` = bin width:
 - `:none` → `w_i`
@@ -673,7 +673,7 @@ rect = (x̂ - |bw|/2, min(fillto, y+offset), |bw|, |y+offset - fillto|); directi
 ```
 - **Categorical x:** barplot only accepts numbers. Makie maps `Categorical` or Enum values to integers 1..n, **sorted with `sortby = identity`**, and labels the ticks with `string(category)`, one tick per category (`MK/dim-converts/categorical-integration.jl:50-68, 148-160`).
   - Plain strings are not converted automatically in 0.24. The usual idiom is `barplot(1:n, v; axis = (xticks = (1:n, names),))`.
-  - ezviz: accept `&[&str]`, map to 1..n **in order of appearance**, and set the tick labels. This deviates from Makie's sorting; choose deliberately.
+  - sciplot: accept `&[&str]`, map to 1..n **in order of appearance**, and set the tick labels. This deviates from Makie's sorting; choose deliberately.
 - Bar labels (`bar_labels`, `label_offset = 5`, `flip_labels_at`) are optional and can be deferred.
 
 ### 8.3 band (`MK/basic_recipes/band.jl`)
@@ -688,7 +688,7 @@ rect = (x̂ - |bw|/2, min(fillto, y+offset), |bw|, |y+offset - fillto|); directi
 
 ---
 
-## Deviations from Makie I recommend flagging in the ezviz design
+## Deviations from Makie I recommend flagging in the sciplot design
 1. **Log major ticks:** use integer decades whenever the range spans at least 1 decade; Makie can produce `10^0.5`.
 2. **Log minor ticks:** default to 2..9 × 10^k; Makie's default `IntervalsBetween(2)` gives 5.5.
 3. **Log singular limits:** a single point at 1 on a log axis stays singular in Makie; expand to `(v/10, v·10)`.

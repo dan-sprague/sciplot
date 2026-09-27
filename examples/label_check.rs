@@ -1,7 +1,7 @@
 //! Labels: super title in a prepended row, panel labels at TopLeft, explicit ticks.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     let fig = Figure!(size = (800, 500));
     let a = Axis!(fig.at(1, 1); title = "ω = 1", xlabel = "t (s)", ylabel = "u (V)");
     let b = Axis!(fig.at(1, 2); title = "ω = 2", xlabel = "t (s)",

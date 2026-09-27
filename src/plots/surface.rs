@@ -20,7 +20,7 @@ use std::sync::Arc;
 /// A surface plot handle (Makie's `surface!(ax3, x, y, z)`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let (nx, ny) = (40, 30);
 /// let x = linspace(-2.0, 2.0, nx);
 /// let y = linspace(-1.5, 1.5, ny);

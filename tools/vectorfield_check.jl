@@ -3,7 +3,7 @@
 #   julia --project=tools tools/vectorfield_check.jl
 #
 # Writes out/vectorfield_{quiver,pendulum,vdp}_makie.png (px_per_unit = 2) and prints the
-# streamplot statistics (seed count, line points, color range) for comparison with the ezviz run.
+# streamplot statistics (seed count, line points, color range) for comparison with the sciplot run.
 
 using CairoMakie
 using CairoMakie.Makie: norm
@@ -59,7 +59,7 @@ arrows2d!(ax, [Point2(6.0, 2.0)], [Vec2(2.0, 2.0)], color = :red, shaftwidth = 6
 arrows2d!(ax, [Point2(6.0, 5.0)], [Vec2(3.0, 0.0)], color = :blue, taillength = 8, tailwidth = 12)
 save("out/vectorfield_metrics_makie.png", fig, px_per_unit = 2)
 
-# Legend entries and a solid-colored streamplot (ezviz's legend entries differ on purpose: a line
+# Legend entries and a solid-colored streamplot (sciplot's legend entries differ on purpose: a line
 # with an arrowhead for both plot types).
 fig = Figure(size = (600, 450))
 ax = Axis(fig[1, 1], title = "legend")

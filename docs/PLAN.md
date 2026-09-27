@@ -1,4 +1,4 @@
-# ezviz — a Makie-style plotting crate for Rust (plan)
+# sciplot — a Makie-style plotting crate for Rust (plan)
 
 ## Context
 Rust plotting is wordy (plotters' builder chains) and has no good "look at my simulation field live"
@@ -19,7 +19,7 @@ User decisions (fixed):
   - log scales, legends, themes.
 
 Environment:
-- An empty directory, `/Users/dansprague/Documents/repos/ezviz`, that is not a git repo. Rust 1.98.1, macOS on an Apple M3 (Metal).
+- An empty directory, `/Users/dansprague/Documents/repos/sciplot`, that is not a git repo. Rust 1.98.1, macOS on an Apple M3 (Metal).
 - Reference sources, all under `~/.julia/packages/`: Makie 0.24.14, GLMakie 0.13.14, CairoMakie 0.15.14, GridLayoutBase 0.11.3 and PlotUtils 1.5.0. They are the reference for defaults, algorithms and shaders.
 - Makie fonts: `~/.julia/artifacts/ad4e594b35357bcfafa2ed97db3137382a3f09bb/fonts/`.
 
@@ -27,7 +27,7 @@ How this plan was made: a research and design workflow.
 - Four research reports: Makie defaults, Makie algorithms, GLMakie → WGSL, and the Rust crate ecosystem. All Makie claims cite the local source.
 - Three competing designs, three judges, a synthesis, then an adversarial critique.
 - The outputs are in the session scratchpad
-  `/private/tmp/claude-501/-Users-dansprague-Documents-repos-ezviz/691d7a35-c8ae-4f0c-8088-c8ffc534fa49/scratchpad/`:
+  `/private/tmp/claude-501/-Users-dansprague-Documents-repos-sciplot/691d7a35-c8ae-4f0c-8088-c8ffc534fa49/scratchpad/`:
   - `synthesis.md`: the full design, about 1300 lines. It has the API reference, WGSL notes, and the Makie constants with citations.
   - `critique.md`
   - `r_defaults.md` = Makie defaults
@@ -47,9 +47,9 @@ How this plan was made: a research and design workflow.
 | Setters | One shape everywhere: `fn attr(&self, v) -> Self`. The same method builds (`ax.lines(..).color(RED)`), serves the macros, and updates live (`ax.title(format!("step {n}"))`). There is no terminal `.build()`; plots register at creation. |
 | Three ways to plot (Makie's) | `ax.lines(x, y)` or `lines!(ax, x, y; kw…)` draw into an existing axis. `fig.at(1, 2).lines(x, y)` creates an Axis there plus the plot. The free function `lines(x, y)` creates a new Figure+Axis. All three return the **plot handle**, which has `.save()`, `.show()`, `.figure()`, `.axis()` and `.unpack() -> (Figure, Axis, Lines)`. The free functions are `#[must_use = "creates a Figure; call .save() or .show()"]`. |
 | Keyword sugar | `lines!(ax, &x, &y; color = RED, linewidth = 2, label = "sin")` expands to the builder chain. The same pattern covers `Figure!`, `Axis!`, `Colorbar!`, `Legend!`, `Label!`, `axislegend!`, `hide*decorations!`, `link*axes!` and `kw!(expr; …)`. A misspelled key gives rustc's `no method named 'colr' found for struct 'Lines'`. A Makie-style comma before the keywords hits a `compile_error!` arm: "use `;` before keyword arguments". |
-| Data input | `Scalar` is sealed and covers every int and float type, with no `Send`/`'static` supertraits (so `&T` impls compile). `Data1D` has **explicit** impls, with no blanket: slices, `Vec`, arrays, integer ranges, common iterator adapters (so `t.iter().map(..)` needs no `.collect()`), the `ezviz::iter(it)` escape hatch, and ndarray behind a feature. `Data2D`: `Field::new(&v, nx, ny)`, `(&v, nx, ny)`, `Vec<Vec<T>>` and ndarray `Array2`. The first index is x (Makie's `z[i, j]`). |
+| Data input | `Scalar` is sealed and covers every int and float type, with no `Send`/`'static` supertraits (so `&T` impls compile). `Data1D` has **explicit** impls, with no blanket: slices, `Vec`, arrays, integer ranges, common iterator adapters (so `t.iter().map(..)` needs no `.collect()`), the `sciplot::iter(it)` escape hatch, and ndarray behind a feature. `Data2D`: `Field::new(&v, nx, ny)`, `(&v, nx, ny)`, `Vec<Vec<T>>` and ndarray `Array2`. The first index is x (Makie's `z[i, j]`). |
 | Heatmap coordinates (Makie-exact) | `a..=b` or a vector of length n = cell **centres**. A vector of length n+1 = edges. `Edges(a, b)` = outer edges, Makie's `EndPoints`, which is what finite-volume grids want. With no coordinates, the centres are `1..=n`. |
-| Errors | A programmer error at the call site (length mismatch, bad colour literal) panics with `#[track_caller]`. Live setters also have `try_*` variants. I/O, GPU and window failures return `ezviz::Result`. |
+| Errors | A programmer error at the call site (length mismatch, bad colour literal) panics with `#[track_caller]`. Live setters also have `try_*` variants. I/O, GPU and window failures return `sciplot::Result`. |
 | Nothing auto-shows | There is no `Drop` magic; `save` and `show` are explicit (Makie practice). |
 | Units | Makie's unitless CSS-px model: default `size (600, 450)`, `fontsize 14`, PNG `px_per_unit = 2`, SVG `pt_per_unit = 0.75`. Constants `INCH`, `PT`, `CM`, `MM`; export at a given DPI with `Save::dpi(300)`. |
 | Look | Makie 0.24's defaults, reproduced exactly (table in DESIGN §4): the TeX Gyre Heros Makie font (bundled, GUST licence), Wong palette, viridis, grid alpha 0.12, 5 px outward ticks, Wilkinson ticks, 5 % autolimit margins, tight limits for heatmaps. |
@@ -60,7 +60,7 @@ How this plan was made: a research and design workflow.
 ## 2. What user code looks like (full S1–S8 in DESIGN §1, with the critique fixes applied)
 
 ```rust
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 // S1: one-liners
 scatter(&x, &y).save("scatter.png")?;            // 600×450 units → 1200×900 px
@@ -214,7 +214,7 @@ The four pipelines:
 
 ## 5. Crate layout and dependencies
 ```
-ezviz/
+sciplot/
   Cargo.toml  rust-toolchain.toml  README.md  LICENSE-MIT  LICENSE-APACHE
   docs/DESIGN.md  docs/critique.md  docs/research/{makie-defaults,makie-algorithms,glmakie-rendering,rust-ecosystem}.md
   assets/fonts/TeXGyreHerosMakie-{Regular,Bold,Italic,BoldItalic}.otf + GUST licence + provenance (sha256)
@@ -271,16 +271,16 @@ Execution:
   - Data2D equivalence, text metrics;
   - the layout solver, including fuzzing with empty grids and conflicting Aspect sizes.
 - **Julia fixtures:** `tools/*.jl` runs with the locally installed Makie/CairoMakie/PlotUtils/StatsBase. The JSON output is committed, so `cargo test` never needs Julia.
-- **SVG snapshots:** byte-for-byte for S2–S4 and S6–S8. The data is seeded with xorshift and polynomials instead of libm, so it is stable across OSes. `EZVIZ_BLESS=1` updates the snapshots.
+- **SVG snapshots:** byte-for-byte for S2–S4 and S6–S8. The data is seeded with xorshift and polynomials instead of libm, so it is stable across OSes. `SCIPLOT_BLESS=1` updates the snapshots.
 - **Gallery and side-by-side comparison:**
   - `cargo run --release --example gallery` → `target/gallery/*.png|svg`. It covers S1–S8 plus stress pages: line torture, all markers, NaN gaps, a 1e9-offset axis, a log-axis heatmap, and every theme.
   - `tools/makie_gallery.jl` renders the same data with CairoMakie.
-  - `examples/compare.rs` builds an ezviz | Makie | diff contact sheet.
+  - `examples/compare.rs` builds an sciplot | Makie | diff contact sheet.
   - I read the PNGs directly at each milestone to check the visuals.
 - **Cross-backend:** mean diff < 1.5 % per channel between the resvg-rasterised SVG and the GPU PNG. The same path runs in CI without a GPU.
 - **Window:**
-  - `tests/window_smoke.rs` (`harness = false`, feature `testing`, gated by `EZVIZ_WINDOW_TESTS=1`) injects scroll, drag, rect-zoom, Ctrl-click, hover and minimise at scale factors 1 and 2. It asserts the final limits and the tooltip text.
-  - `EZVIZ_AUTOCLOSE=3` smoke-runs the windowed examples.
+  - `tests/window_smoke.rs` (`harness = false`, feature `testing`, gated by `SCIPLOT_WINDOW_TESTS=1`) injects scroll, drag, rect-zoom, Ctrl-click, hover and minimise at scale factors 1 and 2. It asserts the final limits and the tooltip text.
+  - `SCIPLOT_AUTOCLOSE=3` smoke-runs the windowed examples.
   - You run a short manual checklist on the M3: trackpad feel, colour, resize, moving between displays.
 - **Perf (`examples/perf.rs`, release build):**
   - 1M-point scatter pan: p99 < 8.3 ms with 0 data uploaded;
@@ -303,7 +303,7 @@ interactive **in-browser dynamic systems** become a core target. User decisions:
   Rust simulation and the figure, mounted in a canvas, driven by a per-frame callback. Later:
   `fig.save("fig.html")` for self-contained interactive figures (pan/zoom/hover) for supplements.
 - **Dynamic-systems features (all wanted):** parameter widgets (Makie-style Slider/SliderGrid/Toggle/
-  Button blocks drawn by ezviz itself, with `on_change` callbacks), vector fields (arrows, streamplot),
+  Button blocks drawn by sciplot itself, with `on_change` callbacks), vector fields (arrows, streamplot),
   contour/contourf (nullclines, level sets), 3D (Axis3 with lines3d/scatter3d/surface, orbit camera).
 
 Architecture rules that follow:

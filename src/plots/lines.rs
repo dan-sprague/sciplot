@@ -17,7 +17,7 @@ use std::sync::Arc;
 /// new points to the GPU.
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let t: Vec<f64> = (0..200).map(|i| i as f64 / 20.0).collect();
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
@@ -379,8 +379,8 @@ impl crate::GridPosition {
 /// `.save(..)` or `.show()` on it.
 ///
 /// ```no_run
-/// let x = ezviz::linspace(0.0, 10.0, 200);
-/// ezviz::lines(&x, x.iter().map(|v| v.sin())).save("sin.png").unwrap();
+/// let x = sciplot::linspace(0.0, 10.0, 200);
+/// sciplot::lines(&x, x.iter().map(|v| v.sin())).save("sin.png").unwrap();
 /// ```
 #[track_caller]
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]

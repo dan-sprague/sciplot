@@ -1,4 +1,4 @@
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// The test harness runs tests off the main thread, which is exactly the case we must reject.
 #[cfg(feature = "window")]
@@ -7,7 +7,7 @@ fn show_off_main_thread_is_an_error() {
     let fig = Figure::new();
     Axis::new(fig.at(1, 1)).scatter([1.0], [1.0]);
     match fig.show() {
-        Err(ezviz::Error::NotMainThread) => {}
+        Err(sciplot::Error::NotMainThread) => {}
         other => panic!("expected NotMainThread, got {other:?}"),
     }
 }

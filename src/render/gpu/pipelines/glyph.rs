@@ -317,7 +317,7 @@ mod tests {
         let dl = DrawList { size, background: Color::TRANSPARENT, axes: Vec::new(), items: vec![item] };
         let (width, height, data) = r.render_rgba(&dl, 2.0).unwrap();
         let img = crate::figure::RgbaImage { width, height, data };
-        if let Ok(dir) = std::env::var("EZVIZ_TEST_OUT") {
+        if let Ok(dir) = std::env::var("SCIPLOT_TEST_OUT") {
             let _ = crate::figure::write_png(&std::path::Path::new(&dir).join("glyph_angles.png"), &img, 2.0);
         }
         Some(img)

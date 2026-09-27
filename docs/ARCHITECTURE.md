@@ -1,4 +1,4 @@
-# ezviz architecture (for contributors)
+# sciplot architecture (for contributors)
 
 Read `docs/PLAN.md` first (it wins over `docs/DESIGN.md` where they disagree). Makie reference
 sources are local: Makie 0.24.14 `~/.julia/packages/Makie/Iy6pu`, GLMakie 0.13.14
@@ -38,7 +38,7 @@ affine `AxisXform::affine(ppu)` computed in f64, so pan/zoom never re-uploads pl
   class). It generates `XAttrs` (Option fields), `XResolved`, handle setters `fn a(&self, v: impl
   Conv<T>) -> Self`, and a theme builder `XTheme`. Add conversions by implementing `attrs::Conv<T>`.
 - Setters never panic except on programmer errors at the call site (`#[track_caller]` asserts, e.g.
-  length mismatch). Environment failures return `ezviz::Result`.
+  length mismatch). Environment failures return `sciplot::Result`.
 - Grid positions are 1-based inclusive (Makie); data indices are 0-based.
 - Colors are sRGB-encoded, straight alpha (`Color`); GPU colors are premultiplied
   (`Color::to_premul_u32`, `frame::premul`). All blending happens on sRGB-encoded values (non-sRGB
@@ -101,9 +101,9 @@ renders on a device with WebGL2 limits and translates every shader to GLSL ES 3.
 - `cargo test` (unit + integration). GPU tests must return early on `Error::NoGpuAdapter`.
 - Render PNGs into `out/` (gitignored) and look at them (the Read tool shows images). Compare against
   CairoMakie renders of the same data (`julia --project=tools`), written next to them.
-- Windows: `EZVIZ_AUTOCLOSE=<secs>` closes windows automatically; `EZVIZ_WINDOW_DUMP=out/x.png` writes
+- Windows: `SCIPLOT_AUTOCLOSE=<secs>` closes windows automatically; `SCIPLOT_WINDOW_DUMP=out/x.png` writes
   the first presented window frame. **Never take desktop screenshots.**
-- `ezviz::testing::Offscreen` renders headless frames with upload stats (`RenderStats`).
+- `sciplot::testing::Offscreen` renders headless frames with upload stats (`RenderStats`).
 - Browser (`src/window/web.rs`; the app core `src/window/app.rs` is shared with native windows):
   `tools/web/build.sh <example>...` builds wasm examples into `examples/web/pkg/` (wasm-bindgen CLI
   0.2.129 in `.tools/`); `tools/web/check.sh [--no-build]` serves `examples/web/`, captures every

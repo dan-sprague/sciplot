@@ -56,7 +56,7 @@ impl Gpu {
             .map_err(|e| e.to_string())?;
         let required_limits = limits.unwrap_or_else(|| adapter.limits());
         let (device, queue) = adapter
-            .request_device(&wgpu::DeviceDescriptor { label: Some("ezviz"), required_limits, ..Default::default() })
+            .request_device(&wgpu::DeviceDescriptor { label: Some("sciplot"), required_limits, ..Default::default() })
             .await
             .map_err(|e| e.to_string())?;
         let errors = Arc::new(AtomicU64::new(0));

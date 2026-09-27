@@ -444,37 +444,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ezviz"
-version = "0.1.0"
-dependencies = [
- "ab_glyph",
- "base64",
- "bytemuck",
- "console_error_panic_hook",
- "console_log",
- "js-sys",
- "log",
- "naga",
- "ndarray",
- "objc2 0.6.4",
- "objc2-core-graphics",
- "objc2-quartz-core 0.3.2",
- "parking_lot",
- "png",
- "pollster",
- "rand",
- "resvg",
- "serde_json",
- "trybuild",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "web-time",
- "wgpu",
- "winit",
-]
-
-[[package]]
 name = "fdeflate"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1756,6 +1725,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "sciplot"
+version = "0.1.0"
+dependencies = [
+ "ab_glyph",
+ "base64",
+ "bytemuck",
+ "console_error_panic_hook",
+ "console_log",
+ "js-sys",
+ "log",
+ "naga",
+ "ndarray",
+ "objc2 0.6.4",
+ "objc2-core-graphics",
+ "objc2-quartz-core 0.3.2",
+ "parking_lot",
+ "png",
+ "pollster",
+ "rand",
+ "resvg",
+ "serde_json",
+ "trybuild",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "web-time",
+ "wgpu",
+ "winit",
 ]
 
 [[package]]

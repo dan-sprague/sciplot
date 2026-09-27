@@ -2,7 +2,7 @@
 //! a normal "no method named ..." error pointing at it.
 //!
 //! ```no_run
-//! use ezviz::prelude::*;
+//! use sciplot::prelude::*;
 //! let fig = Figure!(size = (800, 400));
 //! let ax = Axis!(fig.at(1, 1); title = "demo", xlabel = "x");
 //! scatter!(ax, [1.0, 2.0], [3.0, 4.0]; color = RED, markersize = 12);
@@ -170,7 +170,7 @@ macro_rules! contourf {
 /// `Axis` or `&Axis`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// lines!(ax, [0.0, 1.0, 2.0], [1.0, 0.0, 1.0]; color = RED, linewidth = 3);
@@ -237,7 +237,7 @@ macro_rules! ablines {
 /// grid `xs × ys`, or `arrows2d!(ax, points, directions; kw...)`.
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// let g = linspace(-2.0, 2.0, 15);
@@ -259,7 +259,7 @@ macro_rules! arrows {
 /// Makie's `streamplot!(ax, f, xrange, yrange; kw...)`.
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// streamplot!(ax, |x, y| (y, -x.sin()), -3.0..=3.0, -2.0..=2.0; colormap = Colormap::MAGMA);
@@ -302,7 +302,7 @@ pub fn __as_axis<T: AsAxis + ?Sized>(t: &T) -> &crate::Axis {
 /// [`colored`](crate::text::colored)) and other rich texts (e.g. [`tex`](crate::text::tex)).
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let label = rich!("k", superscript("\u{2212}5/3"), colored(" (fit)", RED));
 /// assert_eq!(label.plain_text(), "k\u{2212}5/3 (fit)");
 /// ```

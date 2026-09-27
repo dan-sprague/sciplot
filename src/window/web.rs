@@ -8,8 +8,8 @@
 //! it stays blank until the browser laid it out (winit reports a 0x0 size before the first
 //! `ResizeObserver` callback).
 //!
-//! The canvas gets `data-ezviz-backend="webgpu"|"webgl2"` once it can draw, or
-//! `data-ezviz-error="..."` if the GPU could not be initialized, so pages and tests can wait for
+//! The canvas gets `data-sciplot-backend="webgpu"|"webgl2"` once it can draw, or
+//! `data-sciplot-error="..."` if the GPU could not be initialized, so pages and tests can wait for
 //! it.
 
 use super::UserEvent;
@@ -147,7 +147,7 @@ pub(super) fn init_gpu(window: Arc<Window>) {
             Err(e) => Err(e),
         };
         if let Err(e) = post(Msg::GpuReady(id, Box::new(gfx))) {
-            log::error!("ezviz: {e}");
+            log::error!("sciplot: {e}");
         }
     });
 }
@@ -162,23 +162,23 @@ pub(super) fn mark_ready(window: &Window, gfx: &Gfx) {
     let name = gfx.gpu.adapter.get_info().name;
     let name = if name.is_empty() { String::new() } else { format!(" on {name}") };
     log::info!(
-        "ezviz: {backend} canvas{name}, format {:?}, max texture {} px",
+        "sciplot: {backend} canvas{name}, format {:?}, max texture {} px",
         gfx.config.format,
         gfx.gpu.max_texture_size()
     );
     if let Some(c) = window.canvas() {
-        let _ = c.set_attribute("data-ezviz-backend", backend);
+        let _ = c.set_attribute("data-sciplot-backend", backend);
     }
 }
 
 /// The GPU context could not be created: tag the canvas with the error.
 pub(super) fn mark_failed(window: &Window, err: &str) {
     if let Some(c) = window.canvas() {
-        let _ = c.set_attribute("data-ezviz-error", err);
+        let _ = c.set_attribute("data-sciplot-error", err);
     }
 }
 
-/// Removes a canvas ezviz appended (its window closed).
+/// Removes a canvas sciplot appended (its window closed).
 pub(super) fn remove_canvas(window: &Window) {
     if let Some(c) = window.canvas() {
         c.remove();

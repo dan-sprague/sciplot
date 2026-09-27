@@ -6,11 +6,11 @@
 //! Scroll to zoom, drag to pan or zoom into a rectangle, hover for values; on touch screens pan
 //! with one finger and pinch with two.
 //!
-//! Native: `cargo run --release --example web_lorenz` (`EZVIZ_AUTOCLOSE=4
-//! EZVIZ_WINDOW_DUMP=out/web_lorenz_native.png` closes after 4 s and writes the last frame).
+//! Native: `cargo run --release --example web_lorenz` (`SCIPLOT_AUTOCLOSE=4
+//! SCIPLOT_WINDOW_DUMP=out/web_lorenz_native.png` closes after 4 s and writes the last frame).
 //! Browser: `tools/web/build.sh web_lorenz`, then serve `examples/web/` and open
 //! `web_lorenz.html` (add `?backend=gl` to force WebGL2).
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// RK4 steps per displayed frame.
 const STEPS_PER_FRAME: usize = 8;
@@ -54,8 +54,8 @@ fn xorshift(seed: u64) -> impl FnMut() -> f64 {
     }
 }
 
-fn main() -> ezviz::Result<()> {
-    let fig = Figure::new().size((960, 440)).window_title("ezviz: Lorenz attractor");
+fn main() -> sciplot::Result<()> {
+    let fig = Figure::new().size((960, 440)).window_title("sciplot: Lorenz attractor");
     let ax = Axis::new(fig.at(1, 1)).title("Lorenz attractor").xlabel("x").ylabel("z");
     let ts = Axis::new(fig.at(1, 2)).title("time series").xlabel("t").ylabel("x, z");
     fig.colsize(1, GridSize::Aspect(1, 1.0));

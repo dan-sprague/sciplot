@@ -78,7 +78,7 @@ fn run(el: &mut EventLoop<UserEvent>, app: &mut App<'_>) -> Result<()> {
 
 /// Opens each figure in its own window and blocks until all are closed.
 ///
-/// Must be called on the main thread. Set `EZVIZ_AUTOCLOSE=<seconds>` to close automatically
+/// Must be called on the main thread. Set `SCIPLOT_AUTOCLOSE=<seconds>` to close automatically
 /// (useful for smoke tests). In the browser (wasm32) each figure is mounted into a canvas
 /// appended to the page and this returns at once.
 pub fn show_all(figs: &[&Figure]) -> Result<()> {
@@ -120,15 +120,15 @@ impl Figure {
     /// per frame): the window does not respond while it runs. For long-running work on a
     /// separate thread use [`Figure::show_live`].
     ///
-    /// Must be called on the main thread. With `EZVIZ_WINDOW_DUMP=<png>` the last frame before
-    /// the window closes is written (or frame `EZVIZ_WINDOW_DUMP_FRAME`, if set).
+    /// Must be called on the main thread. With `SCIPLOT_WINDOW_DUMP=<png>` the last frame before
+    /// the window closes is written (or frame `SCIPLOT_WINDOW_DUMP_FRAME`, if set).
     ///
     /// The same code runs in the browser (wasm32), driven by `requestAnimationFrame`: there
     /// `animate` mounts the figure into a new canvas and returns at once, so `f` must be
     /// `'static` (move owned handles into it).
     ///
     /// ```no_run
-    /// use ezviz::prelude::*;
+    /// use sciplot::prelude::*;
     /// let fig = Figure::new();
     /// let ax = Axis::new(fig.at(1, 1)).limits(-1.2, 1.2, -1.2, 1.2);
     /// let sc = ax.scatter([1.0], [0.0]);
@@ -140,7 +140,7 @@ impl Figure {
     ///         frame.stop();
     ///     }
     /// })?;
-    /// # Ok::<(), ezviz::Error>(())
+    /// # Ok::<(), sciplot::Error>(())
     /// ```
     pub fn animate(&self, mut f: impl FnMut(&mut Frame)) -> Result<()> {
         let gpu = gpu()?;

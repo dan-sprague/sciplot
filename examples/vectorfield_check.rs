@@ -5,7 +5,7 @@
 //! magnitude, with a Colorbar; (b) a streamplot of the same field; (c) a streamplot of the Van der
 //! Pol oscillator; (d) arrow metrics (long, short and styled arrows). Pass `--svg` to also write
 //! SVGs and `--cpu` to also render with the CPU fallback.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// Damped pendulum.
 fn pendulum(th: f64, om: f64) -> (f64, f64) {
@@ -17,7 +17,7 @@ fn vdp(x: f64, y: f64) -> (f64, f64) {
     (y, (1.0 - x * x) * y - x)
 }
 
-fn save(fig: &Figure, name: &str, svg: bool, cpu: bool) -> ezviz::Result<()> {
+fn save(fig: &Figure, name: &str, svg: bool, cpu: bool) -> sciplot::Result<()> {
     fig.save_with(format!("out/{name}.png"), Save::new().px_per_unit(2.0))?;
     if svg {
         fig.save(format!("out/{name}.svg"))?;
@@ -28,7 +28,7 @@ fn save(fig: &Figure, name: &str, svg: bool, cpu: bool) -> ezviz::Result<()> {
     Ok(())
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
     let svg = std::env::args().any(|a| a == "--svg");
     let cpu = std::env::args().any(|a| a == "--cpu");
@@ -71,7 +71,7 @@ fn main() -> ezviz::Result<()> {
     arrows!(ax, [6.0], [5.0], [3.0], [0.0]; color = BLUE, taillength = 8, tailwidth = 12);
     save(&fig, "vectorfield_metrics", svg, cpu)?;
 
-    // (e) Legend entries (ezviz draws a line with an arrowhead; Makie shows a gray patch for
+    // (e) Legend entries (sciplot draws a line with an arrowhead; Makie shows a gray patch for
     // arrows and an upward triangle for streamplot) and a solid-colored streamplot.
     let fig = Figure!(size = (600, 450));
     let ax = Axis!(fig.at(1, 1); title = "legend");

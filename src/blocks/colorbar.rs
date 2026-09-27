@@ -31,7 +31,7 @@ use std::sync::Arc;
 /// shows a colormap over fixed limits.
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let z: Vec<f64> = (0..200).map(|k| (k as f64 * 0.1).sin()).collect();
 /// let fig = Figure::new();
 /// let hm = Axis::new(fig.at(1, 1)).heatmap(Field::new(&z, 20, 10)).colormap(Colormap::MAGMA);

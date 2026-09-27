@@ -7,7 +7,7 @@
 //! painter's-order 3D, rasterized on the CPU).
 //!
 //! Run: `cargo run --example axis3_check`
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 use std::f64::consts::PI;
 
 /// Lorenz system (σ = 10, ρ = 28, β = 8/3), RK4 with a fixed step (shared with the Julia script).
@@ -50,7 +50,7 @@ fn cloud(n: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
 /// The two views: `(suffix, azimuth, elevation, perspectiveness)`.
 const VIEWS: [(&str, f64, f64, f64); 2] = [("a", 1.275 * PI, PI / 8.0, 0.0), ("b", 0.3 * PI, 0.45, 0.5)];
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
     let (lx, ly, lz) = lorenz(4000, 0.01);
     let t: Vec<f64> = (0..lx.len()).map(|i| i as f64 * 0.01).collect();

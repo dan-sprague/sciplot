@@ -29,7 +29,7 @@ use std::sync::Arc;
 /// [`Legend::from_entries`], or over an axis' plot area with [`axislegend`].
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// let t = linspace(0.0, 10.0, 100);
@@ -99,7 +99,7 @@ pub use crate::plots::PlotRef;
 /// explicit [`LegendElement`]s.
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// let l = ax.lines([1.0, 2.0], [1.0, 2.0]);
@@ -321,7 +321,7 @@ impl Legend {
     /// Makie's `Legend(fig[r, c], plots, labels)`: explicit entries.
     ///
     /// ```
-    /// use ezviz::prelude::*;
+    /// use sciplot::prelude::*;
     /// let fig = Figure::new();
     /// let ax = Axis::new(fig.at(1, 1));
     /// let a = ax.lines([1.0, 2.0], [1.0, 2.0]);
@@ -379,7 +379,7 @@ impl Legend {
 /// at the top right by default, 6 units from the spines. Place it with `.position(Pos::LB)` etc.
 ///
 /// ```
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// lines!(ax, [1.0, 2.0], [1.0, 2.0]; label = "a");

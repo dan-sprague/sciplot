@@ -89,12 +89,12 @@ Probe sources: `docs/research/web-probe/` (lib.rs, Cargo.toml, index.html). Capt
     target/wasm32-unknown-unknown/release/examples/web_lorenz.wasm
   ```
   ```html
-  <style>#ezviz{width:640px;height:400px;display:block;touch-action:none;outline:none}</style>
-  <canvas id="ezviz"></canvas>
+  <style>#sciplot{width:640px;height:400px;display:block;touch-action:none;outline:none}</style>
+  <canvas id="sciplot"></canvas>
   <script type="module">import init from './pkg/web_lorenz.js'; await init();</script>
   ```
 - Extra crates: `console_error_panic_hook::set_once()`, `console_log::init_with_level(Info)`,
-  `web_time::Instant` everywhere (`std::time::Instant::now()` panics on wasm32-unknown-unknown). ezviz's
+  `web_time::Instant` everywhere (`std::time::Instant::now()` panics on wasm32-unknown-unknown). sciplot's
   normal deps don't pull getrandom on wasm; demos using `rand` 0.9 need
   `getrandom = { version = "0.3", features = ["wasm_js"] }`. parking_lot compiles on wasm but a contended or
   re-entrant lock panics there.

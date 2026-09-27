@@ -10,8 +10,8 @@
 //!
 //! Run: `cargo run --example fidelity_check`
 #![allow(dead_code)]
-use ezviz::prelude::*;
-use ezviz::{AxisGeometry, theme_dark, theme_light};
+use sciplot::prelude::*;
+use sciplot::{AxisGeometry, theme_dark, theme_light};
 use serde_json::Value;
 
 /// The reference figures: `(name, figure, axis)`.
@@ -32,7 +32,7 @@ pub fn figures() -> Vec<(&'static str, Figure, Axis)> {
     let fig = Figure::new();
     let ax = Axis!(fig.at(1, 1); title = "power law", xlabel = "k", ylabel = "E(k)",
         xscale = Scale::Log10, yscale = Scale::Log10, xticks = TickSpec::LogMakie, yticks = TickSpec::LogMakie,
-        // Makie's default minors (ezviz's own default on log axes is 2..9·10ⁿ).
+        // Makie's default minors (sciplot's own default on log axes is 2..9·10ⁿ).
         xminorticks = MinorSpec::IntervalsBetween(2), yminorticks = MinorSpec::IntervalsBetween(2),
         xminorticksvisible = true, yminorticksvisible = true, xminorgridvisible = true, yminorgridvisible = true);
     lines!(ax, &lx, &ly);
@@ -159,7 +159,7 @@ pub fn check(makie: &Value, verbose: bool) -> f64 {
     worst
 }
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     std::fs::create_dir_all("out").ok();
     for (name, fig, _) in figures() {
         fig.save(format!("out/fidelity_{name}.png"))?;

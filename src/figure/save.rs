@@ -8,7 +8,7 @@ use std::path::Path;
 /// 0.75 pt per unit for vector output.
 ///
 /// ```no_run
-/// # use ezviz::prelude::*;
+/// # use sciplot::prelude::*;
 /// # let fig = Figure::new();
 /// fig.save_with("fig.png", Save::dpi(300)).unwrap();   // px_per_unit = 300 / 96
 /// ```
@@ -50,7 +50,7 @@ impl Save {
         self
     }
     /// Rasterizes bitmaps on the CPU (the SVG through resvg) instead of the GPU. This is what
-    /// happens automatically when no GPU adapter exists; `EZVIZ_FORCE_CPU=1` forces it globally.
+    /// happens automatically when no GPU adapter exists; `SCIPLOT_FORCE_CPU=1` forces it globally.
     /// Needs the `cpu-png` feature (on by default).
     pub fn cpu(mut self, v: bool) -> Save {
         self.cpu = v;
@@ -123,7 +123,7 @@ impl Figure {
                 }
                 #[cfg(feature = "cpu-png")]
                 Err(Error::NoGpuAdapter(e)) => {
-                    log::info!("ezviz: no GPU adapter ({e})");
+                    log::info!("sciplot: no GPU adapter ({e})");
                     crate::warn_once("no GPU adapter found; rendering bitmaps on the CPU (resvg)");
                 }
                 Err(e) => return Err(e),
@@ -178,7 +178,7 @@ impl Figure {
                     return Ok(RgbaImage { width, height, data });
                 }
                 #[cfg(feature = "cpu-png")]
-                Err(Error::NoGpuAdapter(e)) => log::info!("ezviz: no GPU adapter ({e}); rendering on the CPU"),
+                Err(Error::NoGpuAdapter(e)) => log::info!("sciplot: no GPU adapter ({e}); rendering on the CPU"),
                 Err(e) => return Err(e),
             }
         }

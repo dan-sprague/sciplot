@@ -24,7 +24,7 @@ use std::sync::Arc;
 /// A handle to `hlines`, `vlines` or `ablines` (Makie's `HLines` / `VLines` / `ABLines`).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// ax.lines([0.0, 10.0], [-1.0, 1.0]);

@@ -1,7 +1,7 @@
 //! Architecture check: panning a 1M-point scatter re-uploads no plot data.
 
-use ezviz::prelude::*;
-use ezviz::testing::{Offscreen, set_interactive_limits};
+use sciplot::prelude::*;
+use sciplot::testing::{Offscreen, set_interactive_limits};
 use std::time::Instant;
 
 #[test]
@@ -15,7 +15,7 @@ fn pan_1m_scatter_without_reupload() {
 
     let mut off = match Offscreen::new(2.0) {
         Ok(o) => o,
-        Err(ezviz::Error::NoGpuAdapter(_)) => return, // no GPU on this machine
+        Err(sciplot::Error::NoGpuAdapter(_)) => return, // no GPU on this machine
         Err(e) => panic!("{e}"),
     };
     let first = off.frame(&fig).unwrap();

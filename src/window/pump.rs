@@ -42,7 +42,7 @@ fn with_pump<R>(
 ///
 /// ```compile_fail
 /// fn assert_send<T: Send>() {}
-/// assert_send::<ezviz::Screen>();
+/// assert_send::<sciplot::Screen>();
 /// ```
 ///
 /// **Caveat (macOS):** while the user live-resizes the window, macOS runs a modal loop inside
@@ -60,7 +60,7 @@ impl Figure {
     /// Must be called on the main thread.
     ///
     /// ```no_run
-    /// use ezviz::prelude::*;
+    /// use sciplot::prelude::*;
     /// let fig = Figure::new();
     /// let sc = Axis::new(fig.at(1, 1)).scatter([0.0], [0.0]);
     /// let screen = fig.display()?;
@@ -70,7 +70,7 @@ impl Figure {
     ///     sc.set_data([t.cos()], [t.sin()]);
     ///     screen.pump()?;
     /// }
-    /// # Ok::<(), ezviz::Error>(())
+    /// # Ok::<(), sciplot::Error>(())
     /// ```
     pub fn display(&self) -> Result<Screen> {
         let token = crate::figure::next_uid();

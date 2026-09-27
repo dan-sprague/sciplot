@@ -1,7 +1,7 @@
 //! Histogram, categorical barplot, dodged/stacked bars and a band.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
-fn main() -> ezviz::Result<()> {
+fn main() -> sciplot::Result<()> {
     // Deterministic normal samples (Box-Muller on a xorshift stream).
     let mut s: u64 = 0x9E3779B97F4A7C15;
     let mut u = move || {

@@ -2,9 +2,9 @@
 //! title, grid and frame lines (`tests/fixtures/axis3.json`, from `tools/gen_axis3_fixtures.jl`),
 //! plus rendering checks (depth occlusion, WebGL2 limits, SVG) and interaction helpers.
 
-use ezviz::gpu_testing::GpuContext;
-use ezviz::prelude::*;
-use ezviz::{Axis3Geometry, Error};
+use sciplot::gpu_testing::GpuContext;
+use sciplot::prelude::*;
+use sciplot::{Axis3Geometry, Error};
 use serde_json::Value;
 use std::f64::consts::PI;
 
@@ -192,12 +192,12 @@ fn autolimits_and_interaction() {
     assert_eq!(ax.current_limits().unwrap(), before);
 
     // DragRotate: 0.01 rad per unit; the elevation stops short of the poles.
-    let (az, el) = ezviz_drag(1.275 * PI, PI / 8.0, 10.0, -1000.0);
+    let (az, el) = sciplot_drag(1.275 * PI, PI / 8.0, 10.0, -1000.0);
     close(az, 1.275 * PI - 0.1, 1e-12, "azimuth");
     close(el, -(PI / 2.0 - 0.001), 1e-12, "elevation");
 }
 
-fn ezviz_drag(az: f64, el: f64, dx: f64, dy: f64) -> (f64, f64) {
+fn sciplot_drag(az: f64, el: f64, dx: f64, dy: f64) -> (f64, f64) {
     let fig = Figure::new();
     let ax = Axis3::new(fig.at(1, 1)).azimuth(az).elevation(el);
     ax.rotate_by(dx, dy);

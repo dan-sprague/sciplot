@@ -1,4 +1,4 @@
-# Axis3 reference fixtures for ezviz's port of Makie's Axis3 camera and decorations
+# Axis3 reference fixtures for sciplot's port of Makie's Axis3 camera and decorations
 # (src/scene/axis3, tests/axis3.rs).
 #
 #     julia --project=tools tools/gen_axis3_fixtures.jl

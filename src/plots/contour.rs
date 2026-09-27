@@ -77,7 +77,7 @@ impl<T: Scalar, const N: usize> Conv<Levels> for [T; N] {
 /// and `g`: sample both on a grid and draw `levels = [0.0]`.
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// // FitzHugh–Nagumo: v' = v - v³/3 - w + I,  w' = ε (v + a - b w).
 /// let (i_ext, a, b, eps) = (0.5, 0.7, 0.8, 0.08);
 /// let (n, m) = (200, 150);
@@ -620,7 +620,7 @@ impl crate::Axis {
     /// each point (it must have one value per point).
     ///
     /// ```no_run
-    /// use ezviz::prelude::*;
+    /// use sciplot::prelude::*;
     /// let (nx, ny) = (100, 80);
     /// let xs = linspace(-2.0, 2.0, nx);
     /// let ys = linspace(-1.5, 1.5, ny);
@@ -655,7 +655,7 @@ impl crate::GridPosition {
 /// ```no_run
 /// let (nx, ny) = (60, 40);
 /// let z: Vec<f64> = (0..nx * ny).map(|k| ((k % nx) as f64 * 0.1).sin() * ((k / nx) as f64 * 0.15).cos()).collect();
-/// ezviz::contour(ezviz::Field::new(&z, nx, ny)).save("contour.png").unwrap();
+/// sciplot::contour(sciplot::Field::new(&z, nx, ny)).save("contour.png").unwrap();
 /// ```
 #[track_caller]
 #[must_use = "this creates a new Figure; call .save(..) or .show() on it"]

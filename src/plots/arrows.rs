@@ -20,7 +20,7 @@ use std::sync::Arc;
 /// An arrows plot handle (Makie's `Arrows2D`, also known as quiver).
 ///
 /// ```no_run
-/// use ezviz::prelude::*;
+/// use sciplot::prelude::*;
 /// let fig = Figure::new();
 /// let ax = Axis::new(fig.at(1, 1));
 /// // Damped pendulum phase portrait on a 20 × 20 grid, colored by speed.

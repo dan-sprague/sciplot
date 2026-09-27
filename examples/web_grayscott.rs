@@ -5,11 +5,11 @@
 //! mean of `v` against the step, growing as the pattern spreads. Several simulation steps run per
 //! displayed frame. Scroll to zoom, drag to pan or zoom into a rectangle, hover for values.
 //!
-//! Native: `cargo run --release --example web_grayscott` (`EZVIZ_AUTOCLOSE=4
-//! EZVIZ_WINDOW_DUMP=out/web_grayscott_native.png` closes after 4 s and writes the last frame).
+//! Native: `cargo run --release --example web_grayscott` (`SCIPLOT_AUTOCLOSE=4
+//! SCIPLOT_WINDOW_DUMP=out/web_grayscott_native.png` closes after 4 s and writes the last frame).
 //! Browser: `tools/web/build.sh web_grayscott`, then serve `examples/web/` and open
 //! `web_grayscott.html` (add `?backend=gl` to force WebGL2).
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 const N: usize = 256;
 /// Simulation steps per displayed frame.
@@ -88,8 +88,8 @@ impl GrayScott {
     }
 }
 
-fn main() -> ezviz::Result<()> {
-    let fig = Figure::new().size((980, 440)).window_title("ezviz: Gray–Scott");
+fn main() -> sciplot::Result<()> {
+    let fig = Figure::new().size((980, 440)).window_title("sciplot: Gray–Scott");
     let ax = Axis::new(fig.at(1, 1)).title("step 0").xlabel("x").ylabel("y");
     let mut gs = GrayScott::new(0x9E37_79B9_7F4A_7C15);
     let hm = ax.heatmap(Field::new(&gs.v, N, N)).colormap(Colormap::MAGMA).colorrange((0.0, 0.45));

@@ -2,7 +2,7 @@
 //! GPU buffer reuse. `examples/vectorfield_check.rs` + `tools/vectorfield_check.jl` compare the
 //! pictures with CairoMakie.
 
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 fn pendulum(th: f64, om: f64) -> (f64, f64) {
     (om, -th.sin() - 0.2 * om)
@@ -43,7 +43,7 @@ fn autolimits_span_the_box() {
 }
 
 /// Counts pixels whose color is close to `c`.
-fn count(img: &ezviz::RgbaImage, c: [u8; 3]) -> usize {
+fn count(img: &sciplot::RgbaImage, c: [u8; 3]) -> usize {
     img.data.as_chunks::<4>().0.iter().filter(|p| (0..3).all(|k| p[k].abs_diff(c[k]) < 40)).count()
 }
 
@@ -63,20 +63,20 @@ fn renders_on_the_gpu_and_reuses_buffers() {
     let (fig, ar, _) = figure();
     let img = match fig.render_rgba(&Save::new()) {
         Ok(img) => img,
-        Err(ezviz::Error::NoGpuAdapter(_)) => return,
+        Err(sciplot::Error::NoGpuAdapter(_)) => return,
         Err(e) => panic!("{e}"),
     };
     assert!(count(&img, [255, 0, 0]) > 200);
-    let mut off = match ezviz::testing::Offscreen::new(1.0) {
+    let mut off = match sciplot::testing::Offscreen::new(1.0) {
         Ok(o) => o,
-        Err(ezviz::Error::NoGpuAdapter(_)) => return,
+        Err(sciplot::Error::NoGpuAdapter(_)) => return,
         Err(e) => panic!("{e}"),
     };
     off.frame(&fig).unwrap();
     let idle = off.frame(&fig).unwrap();
     assert_eq!(idle.data_bytes, 0, "an unchanged frame uploads no plot data");
     // Panning rebuilds the arrow and arrowhead meshes; the streamlines stay on the GPU.
-    ezviz::testing::set_interactive_limits(&ar.axis(), [-2.0, 2.0, -2.0, 2.0]);
+    sciplot::testing::set_interactive_limits(&ar.axis(), [-2.0, 2.0, -2.0, 2.0]);
     let pan = off.frame(&fig).unwrap();
     assert!(pan.data_bytes > 0);
 }

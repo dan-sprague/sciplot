@@ -2,9 +2,9 @@
 //! `Lines3d::push`, so only new points are converted and uploaded) while the camera turns
 //! slowly around it (`Axis3::azimuth`).
 //!
-//! `EZVIZ_AUTOCLOSE=4 EZVIZ_WINDOW_DUMP=out/lorenz3d.png cargo run --example lorenz3d` closes
+//! `SCIPLOT_AUTOCLOSE=4 SCIPLOT_WINDOW_DUMP=out/lorenz3d.png cargo run --example lorenz3d` closes
 //! after 4 s and writes the first frame.
-use ezviz::prelude::*;
+use sciplot::prelude::*;
 
 /// Lorenz RK4 steps per displayed frame.
 const STEPS_PER_FRAME: usize = 8;
@@ -21,8 +21,8 @@ fn rk4(p: [f64; 3], dt: f64) -> [f64; 3] {
     std::array::from_fn(|i| p[i] + dt / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]))
 }
 
-fn main() -> ezviz::Result<()> {
-    let fig = Figure::new().size((800, 700)).window_title("ezviz: Lorenz attractor (Axis3)");
+fn main() -> sciplot::Result<()> {
+    let fig = Figure::new().size((800, 700)).window_title("sciplot: Lorenz attractor (Axis3)");
     let ax = Axis3!(fig.at(1, 1); title = "Lorenz attractor", perspectiveness = 0.3);
     ax.limits(-25.0, 25.0, -30.0, 30.0, 0.0, 55.0);
     let mut p = [1.0, 1.0, 1.0];

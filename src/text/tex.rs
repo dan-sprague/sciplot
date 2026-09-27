@@ -310,7 +310,7 @@ impl Parser<'_> {
 /// `\alpha = 1` keeps its spaces. Use `\ ` to force a space.
 ///
 /// ```
-/// use ezviz::text::tex;
+/// use sciplot::text::tex;
 /// let t = tex("k^{-5/3}");
 /// assert_eq!(t.plain_text(), "k\u{2212}5/3");
 /// assert_eq!(t.spans[1].size_scale, 0.66);
