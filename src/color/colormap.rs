@@ -1,5 +1,11 @@
 //! Colormaps: 256-entry lookup tables sampled from ColorSchemes.jl exactly as Makie does, plus the
 //! value encoding shared by every colormapped plot.
+//!
+//! Provenance: algorithm adapted from Makie 0.24.14 `src/colorsampler.jl`
+//! (`interpolated_getindex`); name lookup and `reversed` follow `src/conversions.jl`
+//! (`to_colormap`, `Reverse`), and the automatic color range follows `src/layouting/data_limits.jl`
+//! (`distinct_extrema_nan`). MIT licensed. For the table data see cmap_data.rs and
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{Color, IntoColor, cmap_data};
 use crate::scene::drawlist::ColorMapping;

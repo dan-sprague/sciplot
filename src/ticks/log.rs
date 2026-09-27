@@ -4,6 +4,11 @@
 //!   the exponents, so the ticks can land on `10^0.5`.
 //! - [`log_integer`]: the sciplot default (plan deviation D1). Majors sit on whole decades
 //!   whenever at least two of them are visible; Wilkinson picks the decade step.
+//!
+//! Provenance: `log_makie` and `LogBase::label` are ported from Makie 0.24.14
+//! `src/makielayout/lineaxis.jl` (`get_ticks(::LogTicks, ::LogFunctions, ::Automatic, ...)`,
+//! `_logbase`). `log_integer` and `exponent_labels` are sciplot's own (they reuse the ported
+//! Wilkinson search and Makie's label style). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::format::{format_ticks_plain, log_label};
 use super::julia;

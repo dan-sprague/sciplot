@@ -1,4 +1,7 @@
 // Shared by the 3D pipelines (lines3d, markers3d, mesh3d): the Axis3 camera and clip box.
+//
+// Provenance: `in_box` behaviour follows Makie 0.24.14 `src/makielayout/blocks/axis3d.jl` (`clip`:
+// content outside the limits box is hidden). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 struct View3 {
     m: mat4x4<f32>,       // local -> target clip space (depth 0..1)

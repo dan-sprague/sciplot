@@ -5,6 +5,12 @@
 //! start and end points are projected through the axis and every arrow's triangles are built on
 //! the CPU in figure units, so pan/zoom keeps widths constant while lengths follow the data. The
 //! mesh is memoized per axis geometry, so frames that do not move the axis reuse it.
+//!
+//! Provenance: arrow geometry ported from Makie 0.24.14 `src/basic_recipes/arrows.jl`
+//! (`_arrow_align_val`, `_process_arrow_arguments`, `arrowtail2d`, and the arrow metrics and
+//! `should_component_render` of `plot!(::Arrows2D)`); attribute defaults, `strokemask` and the
+//! start/end point limits follow its `@recipe Arrows2D` and `data_limits`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, plot_common, point_bounds, zip_xy};
 use crate::attrs::{Conv, attributes, conv_identity};

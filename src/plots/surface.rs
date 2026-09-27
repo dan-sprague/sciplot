@@ -6,6 +6,11 @@
 //! camera, Blinn-Phong with `diffuse = 1`, `specular = 0.2`, `shininess = 32`); `shading(false)`
 //! draws the flat colormap colors. The GPU lights per pixel, the SVG backend per triangle.
 //! Surfaces write depth, so lines and markers behind them are hidden.
+//!
+//! Provenance: normals and NaN handling adapted from Makie 0.24.14 `src/utilities/utilities.jl`
+//! (`nan_aware_normals`, `nan_aware_orthogonal_vector`, `surface2mesh`); defaults follow
+//! `@recipe Surface` and `mixin_shading_attributes` in `src/basic_plots.jl`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::lines3d::{add_to_axis3, plot3d_common};
 use super::{PlotImpl, PlotKind};

@@ -1,4 +1,10 @@
 //! Shared bar geometry for `barplot` and `hist` (Makie's barplot recipe).
+//!
+//! Provenance: bar layout adapted from Makie 0.24.14 `src/basic_recipes/barplot.jl` (automatic
+//! `width`, `compute_x_and_width`, `scale_width`, `shift_dodge`, `bar_rectangle`; stacking
+//! simplified from `stack_grouped_from_to`). Bar hover follows
+//! `show_data(::DataInspector, ::BarPlot, idx)` in `src/interaction/inspector.jl`; outlines follow
+//! CairoMakie 0.15.14 `src/overrides.jl` (`draw_poly`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::pick::{Hover, PickCtx, point_text};
 use crate::color::Color;

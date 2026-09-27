@@ -9,6 +9,11 @@
 //!
 //! All three are drawn as line segments recomputed from the visible limits every frame, and cycle
 //! the line palette with their own counters, like Makie.
+//!
+//! Provenance: ported from Makie 0.24.14 `src/basic_recipes/hvlines.jl`
+//! (`plot!(::Union{HLines, VLines})`, `data_limits`) and `src/basic_recipes/ablines.jl`
+//! (`plot!(::ABLines)` with its identity-transform check, `data_limits`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common};
 use crate::attrs::attributes;

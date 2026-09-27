@@ -1,5 +1,12 @@
 // Screen-space markers at 3D positions (Axis3 scatter): instanced quads with the depth of the
 // marker centre, depth-tested (no depth writes). The marker SDFs mirror sprite.wgsl.
+//
+// Provenance: marker geometry data from Makie 0.24.14 `src/bezier.jl` and `src/conversions.jl`
+// (`DEFAULT_MARKER_MAP`), as in sprite.wgsl. The AA radius follows GLMakie 0.13.14
+// `assets/shader/distance_shape.frag`; the centered stroke follows CairoMakie 0.15.14
+// `src/scatter.jl` (`draw_marker`). `sd_box`, `sd_tri` and `sd_ngon` are ported from Inigo Quilez's
+// 2D distance functions (sdBox, sdTriangle, sdPolygon; iquilezles.org/articles/distfunctions2d).
+// MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 struct Markers3dU {
     v: View3,

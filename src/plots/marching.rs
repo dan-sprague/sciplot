@@ -12,6 +12,13 @@
 //! pieces and fanned. Every crossing point is computed from its grid edge alone, so neighbouring
 //! cells and neighbouring bands share bit-identical vertices and the mesh has no cracks (seamless
 //! under MSAA; merged per band in SVG). Cells with a NaN corner are left out.
+//!
+//! Provenance: isolines adapted from Contour.jl 0.6.3 `src/Contour.jl` (`_get_case`, the saddle
+//! rule of `get_level_cells`; segment linking restructured from `chase!`/`trace_contour`) and
+//! `src/interpolate.jl` (`interpolate`). Isoband behaviour follows Isoband.jl 0.1.1, which wraps
+//! Claus O. Wilke's isoband C library (isoband_jll 0.2.3); the per-cell band tracing and
+//! triangulation are not taken from isoband. Grid coordinates follow Makie 0.24.14's `VertexGrid`
+//! conversion (`src/conversions.jl`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::color::ValueEncoding;
 use crate::data::{CellSpecKind as Spec, Data2D};

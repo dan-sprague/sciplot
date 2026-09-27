@@ -15,6 +15,13 @@
 //!
 //! Zooming and panning happen in scaled space (log axes zoom by factors) and respect reversed
 //! axes. Limits set on one axis propagate to its linked axes.
+//!
+//! Provenance: `zoom`, `pan` and `chosen_limits` are ported from Makie 0.24.14
+//! `src/makielayout/interactions.jl` (`ScrollZoom`, `DragPan`, `_chosen_limits`), and the limit
+//! resets on Ctrl-click follow `LimitReset` there. `AxisView::valid` follows
+//! `_axis_limits_are_valid` (`src/makielayout/types.jl`), `SCROLL_SPEED` the `ScrollZoom(0.1, 0.2)`
+//! of `src/makielayout/blocks/axis.jl` and `DRAG_THRESHOLD` the `drag_threshold` of
+//! `src/makielayout/mousestatemachine.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::transform::Scale;
 

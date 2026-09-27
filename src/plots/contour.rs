@@ -4,6 +4,13 @@
 //! The lines come from marching squares ([`super::marching`], Contour.jl's rules) on the grid
 //! points: `z[i, j]` sits at `(x_i, y_j)`. Segments are joined into polylines, and lines that
 //! close on themselves are drawn as closed loops, so dash patterns and joins run around them.
+//!
+//! Provenance: ported from Makie 0.24.14 `src/basic_recipes/contours.jl`
+//! (`contour_label_formatter`, `to_levels`, the `zlevels` and `computed_colorrange` rules of
+//! `plot!`, `color_per_level`, `label_info`; label gaps adapted from `masked_lines`; defaults of
+//! `@recipe Contour`) and `to_upright_angle` in `src/utilities/projection_utils.jl`. `approx_eq`
+//! follows Julia 1.12.7 Base `isapprox` defaults (`base/floatfuncs.jl`). Isolines: see
+//! `marching.rs`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::marching::{self, GridField, Polyline};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, plot_common};

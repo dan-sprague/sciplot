@@ -5,6 +5,11 @@
 //! and are reported as protrusions, so a colorbar next to an axis lines up with its spines. The
 //! gradient is `nsteps - 1` interpolated cells (Makie's image of midpoints), and clip colors set
 //! on the plot add triangles at the bar's ends.
+//!
+//! Provenance: algorithm adapted from Makie 0.24.14 `src/makielayout/blocks/colorbar.jl`
+//! (`initialize_block!`: gradient samples, clip triangles, frame polyline, protrusion side) and
+//! `src/makielayout/lineaxis.jl` (`calculate_protrusion`, tick and label placement); defaults
+//! follow `src/makielayout/types.jl` (`@Block Colorbar`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{BlockCtx, BlockImpl, BlockLayout, block_common};
 use crate::attrs::{Conv, attributes};

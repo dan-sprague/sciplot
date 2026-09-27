@@ -1,5 +1,10 @@
 //! Building rich text: the opt-in [`tex`] mini-markup, the [`rich!`](crate::rich) macro's
 //! [`IntoSpans`] conversion, and span styling helpers.
+//!
+//! Provenance: the parser is original. Its script geometry (0.66× size, baseline +0.4 / −0.25 of
+//! the enclosing size, compounding when nested) follows Makie 0.24.14 `src/basic_recipes/text.jl`
+//! (`new_glyphstate`), and the U+2212 minus in scripts follows `src/tick_format.jl` (`MINUS_SIGN`).
+//! MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{Font, RichText, TextSpan, faces};
 use crate::color::IntoColor;

@@ -4,6 +4,14 @@
 //! written in painter's order; data-space items are mapped to figure units on the CPU in f64
 //! through `AxisXform::affine(1.0)`, so stroke widths and marker sizes are never distorted.
 //! Numbers have at most 3 decimals and ids are sequential, so output is byte-stable.
+//!
+//! Provenance: algorithm adapted from CairoMakie 0.15.14. Lines follow `src/lines.jl`
+//! (`draw_multi_lines`: per-point colors as runs of one color plus gradient segments, closed
+//! subpaths) and `src/utils.jl` (`to_cairo_linestyle` dash lengths; `to_cairo_miter_limit`, with
+//! Makie 0.24.14 `src/conversions.jl` `miter_angle_to_distance`). Markers follow `src/scatter.jl`
+//! (`draw_marker`: fill, then a centered stroke) with the miter limit 2 of `src/screen.jl`. The
+//! 0.75 pt per unit default follows Makie 0.24.14 `src/theming.jl`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 pub(crate) mod field;
 mod marker;

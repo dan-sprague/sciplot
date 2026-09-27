@@ -7,8 +7,14 @@
 //!
 //! Interaction: [`Axis3::rotate_by`] and [`Axis3::zoom_by`] apply Makie's `DragRotate` and
 //! `ScrollZoom` (pure versions: [`crate::scene::axis3::drag_rotate`],
-//! [`crate::scene::axis3::scroll_zoom_limits`]); windows find the Axis3 under the cursor with
-//! [`crate::scene::axis3::area_at`].
+//! [`crate::scene::axis3::scroll_zoom_limits`]). [`crate::scene::axis3::area_at`] finds the Axis3
+//! under a point; windows do not route mouse input to it yet.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/makielayout/types.jl`
+//! (`@Block Axis3` attributes) and `src/makielayout/blocks/axis3d.jl` (`limits!`, `autolimits!`,
+//! `hidedecorations!`, `hidespines!`, the `zoom_mult` and `axis_offset` state); `reset_view`
+//! follows `LimitReset` in `src/makielayout/interactions.jl`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{BlockCtx, BlockImpl, BlockLayout};
 use crate::attrs::{Conv, attributes, conv_identity};

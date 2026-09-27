@@ -1,4 +1,11 @@
 //! Heatmap cell coordinates (Makie's `CellGrid` conversions, `conversions.jl:321-342, 419-438`).
+//!
+//! Provenance: `centres_to_edges` is ported from Makie 0.24.14 `src/conversions.jl` (`edges`). The
+//! centre/edge inference and the half-step widening of `a..=b` follow
+//! `adjust_axes(::CellGrid, ...)`, `get_step` and
+//! `convert_arguments(::CellGrid, ::EndPointsLike, ...)` in the same file, and the default centres
+//! `1..=n` follow `expand_dimensions(::CellGrid, ...)` in `src/interfaces.jl`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{Data1D, Scalar};
 use std::sync::Arc;

@@ -1,6 +1,10 @@
 // 3D polylines: one instanced 4-vertex quad per segment, extruded in screen space around the
 // projected end points; the fragment shader draws a capsule (round caps, so consecutive segments
 // join round) with the depth interpolated between the ends. Depth-tested, no depth writes.
+//
+// Provenance: defaults and behaviour follow GLMakie 0.13.14 `assets/shader/lines.geom` and
+// `assets/shader/lines.frag` (AA radius 0.8 px; lines thinner than that keep its width and fade
+// instead). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 const AA: f32 = 0.8;   // px, half-width of the AA smoothstep (GLMakie)
 

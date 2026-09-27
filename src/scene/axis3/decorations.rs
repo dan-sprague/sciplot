@@ -4,6 +4,11 @@
 //! viewer, axis labels offset from those edges, and the title above the layout box.
 //!
 //! Geometry is computed in Makie's figure pixels (y up) and flipped when emitted.
+//!
+//! Provenance: ported from Makie 0.24.14 `src/makielayout/blocks/axis3d.jl` (`add_panel!`,
+//! `add_gridlines_and_frames!`, `add_ticks_and_ticklabels!`, `dimpoint`, `dim1`, `dim2`, the
+//! `mi1`..`mi3` flags and the title position); `approx` follows `isapprox` in Julia 1.12.7
+//! `base/floatfuncs.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::Axis3Frame;
 use super::camera::mod1;

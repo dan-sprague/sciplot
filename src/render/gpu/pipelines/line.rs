@@ -7,6 +7,11 @@
 //! for both ends, and dash arc lengths at one. When consecutive points repeat exactly, the
 //! neighbours past the duplicates (up to `MAX_SKIP`) are resolved on the CPU into per-segment
 //! `prev`/`next` buffers that take the place of `p[k - 1]` and `p[k + 2]`.
+//!
+//! Provenance: `arc_lengths` algorithm adapted from GLMakie 0.13.14 `src/glshaders/lines.jl`
+//! (`sumlengths`); `gl_miter_limit` ported from Makie 0.24.14 `src/backend-functionality.jl`. The
+//! shader is a port of GLMakie's line shaders (see `line.wgsl`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::super::frame::{CMapU, DrawCmd, Frame, POINTS_OFFSET, premul, tag};
 use super::Layouts;

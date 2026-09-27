@@ -1,4 +1,9 @@
 //! `Axis`: a 2D coordinate system with ticks, labels, grid and spines.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/makielayout/types.jl`
+//! (`@Block Axis` attributes, `DataAspect`, `AxisAspect`) and `src/makielayout/blocks/axis.jl`
+//! (`xlims!`, `ylims!`, `limits!`, `reset_limits!`, `autolimits!`, `linkaxes!`,
+//! `hidexdecorations!`, `hidespines!`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::attrs::attributes;
 use crate::color::Color;

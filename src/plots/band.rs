@@ -1,4 +1,9 @@
 //! `band`: the filled region between two curves (confidence intervals).
+//!
+//! Provenance: mesh and stroke adapted from Makie 0.24.14 `src/basic_recipes/band.jl`
+//! (`plot!(::Band)`: `band_connect` triangles, NaN handling, `merged_points` stroke); defaults
+//! follow its `@recipe Band` and the legend patch `legendelements(::Band)` in
+//! `src/makielayout/blocks/legend.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, point_bounds};
 use crate::attrs::attributes;

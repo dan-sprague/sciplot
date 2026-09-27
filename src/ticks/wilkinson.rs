@@ -1,9 +1,18 @@
 //! Literal port of PlotUtils 1.5.0 `optimize_ticks` (Wilkinson's extended labeling, via Gadfly),
-//! `~/.julia/packages/PlotUtils/J9gzB/src/ticks.jl:9-349`, with Makie's arguments
+//! `src/ticks.jl:9-349`, with Makie's arguments
 //! (`extend_ticks = false`, `strict_span = true`, `span_buffer = nothing`).
 //!
 //! Loop order, strict comparisons and every `Float64` operation follow the Julia source, so near
 //! ties are broken exactly like Makie.
+//!
+//! Provenance: ported from PlotUtils 1.5.0 `src/ticks.jl` (`bounding_order_of_magnitude`,
+//! `postdecimal_digits`, `fallback_ticks`, `optimize_ticks`, `optimize_ticks_typed`), code that
+//! PlotUtils took over from Gadfly.jl (original author Daniel Jones); the `integer_steps` filter is
+//! a sciplot addition. The `Wilkinson` parameters and defaults follow Makie 0.24.14
+//! `src/makielayout/ticklocators/wilkinson.jl` (`WilkinsonTicks`, `get_tickvalues`). The algorithm
+//! comes from J. Talbot, S. Lin and P. Hanrahan, "An Extension of Wilkinson's Algorithm for
+//! Positioning Tick Labels on Axes", IEEE TVCG 16(6), 2010 (InfoVis 2010). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::julia::{self, Mode};
 

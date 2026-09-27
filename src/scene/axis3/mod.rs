@@ -18,6 +18,13 @@
 //! - [`drag_rotate`] (left drag) and [`scroll_zoom_limits`] / [`zoom_factor`] (scroll) are
 //!   Makie's `DragRotate` / `ScrollZoom` as pure functions; `Axis3::rotate_by` and
 //!   `Axis3::zoom_by` apply them to a figure.
+//!
+//! Provenance: algorithm adapted from Makie 0.24.14 `src/makielayout/blocks/axis3d.jl`
+//! (`initialize_block!`: scene area, clip box nudge; `getlimits`) and
+//! `src/makielayout/blocks/axis.jl` (`reset_limits!`, `expandlimits`). `drag_rotate`, `zoom_factor`
+//! and `scroll_zoom_limits` are ported from `src/makielayout/interactions.jl` (`DragRotate`,
+//! `ScrollZoom` for Axis3), and the default light follows `src/theming.jl`. `Rebase3` is original.
+//! MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 pub(crate) mod camera;
 mod decorations;

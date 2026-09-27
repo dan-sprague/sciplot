@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: >-
+  If you use sciplot in your work, please cite it using the metadata below.
+  sciplot follows Makie's design and translates much of its behaviour, so please
+  also cite Makie (the reference below).
+type: software
+title: sciplot
+abstract: >-
+  Makie-style plotting for Rust: Figure/Axis layouts, GPU (wgpu) windows with
+  live updates, PNG and SVG export.
+authors:
+  - family-names: Sprague
+    given-names: Dan
+license:
+  - MIT
+  - Apache-2.0
+  - LPPL-1.3c
+version: 0.1.0
+references:
+  - type: article
+    title: "Makie.jl: Flexible high-performance data visualization for Julia"
+    authors:
+      - family-names: Danisch
+        given-names: Simon
+      - family-names: Krumbiegel
+        given-names: Julius
+    journal: Journal of Open Source Software
+    publisher:
+      name: The Open Journal
+    year: 2021
+    volume: 6
+    issue: 65
+    start: 3349
+    doi: 10.21105/joss.03349
+    url: "https://doi.org/10.21105/joss.03349"

@@ -11,6 +11,13 @@
 //! the figure's root grid uses `Outside(figure_padding)` like Makie. Inside this module coordinates
 //! are Makie's: y up, origin at the bottom-left of the figure ([`BBox`]); [`solve`] converts its
 //! results to the scene's y-down [`Rect`]s.
+//!
+//! Provenance: the types (`Protrusion`, `BlockSize`, `AlignMode`, `MixedSide`, `Gap`) and the
+//! `LayoutItem` defaults are adapted from GridLayoutBase 0.11.3 `src/types.jl` and
+//! `src/layoutobservables.jl`. `BBox::round` is ported from Makie 0.24.14
+//! `src/makielayout/helpers.jl` (`round_to_IRect2D`); the root grid's `Outside(figure_padding)` and
+//! `tight_size` follow Makie 0.24.14 `src/figures.jl` (`Figure`, `resize_to_layout!`). MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 mod grid;
 

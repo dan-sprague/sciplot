@@ -1,4 +1,8 @@
 //! CSS color names (lowercase, no separators) -> 0xRRGGBB.
+//!
+//! Provenance: data from the W3C CSS Color Module Level 4 named-color list (148 names); every value
+//! equals the SVG/CSS entry of Colors 0.13.1 `src/names_data.jl` (MIT), through which Makie
+//! resolves color names. See THIRD_PARTY_NOTICES.md.
 
 pub(crate) fn lookup(name: &str) -> Option<u32> {
     NAMED.binary_search_by(|(n, _)| n.cmp(&name)).ok().map(|i| NAMED[i].1)

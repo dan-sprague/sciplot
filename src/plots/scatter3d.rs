@@ -1,5 +1,9 @@
 //! `scatter` in an [`Axis3`](crate::Axis3): screen-space markers (`markersize` in units, Makie's
 //! `markerspace = :pixel`) at 3D positions, hidden behind surfaces by the depth buffer.
+//!
+//! Provenance: defaults follow Makie 0.24.14 `src/basic_plots.jl` (`@recipe Scatter`,
+//! `markerspace = :pixel`) and `src/theming.jl` (`markersize = 9`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::lines3d::{add_to_axis3, colormapping3, plot3d_common, prim_color3, zip_xyz};
 use super::{ColorSpec, PlotImpl, PlotKind, is_auto};

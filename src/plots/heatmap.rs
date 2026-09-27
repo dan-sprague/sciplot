@@ -3,6 +3,11 @@
 //! Values are converted once, on the caller's thread, to f32 `(v - off) * k` with `off`/`k` from
 //! the f64 extrema, so fields of any magnitude keep their resolution; the GPU draws one quad and
 //! looks the cell up per fragment.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/basic_plots.jl`
+//! (`@recipe Heatmap`), the legend element of `src/makielayout/types.jl`
+//! (`heatmapvalues = [0 0.3; 0.6 1]`) and the cell outline and NaN rule of `show_imagelike` in
+//! `src/interaction/inspector.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{PlotImpl, PlotKind, add_to_axis, plot_common};
 use crate::attrs::attributes;

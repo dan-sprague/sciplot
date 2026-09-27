@@ -1,4 +1,9 @@
 //! Lowering plots to draw-list primitives: cycling, then each plot type's `PlotImpl::emit`.
+//!
+//! Provenance: cycle indexing adapted from Makie 0.24.14 `src/compute-plots.jl` (`_cycle_position`:
+//! only plots whose cycled attribute is automatic advance the counter) and
+//! `src/makielayout/types.jl` (`Cycled`, `get_cycle_attribute`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::drawlist::{Buf, BufKey, Emitter, Prim, PrimColor, Rect, Space};
 use super::{AxisFrame, SceneCache};

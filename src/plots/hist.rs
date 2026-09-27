@@ -1,4 +1,10 @@
 //! `hist`: histogram (Makie's recipe on StatsBase semantics: equal-width bins, closed on the left).
+//!
+//! Provenance: `hist_edges` is ported from Makie 0.24.14 `src/stats/hist.jl` (`pick_hist_edges`),
+//! whose `@recipe Hist` and `_hist_center_weights` also give the defaults and `scale_to`. Binning
+//! (closed on the left) and the normalization modes are adapted from StatsBase 0.34.13
+//! `src/hist.jl` (`fit(Histogram, ...)`, `_edge_binindex`, `normalize!`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::bars::{Bar, BarLayout, bars_bounds, emit_bar_strokes, emit_bars, layout_bars, pick_bar};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common};

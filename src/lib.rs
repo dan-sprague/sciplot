@@ -50,6 +50,10 @@ pub mod prelude;
 #[doc(hidden)]
 pub mod testing;
 
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+pub struct ReadmeDoctests;
+
 #[doc(hidden)]
 pub use macros::{__as_axis, AsAxis};
 /// GPU portability hooks (WebGL2-limited contexts, shader sources) for `tests/portability.rs`.

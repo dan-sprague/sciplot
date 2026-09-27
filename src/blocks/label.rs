@@ -1,4 +1,8 @@
 //! `Label`: a text block in a grid cell (Makie's `Label`), e.g. super-titles and panel labels.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/makielayout/types.jl`
+//! (`@Block Label` attributes) and `src/makielayout/blocks/label.jl` (autosize = text bounding box
+//! + padding). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{BlockCtx, BlockImpl, BlockLayout, block_common};
 use crate::attrs::attributes;

@@ -1,5 +1,14 @@
-// Scatter markers as instanced quads with analytic SDFs (Makie marker geometry, GLMakie AA and
-// outer stroke).
+// Scatter markers as instanced quads with analytic SDFs (Makie marker geometry, GLMakie AA,
+// CairoMakie's centered stroke).
+//
+// Provenance: marker geometry data from Makie 0.24.14 `src/bezier.jl` (`BezierCircle`,
+// `BezierSquare`, `BezierCross`, `BezierUTriangle`, `bezier_ngon`, `bezier_star`), scaled by 0.75
+// as in `DEFAULT_MARKER_MAP` (`src/conversions.jl`). The AA radius (1/sqrt(2) px) follows GLMakie
+// 0.13.14 `assets/shader/distance_shape.frag`. The full-size circle and rect and the stroke follow
+// CairoMakie 0.15.14 `src/scatter.jl` (`draw_marker`: fill, then a stroke centered on the outline)
+// with the miter limit 2 of `src/screen.jl`. `sd_box`, `sd_tri` and `sd_ngon` are ported from Inigo
+// Quilez's 2D distance functions (sdBox, sdTriangle, sdPolygon;
+// iquilezles.org/articles/distfunctions2d). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 struct SpriteU {
     xform: vec4<f32>,

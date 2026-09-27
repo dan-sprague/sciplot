@@ -1,4 +1,8 @@
 //! `text`: text annotations at data positions (Makie's `text!`).
+//!
+//! Provenance: defaults follow Makie 0.24.14 `src/basic_plots.jl` (`@recipe Text`:
+//! `align = (:left, :bottom)`, `rotation = 0`, `offset = (0, 0)`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{PlotImpl, PlotKind, add_to_axis, plot_common, point_bounds};
 use crate::attrs::attributes;

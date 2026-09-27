@@ -1,6 +1,10 @@
 // 3D triangle meshes (Axis3 surfaces) with depth writes and Makie's FastShading: ambient light
 // plus one directional light, Blinn-Phong, evaluated per pixel in world space (the formula of
 // CairoMakie's `_calculate_shaded_vertexcolors`).
+//
+// Provenance: shading algorithm adapted from CairoMakie 0.15.14 `src/mesh.jl`
+// (`_calculate_shaded_vertexcolors`), evaluated per pixel. MIT licensed; see
+// THIRD_PARTY_NOTICES.md.
 
 struct Mesh3dU {
     v: View3,

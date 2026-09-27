@@ -4,6 +4,11 @@
 //! Every plot type describes itself through `PlotImpl::legend_elements`; colors resolve exactly
 //! like the plot's own `emit` (same palette, same cycle index), and colors that go through a
 //! colormap fall back to the Legend's defaults like Makie's `extract_color`.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/makielayout/blocks/legend.jl`
+//! (`legendelements`, `extract_color`, `choose_scalar`), `src/makielayout/types.jl` (Legend's
+//! `linepoints`, `markerpoints`, `polypoints`, `heatmapvalues`) and `src/theming.jl` (`linecolor`,
+//! `markercolor`, `patchcolor`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::ColorSpec;
 use crate::color::Color;

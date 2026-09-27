@@ -1,5 +1,10 @@
 // Heatmaps: one quad over the cell bounds (per tile); each fragment finds its cell (affine map for
 // regular grids, binary search over an edges texture otherwise) and colormaps the value.
+//
+// Provenance: defaults and behaviour follow GLMakie 0.13.14 `assets/shader/heatmap.frag` and
+// `src/plot-primitives.jl` (heatmap `interpolate`: bilinear between cell centres, clamped at the
+// grid edge; values x fastest); the per-fragment cell lookup is our own. MIT licensed; see
+// THIRD_PARTY_NOTICES.md.
 
 struct FieldU {
     rect_px: vec4<f32>,     // quad in device px: x0, y0, x1, y1

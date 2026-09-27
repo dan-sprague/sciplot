@@ -1,6 +1,13 @@
 //! Window overlays drawn on top of the last frame without relayout: the rectangle-zoom shade,
 //! the hover tooltip and its highlight ring. Also builds the interaction views of a frame and
 //! runs hover picking on the frame's snapshot.
+//!
+//! Provenance: the tooltip shape is adapted from Makie 0.24.14 `src/basic_recipes/tooltip.jl`
+//! (`ToolTipShape` and the recipe defaults: offset 10, triangle 7, padding (5, 5, 3, 3), white box,
+//! black 1 unit outline); `placement` is ported from `src/interaction/inspector.jl`
+//! (`update_tooltip_alignment!`), whose `DataInspector` defaults (range 10, red indicator of width
+//! 2, depth 9e3) are used too. The rectangle-zoom shade follows `RectangleZoom` in
+//! `src/makielayout/types.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::interact::{AxisView, InteractState};
 use crate::color::Color;

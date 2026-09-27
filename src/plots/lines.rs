@@ -1,4 +1,9 @@
 //! `lines`: a polyline through points; NaN values break it into separate runs.
+//!
+//! Provenance: defaults follow Makie 0.24.14 `src/basic_plots.jl` (`@recipe Lines`) and
+//! `src/theming.jl` (`linewidth = 1.5`, butt caps, miter joins, `miter_limit = π/3`); hover follows
+//! `show_data` for `Lines` (`closest_point_on_line`) in `src/interaction/inspector.jl`. MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, zip_xy};
 use crate::attrs::attributes;

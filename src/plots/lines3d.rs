@@ -3,6 +3,9 @@
 //! Drawn as screen-space segments with round ends and joins, `linewidth` in units, hidden behind
 //! surfaces by the depth buffer (lines don't occlude each other: later ones draw on top, as in
 //! CairoMakie). Live data: [`Lines3d::push`] appends in O(1) and uploads only the new points.
+//!
+//! Provenance: defaults follow Makie 0.24.14 `src/basic_plots.jl` (`@recipe Lines`) and
+//! `src/theming.jl` (`linewidth = 1.5`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{ColorSpec, PlotImpl, PlotKind, is_auto};
 use crate::attrs::attributes;

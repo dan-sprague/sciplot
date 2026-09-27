@@ -1,5 +1,9 @@
 //! Makie marker geometry as vector shapes. Mirrors `marker_sdf` in
 //! `render/gpu/pipelines/sprite.wgsl` (all sizes in units of markersize, y up).
+//!
+//! Provenance: data from Makie 0.24.14 `src/bezier.jl` (`BezierCircle`, `BezierSquare`,
+//! `BezierCross`, `BezierUTriangle`, `bezier_ngon`, `bezier_star`), scaled by 0.75 as in
+//! `DEFAULT_MARKER_MAP` (`src/conversions.jl`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::style::Marker;
 

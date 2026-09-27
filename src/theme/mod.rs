@@ -1,5 +1,9 @@
 //! Themes: figure-wide defaults (Makie's `Theme`), with process-global `set_theme` and
 //! thread-scoped `with_theme`.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/theming.jl` (the global values of
+//! `MAKIE_DEFAULT_THEME`, the `patchcolor` palette of `generate_default_palette`, and the
+//! `set_theme!` / `with_theme` / `merge` semantics). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::blocks::axis::{AxisAttrs, AxisTheme};
 use crate::blocks::axis3::{Axis3Attrs, Axis3Theme};

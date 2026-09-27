@@ -11,6 +11,11 @@
 //! Triangles are grown by [`SEAM`] units to hide antialiasing seams between them. This
 //! approximates the GPU's per-pixel depth test: intersecting triangles and segments
 //! crossing a surface are ordered as a whole, not per pixel.
+//!
+//! Provenance: `shade` is ported from CairoMakie 0.15.14 `src/mesh.jl`
+//! (`_calculate_shaded_vertexcolors`); the back-to-front sort by mean depth and the dropping of
+//! clipped triangles are adapted from `draw_mesh3D` and `average_z` in the same file. MIT licensed;
+//! see THIRD_PARTY_NOTICES.md.
 
 use super::field::Mapper;
 use super::num::unpremul_u32;

@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
 description = "Makie-style plotting for Rust: Figure/Axis layouts, GPU (wgpu) windows with live updates, PNG and SVG export"
-license = "MIT AND LPPL-1.3c"
+license = "MIT AND Apache-2.0 AND LPPL-1.3c"
+readme = "README.md"
 publish = false
-include = ["src/**", "assets/fonts/**", "LICENSE-MIT", "README.md"]
+include = ["src/**", "assets/fonts/**", "LICENSE-MIT", "README.md", "THIRD_PARTY_NOTICES.md"]
 
 [features]
 default = ["window", "cpu-png"]

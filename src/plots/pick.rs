@@ -1,5 +1,9 @@
 //! Hover picking for the data inspector: the plot element nearest to the cursor, found on the CPU
 //! from the last frame's snapshot (never under the figure lock).
+//!
+//! Provenance: behaviour follows Makie 0.24.14 `src/interaction/inspector.jl` (`DataInspector`'s
+//! `range = 10`, the `x: …\ny: …` layout of `position2string`, `closest_point_on_line` for lines);
+//! the point grid is this crate's own. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::scene::AxisFrame;
 use crate::theme::{Globals, Theme};

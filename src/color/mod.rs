@@ -1,4 +1,9 @@
 //! Colors, the Wong palette, named colors and colormaps.
+//!
+//! Provenance: `WONG` is data from Makie 0.24.14 `src/theming.jl` (`wong_colors`, after Bang Wong,
+//! "Points of view: Color blindness", Nature Methods 2011); `Color::lerp` in sRGB-encoded space
+//! follows Makie. Color names follow Colors 0.13.1 `src/names_data.jl` (see named.rs). MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 mod cmap_data;
 mod colormap;
@@ -63,7 +68,9 @@ impl Color {
         if let Some(rest) = key.strip_prefix("gray").or_else(|| key.strip_prefix("grey")) {
             if let Ok(n) = rest.parse::<u32>() {
                 if n <= 100 {
-                    return Ok(Color::gray(n as f32 / 100.0));
+                    // The X11 table that Colors.jl uses: gray50 is 127/255, gray90 229/255.
+                    let byte = (n as f64 * 2.55 + 0.5).floor();
+                    return Ok(Color::gray((byte / 255.0) as f32));
                 }
             }
         }
@@ -186,7 +193,10 @@ mod tests {
         assert_eq!(Color::parse("#0072B2").unwrap(), WONG[0]);
         assert_eq!(Color::parse("#fff").unwrap(), colors::WHITE);
         assert_eq!(Color::parse("red").unwrap(), colors::RED);
-        assert_eq!(Color::parse("gray50").unwrap(), Color::gray(0.5));
+        // Colors.jl's X11 grays.
+        for (name, byte) in [("gray1", 3.0), ("gray50", 127.0), ("grey90", 229.0), ("gray100", 255.0)] {
+            assert_eq!(Color::parse(name).unwrap(), Color::gray(byte / 255.0), "{name}");
+        }
         assert!((Color::parse("#00000080").unwrap().a - 128.0 / 255.0).abs() < 1e-6);
         assert!(Color::parse("notacolor").is_err());
     }

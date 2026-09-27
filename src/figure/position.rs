@@ -1,4 +1,9 @@
 //! Grid positions: Makie's `fig[row, col]`, 1-based and inclusive.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/figures.jl` (`fig[row, col]`) and
+//! GridLayoutBase 0.11.3 `src/types.jl` (the `Side` types) and `src/gridlayout.jl` (`prependrows!`,
+//! `prependcols!`: sizes and gaps move with their rows and columns). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{Figure, Placement};
 

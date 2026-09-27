@@ -1,5 +1,11 @@
 //! Point data: the [`PointData`] input trait and the chunked, append-only point storage behind
 //! live line plots.
+//!
+//! Provenance: behaviour follows Makie 0.24.14 `src/interfaces.jl`
+//! (`expand_dimensions(::PointBased, y)`: y-only data gets x = 1..n) and GLMakie 0.13.14
+//! `src/plot-primitives.jl` (the closed-loop test behind `Points::is_closed`: at least 3 segments,
+//! first point `isapprox` the last). The chunked storage and `LocalCache` are sciplot's own. MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{Data1D, Scalar};
 use std::sync::Arc;

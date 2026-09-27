@@ -3,6 +3,13 @@
 //! Bands follow Isoband.jl (what Makie uses): band `k` covers `levels[k] <= z < levels[k + 1]`.
 //! They are triangulated per grid cell with shared, bit-identical vertices ([`super::marching`]),
 //! so the mesh has no seams on the GPU (MSAA) and each band becomes one merged path in SVG.
+//!
+//! Provenance: adapted from Makie 0.24.14 `src/basic_recipes/contourf.jl` (`_get_isoband_levels`,
+//! the `computed_levels` rules of `register_contourf_computations!`, `compute_contourf_colormap`,
+//! `compute_lowcolor`/`compute_highcolor`, `_calculate_polys!`; defaults of `@recipe Contourf`);
+//! the hover text follows `show_data(::DataInspector, ::Contourf, ...)` in
+//! `src/interaction/inspector.jl`. Band semantics: see `marching.rs`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::marching::{self, GridField};
 use super::{Levels, PlotImpl, PlotKind, add_to_axis, plot_common};

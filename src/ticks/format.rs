@@ -2,6 +2,15 @@
 //! Showoff): `format_ticks_auto`, `format_ticks_plain`, and the scientific `×10ⁿ` labels.
 //!
 //! Also a small Python/Format.jl-style format-string formatter for `TickFormat::Format`.
+//!
+//! Provenance: ported from Makie 0.24.14 `src/tick_format.jl` (`_plain_label_precision`,
+//! `_scientific_label_precision`, `_format_plain_label`, `format_ticks_plain`, `_split_scientific`,
+//! `_scientific_rich`, `_pick_label_style`, `format_ticks_auto`), which Makie vendored from
+//! Showoff.jl. `format_with` is not a port, but its behaviour follows Format.jl 1.3.7 `format`
+//! (`src/fmtspec.jl`, `src/formatexpr.jl`), which Makie's `get_ticklabels` uses for format strings.
+//! `shortest_e10_f32`, `format_plain_label` and `shortest` reproduce the output of Julia 1.12.7
+//! `Base.Ryu` (`base/ryu/`) with Rust's formatter; no Ryu code is ported. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::julia;
 use crate::text::{RichText, TextSpan, superscript};

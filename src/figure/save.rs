@@ -1,4 +1,8 @@
 //! Export: `fig.save("out.png")`, `fig.save("out.svg")`, `fig.render_rgba(..)`.
+//!
+//! Provenance: defaults follow Makie 0.24.14 `src/theming.jl` (CairoMakie `px_per_unit = 2`,
+//! `pt_per_unit = 0.75`) and `src/display.jl` (PNG resolution `dpi = 96 * px_per_unit`). MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::Figure;
 use crate::error::{Error, Result};

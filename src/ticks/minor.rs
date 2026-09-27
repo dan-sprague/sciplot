@@ -1,5 +1,10 @@
 //! Minor ticks: Makie's `IntervalsBetween(n)` (exact port of `get_minor_tickvalues`,
 //! `Makie/src/makielayout/lineaxis.jl:880-948`) and the sciplot log-axis default (plan D2).
+//!
+//! Provenance: `intervals_between` is ported from Makie 0.24.14 `src/makielayout/lineaxis.jl`
+//! (`get_minor_tickvalues(::IntervalsBetween, ...)`, the identity and `LogFunctions` methods).
+//! `log_decade_minors` and `decade_exponents` are sciplot's own. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::julia;
 use super::log::LogBase;

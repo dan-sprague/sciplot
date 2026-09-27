@@ -1,4 +1,11 @@
 //! Axis limits, protrusions and decorations (background, grid, ticks, spines, labels, title).
+//!
+//! Provenance: ported from Makie 0.24.14 `src/makielayout/lineaxis.jl` (`calculate_protrusion`,
+//! `calculate_real_ticklabel_align`, `update_tick_obs`, `update_ticklabel_node`),
+//! `src/makielayout/blocks/axis.jl` (`expandlimits`, `defaultlimits`, `adjustlimits!`,
+//! `compute_protrusions`, `calculate_title_position`, the z-order of the decorations) and
+//! `src/makielayout/helpers.jl` (`sceneareanode!`). `compute_limits` is adapted from `autolimits`
+//! and `reset_limits!` in `axis.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::AxisFrame;
 use super::drawlist::{AxisXform, Emitter, GlyphsPrim, Prim, Rect, RectPrim, Space};

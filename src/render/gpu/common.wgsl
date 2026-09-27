@@ -1,4 +1,8 @@
 // Shared definitions, prepended to every pipeline's shader.
+//
+// Provenance: `cmap_lookup` algorithm adapted from GLMakie 0.13.14 `assets/shader/util.vert` and
+// `assets/shader/lines.frag` (`get_color_from_cmap`: lowclip / highclip / nan_color and the
+// half-texel LUT remap). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 struct Globals {
     target_px: vec2<f32>,

@@ -1,4 +1,8 @@
 //! `barplot`: bars from a baseline (`fillto`) to heights, with dodge/stack and categorical x.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/basic_recipes/barplot.jl`
+//! (`@recipe BarPlot` attributes, `bar_default_fillto` on log axes); the bar geometry is in
+//! `bars.rs`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::bars::{Bar, BarLayout, bars_bounds, emit_bar_strokes, emit_bars, layout_bars, pick_bar};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common};

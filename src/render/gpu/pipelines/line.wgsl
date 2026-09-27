@@ -7,6 +7,11 @@
 // truncation, discard line) is derived from segment directions computed by the same expression in
 // both segments of a joint, so both agree bit for bit: miter joints meet on the shared miter line
 // and truncated joints split their overlap per pixel (no double blending of translucent lines).
+//
+// Provenance: ported from GLMakie 0.13.14 `assets/shader/lines.geom`,
+// `assets/shader/line_segment.geom` and `assets/shader/lines.frag` (joint and cap geometry,
+// truncated-joint discard split, SDF coverage, AA constants). `pattern_sdf`: algorithm adapted from
+// Makie 0.24.14 `src/utilities/utilities.jl` (`gappy`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 const AA_RADIUS: f32 = 0.8;       // px, half-width of the AA smoothstep (GLMakie)
 const BUTT: u32 = 0u;

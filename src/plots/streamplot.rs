@@ -6,6 +6,14 @@
 //! and an arrowhead marks every seed. The result is deterministic and identical to Makie's for the
 //! same field. It is computed lazily once per function/box/parameter change and shared by every
 //! snapshot of the figure; the arrowheads are rebuilt in figure units only when the axis moves.
+//!
+//! Provenance: `streamlines` is ported from Makie 0.24.14 `src/basic_recipes/streamplot.jl`
+//! (`streamplot_impl`, which Makie credits to an example by Moritz Schauer); defaults and
+//! arrowheads follow its `@recipe StreamPlot` and `plot!`. The `:utriangle` head is data from
+//! `src/bezier.jl` (`BezierUTriangle`) scaled by `size_factor` in `src/conversions.jl`, and the
+//! head rotation follows `register_projected_rotations_2d!` in `src/utilities/projection_utils.jl`.
+//! `lerpi` and `searchsortedlast` are ported from Julia 1.12.7 Base `base/range.jl` and
+//! `base/sort.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::arrows::{CpuColormap, ScalarFn, VectorColor, arrow_legend, axis_geometry_key};
 use super::lines::prim_color_mapped;

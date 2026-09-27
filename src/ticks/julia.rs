@@ -11,6 +11,16 @@
 //! Julia's `muladd` compiles to a fused multiply-add on the platforms we target (aarch64,
 //! x86-64 with FMA), so it is `mul_add` here. Negated float comparisons (`!(a <= b)`) mirror the
 //! Julia source and its NaN behavior.
+//!
+//! Provenance: ported from Julia 1.12.7 Base: `base/math.jl` (`two_mul`,
+//! `pow_body(::Float64, ::Integer)`, the integer-exponent path of `^(::Float64, ::Float64)`),
+//! `base/special/log.jl` (`log_proc1`, `log_proc2`, `_log`), `base/special/exp.jl` (`exp_impl` with
+//! its range constants and `expm1b_kernel` polynomials), `base/float.jl` (`eps`),
+//! `base/floatfuncs.jl` (`isapprox`, `_round_digits`, `_round_invstep`, `_round_invstepsqrt`,
+//! `_round_step`, `hidigit`, `_round_sigdigits`) and `base/twiceprecision.jl` (`TwicePrecision`
+//! arithmetic, `steprangelen_hp`, `nbitslen`, `floatrange`, `(:)`, `range_start_stop_length`,
+//! `_linspace`, `_linspace1`, `rat`, `lcm_unchecked`, `isbetween`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 #![allow(clippy::neg_cmp_op_on_partial_ord)]
 
 use super::julia_tables::{J_TABLE, T_LOG};

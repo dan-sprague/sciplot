@@ -4,6 +4,11 @@
 //! an id, so handles are cheap to clone, `Send + Sync`, and never borrow the figure. All mutation
 //! goes through one short-lived lock; rendering snapshots the state (cheap `Arc` clones) and does
 //! all heavy work outside the lock.
+//!
+//! Provenance: defaults and behaviour follow GridLayoutBase 0.11.3 `src/types.jl` (`GridSize`
+//! mirrors `Auto`, `Fixed`, `Relative`, `Aspect`) and `src/gridlayout.jl` (`colsize!`, `rowsize!`,
+//! `colgap!`, `rowgap!`), and Makie 0.24.14 `src/figures.jl` (`fig[row, col]`,
+//! `resize_to_layout!`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 mod position;
 mod save;

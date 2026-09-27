@@ -8,6 +8,11 @@
 //! below it), then the entries in `[patch | label]` column pairs (`patchlabelgap` between patch
 //! and label, `colgap` between banks, `rowgap` between rows). The legend's size is that grid plus
 //! `padding` and `margin`; the frame and background fill the area inside the margin.
+//!
+//! Provenance: algorithm adapted from Makie 0.24.14 `src/makielayout/blocks/legend.jl`
+//! (`initialize_block!`: entry grid, frame and hidden-entry shade; `get_labeled_plots` with
+//! `merge`/`unique`; `axislegend`; `legend_position_to_aligns`); defaults follow
+//! `src/makielayout/types.jl` (`@Block Legend`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{BlockCtx, BlockImpl, BlockLayout, block_common};
 use crate::attrs::{attributes, conv_identity};

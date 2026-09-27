@@ -1,4 +1,9 @@
 //! `scatter`: markers at points.
+//!
+//! Provenance: defaults follow Makie 0.24.14 `src/basic_plots.jl` (`@recipe Scatter`) and
+//! `src/theming.jl` (`marker = :circle`, `markersize = 9`, `markerstrokewidth = 0`); the hover text
+//! follows `show_data` for `Scatter` in `src/interaction/inspector.jl`. MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, point_bounds, zip_xy};
 use crate::attrs::attributes;

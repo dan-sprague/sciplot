@@ -1,4 +1,10 @@
 //! Axis scale transforms (applied on the CPU in f64, as in Makie).
+//!
+//! Provenance: the scales and their domains follow Makie 0.24.14 `src/makielayout/blocks/axis.jl`
+//! (`defined_interval` for `identity`, `LogFunctions` and `sqrt`). `Rebase` adapts the algorithm of
+//! Makie's `Float32Convert` (`src/float32-scaling.jl`: `update_limits!`, rescaling the view to
+//! `-1..1` when fewer than `resolution = 1e4` Float32 values span it). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 /// An axis scale.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default, Hash)]

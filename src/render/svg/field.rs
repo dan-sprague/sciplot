@@ -1,4 +1,8 @@
 //! CPU colormapping (the GPU `cmap_lookup` rules) and heatmap images for vector output.
+//!
+//! Provenance: `Mapper` algorithm adapted from Makie 0.24.14 `src/colorsampler.jl`
+//! (`numbers_to_colors`: NaN color, lowclip / highclip defaulting to the colormap ends,
+//! interpolated lookup). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::color::Color;
 use crate::scene::drawlist::{ColorMapping, FieldPrim, GridAxis};

@@ -1,5 +1,12 @@
 //! Text: rich strings, the bundled TeX Gyre Heros Makie fonts, and Makie-exact layout
 //! (advance-only, no kerning; line box = ascender − descender = 1.165 em).
+//!
+//! Provenance: algorithm adapted from Makie 0.24.14 `src/basic_recipes/text.jl`
+//! (`process_rt_node!`, `max_y_ascender`/`min_y_descender`, `apply_alignment_and_justification!`),
+//! `src/layouting/text_layouting.jl` (`glyph_collection` line height) and
+//! `src/layouting/text_boundingbox.jl` (advance × ascender/descender boxes); MIT licensed. The
+//! bundled fonts are data from Makie's assets artifact (TeX Gyre Heros "Makie" variant, GUST Font
+//! License); see assets/fonts/README.md and THIRD_PARTY_NOTICES.md.
 
 pub(crate) mod atlas;
 pub(crate) mod outline;

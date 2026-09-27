@@ -1,4 +1,9 @@
 //! Makie's built-in themes (`Makie/src/themes/theme_*.jl`), restricted to the blocks sciplot has.
+//!
+//! Provenance: ported from Makie 0.24.14 `src/themes/theme_minimal.jl`, `src/themes/theme_light.jl`
+//! and `src/themes/theme_dark.jl` (the Axis, Legend and Colorbar settings; the Axis3 settings and
+//! theme_dark's `linecolor` are not carried over). The X11 grays are data from Colors 0.13.1
+//! `src/names_data.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::Theme;
 use crate::color::Color;

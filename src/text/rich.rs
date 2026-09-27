@@ -1,4 +1,9 @@
 //! Rich text: a sequence of spans that can change font, color, size and baseline.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/richtext.jl` (`rich`,
+//! `superscript`, `subscript`) and `src/basic_recipes/text.jl` (`new_glyphstate`: scripts at 0.66×
+//! size, baseline +0.4 / −0.25 em, `offset` in units of the span's font size). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 use super::Font;
 use crate::color::Color;

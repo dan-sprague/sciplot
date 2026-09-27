@@ -5,6 +5,10 @@
 //! Platform code only creates windows: `native.rs` opens OS windows and creates their surface
 //! at once; `web.rs` binds canvases and creates the GPU context asynchronously (the window
 //! draws nothing until [`App::gpu_ready`] delivers it).
+//!
+//! Provenance: `Freeze` (the tick-label space freeze during zoom and pan bursts) is adapted from
+//! Makie 0.24.14 `src/makielayout/blocks/axis.jl` (`timed_ticklabelspace_reset`, 0.2 s delay). MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::animate::{Anim, AnimFn};
 use super::input::{Touches, translate};

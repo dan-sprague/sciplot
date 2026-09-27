@@ -8,6 +8,13 @@
 //!
 //! Axis attributes take the public spec types [`TickSpec`], [`MinorSpec`] and [`TickFormat`];
 //! the scene builder calls [`resolve_ticks`] and [`resolve_minor`].
+//!
+//! Provenance: tick resolution (`raw_ticks`, `resolve_ticks`, `resolve_minor`, `is_within_limits`,
+//! `TickFormat::labels`) is adapted from Makie 0.24.14 `src/makielayout/lineaxis.jl` (`get_ticks`,
+//! `get_tickvalues`, `get_ticklabels`, `get_minor_tickvalues`, `is_within_limits`). The spec
+//! defaults follow the `Axis` attributes in `src/makielayout/types.jl` (`xticks`, `xtickformat`,
+//! `xminorticks = IntervalsBetween(2)`). `TickSpec::LogInteger` and the log-decade
+//! `MinorSpec::Auto` are sciplot's own. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 pub(crate) mod format;
 pub(crate) mod julia;

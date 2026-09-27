@@ -1,5 +1,8 @@
 //! Lookup tables copied from Julia 1.12 `base/special/exp.jl` (`J_TABLE`) and
 //! `base/special/log.jl` (`t_log_Float64`), so the tick code reproduces Julia's `exp10`/`log10` bit for bit.
+//!
+//! Provenance: data from Julia 1.12.7 Base `base/special/exp.jl` (`J_TABLE`) and
+//! `base/special/log.jl` (`t_log_Float64`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 /// `2^(j/256)` in extended precision (Julia's packed `J_TABLE`).
 #[rustfmt::skip]

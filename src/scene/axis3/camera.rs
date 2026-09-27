@@ -6,6 +6,11 @@
 //! at the origin with a perspective projection (at least 0.5° field of view, so
 //! `perspectiveness = 0` is nearly orthographic). `viewmode` then scales the projection so the box
 //! fits the scene area minus the protrusions. Clip space is OpenGL's (-1..1 in x, y and z, y up).
+//!
+//! Provenance: ported from Makie 0.24.14 `src/makielayout/blocks/axis3d.jl` (`calculate_matrices`,
+//! `projectionmatrix`) and `src/camera/projection_math.jl` (`lookat`, `frustum`,
+//! `perspectiveprojection`, `transformationmatrix`); `mod1` follows Julia 1.12.7
+//! `base/operators.jl`. MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 /// A 4×4 matrix, row-major: `m[row][col]` (Makie prints and multiplies the same way).
 pub type M4 = [[f64; 4]; 4];

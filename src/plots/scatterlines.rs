@@ -1,4 +1,8 @@
 //! `scatterlines`: a polyline with markers at its points.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/basic_recipes/scatterlines.jl`
+//! (`@recipe ScatterLines`; `plot!` draws the line, then markers whose `markercolor` defaults to
+//! `color`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::lines::{LineStyle, emit_line_mapped, live_points, prim_color_mapped};
 use super::{ColorSpec, PlotImpl, PlotKind, add_to_axis, is_auto, plot_common, zip_xy};

@@ -5,6 +5,11 @@
 //! - `layout` reports its layout request (size, autosize, protrusions, alignment),
 //! - `emit` draws it into its solved rectangle,
 //! - `inside_axis` places it over an axis instead of in a grid cell (e.g. `axislegend`).
+//!
+//! Provenance: defaults and behaviour of the layout request follow GridLayoutBase 0.11.3
+//! `LayoutObservables` (`src/layoutobservables.jl`, `src/types.jl`: width/height,
+//! tellwidth/tellheight, halign/valign, `alignmode` default `Inside()`, protrusions, autosize). MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 pub(crate) mod axis;
 pub(crate) mod axis3;

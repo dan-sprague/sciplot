@@ -2,6 +2,12 @@
 //!
 //! Runs on the rendering thread, outside the figure lock. A `SceneCache` per render context keeps
 //! converted f32 buffers and per-axis rebases so unchanged data is never reconverted or reuploaded.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14: the limit pipeline (target limits, then
+//! `autolimitaspect` on the viewport left by `aspect`) follows `src/makielayout/blocks/axis.jl`,
+//! and categorical axes tick every category at 1..n as in
+//! `src/dim-converts/categorical-integration.jl` (`get_ticks`). MIT licensed; see
+//! THIRD_PARTY_NOTICES.md.
 
 pub(crate) mod axis;
 pub(crate) mod axis3;

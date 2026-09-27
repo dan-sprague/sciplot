@@ -1,4 +1,10 @@
 //! Small style enums shared by plots and blocks.
+//!
+//! Provenance: defaults and behaviour follow Makie 0.24.14 `src/conversions.jl` (the `Linestyle`
+//! patterns are the values of `line_pattern`/`line_diff_pattern` with `:normal` gaps, which Makie
+//! notes are inspired by TikZ's predefined dash patterns; the `Marker` names follow
+//! `DEFAULT_MARKER_MAP`), `src/theming.jl` (`linecap = :butt`, `joinstyle = :miter`) and
+//! `src/stats/hist.jl` (`normalization`). MIT licensed; see THIRD_PARTY_NOTICES.md.
 
 use crate::attrs::conv_identity;
 

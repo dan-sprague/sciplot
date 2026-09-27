@@ -4,6 +4,12 @@
 //! Deviations, all in cases where GridLayoutBase throws: an Aspect size whose reference cannot be
 //! determined shares the leftover space like an Auto size; relative gaps make a grid's size
 //! undeterminable; `Mixed` align modes are supported by `determinedirsize` and `tight_bbox`.
+//!
+//! Provenance: ported from GridLayoutBase 0.11.3 `src/gridlayout.jl` (`compute_rowcols`,
+//! `_compute_maxgrid`, `compute_col_row_sizes`, `determinedirsize`, `dirgaps`, `align_to_bbox!`,
+//! `tight_bbox`) and `src/layoutobservables.jl` (`computed_size`, `update_computedbbox!`,
+//! `effective_protrusion`). The 18-unit default gaps follow Makie 0.24.14 `src/theming.jl`. MIT
+//! licensed; see THIRD_PARTY_NOTICES.md.
 
 use super::{AlignMode, BBox, BlockSize, Gap, LayoutItem, MixedSide, Protrusion};
 use crate::figure::{GridSize, Side};
