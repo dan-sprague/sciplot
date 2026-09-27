@@ -122,7 +122,7 @@ pub(crate) fn emit_bars(ctx: &mut PlotCtx<'_>, part: u8, bars: &[Bar], colors: &
 /// Makie's poly stroke of every bar: the rectangle's closed outline, centered on its edges, with
 /// miter joins (CairoMakie's `fill_preserve` + `stroke` per rectangle). Drawn after all fills.
 pub(crate) fn emit_bar_strokes(ctx: &mut PlotCtx<'_>, bars: &[Bar], color: Color, width: f64, dir: Direction) {
-    if !(width > 0.0) || color.a <= 0.0 {
+    if width.is_nan() || width <= 0.0 || color.a <= 0.0 {
         return;
     }
     for b in bars {
