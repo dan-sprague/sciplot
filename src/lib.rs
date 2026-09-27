@@ -74,6 +74,7 @@ pub use error::{Error, Result};
 pub use figure::{Figure, GridPosition, GridSize, IntoSpan, Prepend, RgbaImage, Save, Side, Span};
 pub use plots::Heatmap;
 pub use plots::LegendElement;
+pub use plots::arrows::{ArrowsTheme, arrows, arrows_fn, arrows_points};
 pub use plots::band::{BandTheme, band};
 pub use plots::barplot::{BarPlotTheme, barplot};
 pub use plots::heatmap::{HeatmapTheme, heatmap, heatmap_xy};
@@ -82,6 +83,8 @@ pub use plots::lines::{LinesTheme, lines, lines_points};
 pub use plots::reflines::RefLinesTheme;
 pub use plots::scatter::{ScatterTheme, scatter};
 pub use plots::scatterlines::{ScatterLinesTheme, scatterlines, scatterlines_points};
+pub use plots::streamplot::{StreamPlotTheme, streamplot};
+pub use plots::{ArrowAlign, Arrows, Interval, Magnitude, ScalarFn, StreamPlot, VectorColor, VectorFieldFn};
 pub use plots::{ABLines, HLines, RefLines, RefValues, VLines};
 pub use plots::{Band, BarPlot, BarX, Bins, ColorSpec, Cycled, Hist, IntoTexts, Scatter, TextPlot};
 pub use plots::{ColorMapped, ResolvedColormap};
@@ -135,6 +138,8 @@ const _: () = {
     ok::<ScatterLines>();
     ok::<GridPosition>();
     ok::<Colorbar>();
+    ok::<Arrows>();
+    ok::<StreamPlot>();
     #[cfg(feature = "window")]
     ok_send_sync::<Live>();
 };

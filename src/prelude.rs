@@ -23,3 +23,4 @@ pub use crate::{Lines, PointData, ScatterLines, lines, lines_points, scatterline
 pub use crate::{Live, Screen};
 pub use crate::{MinorSpec, TickFormat, TickSpec, Wilkinson};
 pub use crate::{colored, rich, tex};
+pub use crate::{ArrowAlign, Arrows, Magnitude, StreamPlot, VectorColor, arrows, arrows_fn, arrows_points, streamplot};

@@ -6,6 +6,7 @@ use crate::blocks::colorbar::{ColorbarAttrs, ColorbarTheme};
 use crate::blocks::label::{LabelAttrs, LabelTheme};
 use crate::blocks::legend::{LegendAttrs, LegendTheme};
 use crate::color::{Color, WONG};
+use crate::plots::arrows::{ArrowsAttrs, ArrowsTheme};
 use crate::plots::band::{BandAttrs, BandTheme};
 use crate::plots::barplot::{BarPlotAttrs, BarPlotTheme};
 use crate::plots::heatmap::{HeatmapAttrs, HeatmapTheme};
@@ -14,6 +15,7 @@ use crate::plots::lines::{LinesAttrs, LinesTheme};
 use crate::plots::reflines::{RefLinesAttrs, RefLinesTheme};
 use crate::plots::scatter::{ScatterAttrs, ScatterTheme};
 use crate::plots::scatterlines::{ScatterLinesAttrs, ScatterLinesTheme};
+use crate::plots::streamplot::{StreamPlotAttrs, StreamPlotTheme};
 use crate::plots::textplot::TextAttrs;
 use parking_lot::RwLock;
 use std::cell::RefCell;
@@ -82,6 +84,8 @@ pub struct Theme {
     pub(crate) lines: LinesAttrs,
     pub(crate) scatterlines: ScatterLinesAttrs,
     pub(crate) reflines: RefLinesAttrs,
+    pub(crate) arrows: ArrowsAttrs,
+    pub(crate) streamplot: StreamPlotAttrs,
 }
 
 macro_rules! theme_setters {
@@ -190,6 +194,18 @@ impl Theme {
         self
     }
 
+    /// Arrows defaults: `Theme::new().arrows(|a| a.shaftwidth(2).tipwidth(10))`.
+    pub fn arrows(mut self, f: impl FnOnce(ArrowsTheme) -> ArrowsTheme) -> Self {
+        self.arrows = f(ArrowsTheme(self.arrows)).0;
+        self
+    }
+
+    /// Streamplot defaults: `Theme::new().streamplot(|s| s.colormap(Colormap::MAGMA))`.
+    pub fn streamplot(mut self, f: impl FnOnce(StreamPlotTheme) -> StreamPlotTheme) -> Self {
+        self.streamplot = f(StreamPlotTheme(self.streamplot)).0;
+        self
+    }
+
     /// Makie's `merge(a, b)`: values set in `self` win over `other`.
     pub fn merge(self, other: Theme) -> Theme {
         let mut out = other;
@@ -222,6 +238,8 @@ impl Theme {
         out.lines.merge_from(&self.lines);
         out.scatterlines.merge_from(&self.scatterlines);
         out.reflines.merge_from(&self.reflines);
+        out.arrows.merge_from(&self.arrows);
+        out.streamplot.merge_from(&self.streamplot);
         out
     }
 
