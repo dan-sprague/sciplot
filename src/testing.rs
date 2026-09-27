@@ -8,12 +8,14 @@ use crate::render::gpu::{Renderer, gpu};
 /// A persistent headless render context, like a window without a window.
 pub struct Offscreen {
     r: Renderer,
+    gpu: std::sync::Arc<crate::render::gpu::Gpu>,
     ppu: f64,
 }
 
 impl Offscreen {
     pub fn new(ppu: f64) -> Result<Offscreen> {
-        Ok(Offscreen { r: Renderer::new(gpu()?), ppu })
+        let gpu = gpu()?;
+        Ok(Offscreen { r: Renderer::new(gpu.clone()), gpu, ppu })
     }
 
     /// Renders one frame of `fig` and waits for the GPU. Returns the frame's upload stats.
@@ -22,6 +24,34 @@ impl Offscreen {
         let (dl, _) = crate::scene::build(&st, None, &mut self.r.scene);
         self.r.render_rgba(&dl, self.ppu)?;
         Ok(self.r.stats)
+    }
+
+    /// What a window frame costs, without readback: `[snapshot + scene build, encode + GPU]`.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn frame_phases(&mut self, fig: &Figure) -> Result<[std::time::Duration; 2]> {
+        let t0 = std::time::Instant::now();
+        let st = fig.sh.snapshot();
+        let (dl, _) = crate::scene::build(&st, None, &mut self.r.scene);
+        let t1 = std::time::Instant::now();
+        let size = [(dl.size[0] * self.ppu).round() as u32, (dl.size[1] * self.ppu).round() as u32];
+        let gpu = self.gpu.clone();
+        let tex = gpu.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("frame_phases"),
+            size: wgpu::Extent3d { width: size[0], height: size[1], depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: crate::render::gpu::TARGET_FORMAT,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let view = tex.create_view(&Default::default());
+        let cmd = self.r.render(&dl, &view, size, self.ppu);
+        let idx = gpu.queue.submit([cmd]);
+        gpu.device
+            .poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None })
+            .map_err(|e| crate::error::Error::Gpu(e.to_string()))?;
+        Ok([t1 - t0, t1.elapsed()])
     }
 }
 
