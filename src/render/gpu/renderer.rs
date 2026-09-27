@@ -3,7 +3,7 @@
 
 use super::frame::{DrawCmd, Frame, RenderStats, Resources, UNIFORM_ALIGN};
 use super::pipelines;
-use super::{Gpu, MSAA, OFFSCREEN_FORMAT, TARGET_FORMAT};
+use super::{Gpu, MSAA, OFFSCREEN_FORMAT};
 use crate::error::{Error, Result};
 use crate::scene::SceneCache;
 use crate::scene::drawlist::{DrawList, Prim, Rect, Space};
@@ -113,16 +113,18 @@ impl Renderer {
         b
     }
 
-    /// Encodes one frame of `dl` into a window surface `target` of [`TARGET_FORMAT`] (size in
-    /// device pixels).
+    /// Encodes one frame of `dl` into a window surface `target` of `format` (size in device
+    /// pixels). The frame is opaque: a translucent figure background is shown over black, as an
+    /// opaque compositor would, so a browser canvas never shows the page through.
     pub fn render(
         &mut self,
         dl: &DrawList,
         target: &wgpu::TextureView,
+        format: wgpu::TextureFormat,
         size: [u32; 2],
         ppu: f64,
     ) -> wgpu::CommandBuffer {
-        self.render_to(dl, target, TARGET_FORMAT, size, ppu)
+        self.encode(dl, target, format, size, ppu, true)
     }
 
     /// Encodes one frame of `dl` into `target` of `format` (size in device pixels).
@@ -133,6 +135,18 @@ impl Renderer {
         format: wgpu::TextureFormat,
         size: [u32; 2],
         ppu: f64,
+    ) -> wgpu::CommandBuffer {
+        self.encode(dl, target, format, size, ppu, false)
+    }
+
+    fn encode(
+        &mut self,
+        dl: &DrawList,
+        target: &wgpu::TextureView,
+        format: wgpu::TextureFormat,
+        size: [u32; 2],
+        ppu: f64,
+        opaque: bool,
     ) -> wgpu::CommandBuffer {
         self.res.frame += 1;
         self.res.stats = RenderStats::default();
@@ -203,7 +217,7 @@ impl Renderer {
                 r: (bg.r * bg.a) as f64,
                 g: (bg.g * bg.a) as f64,
                 b: (bg.b * bg.a) as f64,
-                a: bg.a as f64,
+                a: if opaque { 1.0 } else { bg.a as f64 },
             };
             let mut pass = enc.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("figure"),
@@ -238,6 +252,48 @@ impl Renderer {
     /// Blocks until the GPU is done (native only: the browser can't wait for a readback).
     #[cfg(not(target_arch = "wasm32"))]
     pub fn render_rgba(&mut self, dl: &DrawList, ppu: f64) -> Result<(u32, u32, Vec<u8>)> {
+        let rb = self.submit_readback(dl, ppu)?;
+        let (tx, rx) = std::sync::mpsc::channel();
+        rb.buf.slice(..).map_async(wgpu::MapMode::Read, move |r| {
+            let _ = tx.send(r);
+        });
+        self.res
+            .gpu
+            .device
+            .poll(wgpu::PollType::Wait { submission_index: Some(rb.idx.clone()), timeout: None })
+            .map_err(|e| Error::Gpu(e.to_string()))?;
+        rx.recv().map_err(|e| Error::Gpu(e.to_string()))?.map_err(|e| Error::Gpu(e.to_string()))?;
+        rb.read()
+    }
+
+    /// Like `render_rgba`, but awaits the readback instead of blocking, so it also works in the
+    /// browser (`map_async` + await; on WebGL2 the mapping completes during device polls).
+    pub async fn render_rgba_async(&mut self, dl: &DrawList, ppu: f64) -> Result<(u32, u32, Vec<u8>)> {
+        let rb = self.submit_readback(dl, ppu)?;
+        let done = Arc::new(parking_lot::Mutex::new(None));
+        let slot = done.clone();
+        rb.buf.slice(..).map_async(wgpu::MapMode::Read, move |r| *slot.lock() = Some(r));
+        loop {
+            #[cfg(not(target_arch = "wasm32"))]
+            self.res
+                .gpu
+                .device
+                .poll(wgpu::PollType::Wait { submission_index: Some(rb.idx.clone()), timeout: None })
+                .map_err(|e| Error::Gpu(e.to_string()))?;
+            #[cfg(target_arch = "wasm32")]
+            let _ = self.res.gpu.device.poll(wgpu::PollType::Poll);
+            if let Some(r) = done.lock().take() {
+                r.map_err(|e| Error::Gpu(e.to_string()))?;
+                break;
+            }
+            #[cfg(target_arch = "wasm32")]
+            next_tick().await;
+        }
+        rb.read()
+    }
+
+    /// Renders `dl` into an offscreen texture and submits its copy into a mappable buffer.
+    fn submit_readback(&mut self, dl: &DrawList, ppu: f64) -> Result<Readback> {
         let w = (dl.size[0] * ppu).round().max(1.0) as u32;
         let h = (dl.size[1] * ppu).round().max(1.0) as u32;
         let max = self.res.gpu.max_texture_size();
@@ -289,30 +345,51 @@ impl Renderer {
             wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 },
         );
         let idx = self.res.gpu.queue.submit([frame_cmd, enc.finish()]);
-        let slice = buf.slice(..);
-        let (tx, rx) = std::sync::mpsc::channel();
-        slice.map_async(wgpu::MapMode::Read, move |r| {
-            let _ = tx.send(r);
-        });
-        device
-            .poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None })
-            .map_err(|e| Error::Gpu(e.to_string()))?;
-        rx.recv().map_err(|e| Error::Gpu(e.to_string()))?.map_err(|e| Error::Gpu(e.to_string()))?;
-        let rgba = {
-            let data = slice.get_mapped_range().map_err(|e| Error::Gpu(e.to_string()))?;
-            unpremultiply_rows(&data, padded as usize, unpadded as usize, bgra)
-        };
-        buf.unmap();
-        Ok((w, h, rgba))
+        Ok(Readback { buf, idx, w, h, padded, bgra })
     }
 }
 
 #[cfg(target_arch = "wasm32")]
 impl Renderer {
-    /// Offscreen readback needs to block on the GPU, which the browser can't do.
+    /// Offscreen readback needs to block on the GPU, which the browser can't do (use
+    /// `render_rgba_async`).
     pub fn render_rgba(&mut self, _dl: &DrawList, _ppu: f64) -> Result<(u32, u32, Vec<u8>)> {
         Err(Error::Gpu("synchronous GPU readback is not available in the browser".into()))
     }
+}
+
+/// A submitted offscreen frame being copied into `buf`.
+struct Readback {
+    buf: wgpu::Buffer,
+    idx: wgpu::SubmissionIndex,
+    w: u32,
+    h: u32,
+    /// Bytes per row in `buf`.
+    padded: u32,
+    bgra: bool,
+}
+
+impl Readback {
+    /// Straight-alpha RGBA rows from the mapped buffer.
+    fn read(self) -> Result<(u32, u32, Vec<u8>)> {
+        let rgba = {
+            let data = self.buf.slice(..).get_mapped_range().map_err(|e| Error::Gpu(e.to_string()))?;
+            unpremultiply_rows(&data, self.padded as usize, self.w as usize * 4, self.bgra)
+        };
+        self.buf.unmap();
+        Ok((self.w, self.h, rgba))
+    }
+}
+
+/// Resolves on a later browser task (lets the event loop run between device polls).
+#[cfg(target_arch = "wasm32")]
+async fn next_tick() {
+    let p = js_sys::Promise::new(&mut |resolve, _| {
+        if let Some(w) = web_sys::window() {
+            let _ = w.set_timeout_with_callback(&resolve);
+        }
+    });
+    let _ = wasm_bindgen_futures::JsFuture::from(p).await;
 }
 
 /// Premultiplied RGBA or BGRA rows (`stride` bytes apart, `width` bytes used) -> straight-alpha

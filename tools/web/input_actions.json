@@ -1,0 +1,23 @@
+[
+  {"move": [200, 170]},
+  {"shot": "out/web/input_0_start.png"},
+  {"wheel": [200, 170, -120]}, {"sleep": 50},
+  {"wheel": [200, 170, -120]}, {"sleep": 50},
+  {"wheel": [200, 170, -120]},
+  {"shot": "out/web/input_1_wheel_zoom.png"},
+  {"drag": [200, 170, 260, 120], "button": "right", "steps": 12},
+  {"shot": "out/web/input_2_right_drag_pan.png"},
+  {"touch": [[480, 170], [540, 170]], "to": [[430, 170], [590, 170]], "steps": 12},
+  {"shot": "out/web/input_3_touch_pinch.png"},
+  {"touch": [[510, 170]], "to": [[570, 230]], "steps": 12},
+  {"shot": "out/web/input_4_touch_pan.png"},
+  {"move": [510, 170]},
+  {"wheel": [510, 170, -40], "ctrl": true},
+  {"shot": "out/web/input_5_ctrl_wheel_pinch.png"},
+  {"drag": [100, 100, 220, 220], "button": "left", "steps": 12},
+  {"shot": "out/web/input_6_rect_zoom.png"},
+  {"click": [200, 170], "count": 2},
+  {"click": [510, 170], "count": 2},
+  {"move": [85, 76]},
+  {"shot": "out/web/input_7_reset_and_hover.png"}
+]

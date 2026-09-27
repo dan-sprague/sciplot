@@ -146,6 +146,72 @@ impl Figure {
         }
     }
 
+    /// Like [`Figure::to_png_bytes`], but renders on the GPU in the browser too: the readback is
+    /// awaited instead of blocked on. Falls back to the CPU rasterizer (feature `cpu-png`) when no
+    /// GPU adapter exists or `opts.cpu(true)` is set.
+    ///
+    /// In the browser the GPU context of a mounted canvas is reused (on WebGL2 the first one);
+    /// before any figure is mounted a WebGPU context is created on demand.
+    pub async fn to_png_bytes_async(&self, opts: &Save) -> Result<Vec<u8>> {
+        let img = self.render_rgba_async(opts).await?;
+        let mut out = Vec::new();
+        encode_png(&mut out, &img, opts.px_per_unit)?;
+        Ok(out)
+    }
+
+    /// Like [`Figure::render_rgba`], awaiting the GPU readback (works in the browser).
+    pub async fn render_rgba_async(&self, opts: &Save) -> Result<RgbaImage> {
+        #[cfg(feature = "cpu-png")]
+        let force_cpu = opts.cpu || crate::render::cpu::forced_by_env();
+        #[cfg(not(feature = "cpu-png"))]
+        let force_cpu = false;
+        if !force_cpu {
+            match crate::render::gpu::gpu_async(None).await {
+                Ok(gpu) => {
+                    let st = self.sh.snapshot();
+                    let mut r = crate::render::gpu::Renderer::new(gpu);
+                    let (mut dl, _) = crate::scene::build(&st, None, &mut r.scene);
+                    if let Some(bg) = opts.background {
+                        dl.background = bg;
+                    }
+                    let (width, height, data) = r.render_rgba_async(&dl, opts.px_per_unit).await?;
+                    return Ok(RgbaImage { width, height, data });
+                }
+                #[cfg(feature = "cpu-png")]
+                Err(Error::NoGpuAdapter(e)) => log::info!("ezviz: no GPU adapter ({e}); rendering on the CPU"),
+                Err(e) => return Err(e),
+            }
+        }
+        #[cfg(feature = "cpu-png")]
+        {
+            let mut opts = opts.clone();
+            opts.cpu = true;
+            self.render_rgba(&opts)
+        }
+        #[cfg(not(feature = "cpu-png"))]
+        Err(Error::Gpu("the CPU rasterizer needs the `cpu-png` feature".into()))
+    }
+
+    /// Browser: renders the figure as a PNG ([`Figure::to_png_bytes_async`]) and offers it as
+    /// a download named `name`.
+    #[cfg(target_arch = "wasm32")]
+    pub async fn download_png(&self, name: &str, opts: &Save) -> Result<()> {
+        use wasm_bindgen::JsCast;
+        let bytes = self.to_png_bytes_async(opts).await?;
+        let err = |e: wasm_bindgen::JsValue| Error::Encode(format!("{e:?}"));
+        let parts = js_sys::Array::of1(&js_sys::Uint8Array::from(bytes.as_slice()));
+        let props = web_sys::BlobPropertyBag::new();
+        props.set_type("image/png");
+        let blob = web_sys::Blob::new_with_u8_array_sequence_and_options(&parts, &props).map_err(err)?;
+        let url = web_sys::Url::create_object_url_with_blob(&blob).map_err(err)?;
+        let doc = web_sys::window().and_then(|w| w.document()).ok_or_else(|| Error::Encode("no document".into()))?;
+        let a: web_sys::HtmlAnchorElement = doc.create_element("a").map_err(err)?.unchecked_into();
+        a.set_href(&url);
+        a.set_download(name);
+        a.click();
+        web_sys::Url::revoke_object_url(&url).map_err(err)
+    }
+
     /// The figure as a standalone SVG document (`width`/`height` in points from
     /// `opts.pt_per_unit`, `viewBox` in figure units). Text is drawn as glyph outlines.
     pub fn to_svg_string(&self, opts: &Save) -> Result<String> {

@@ -1,7 +1,8 @@
 //! Pump mode: `fig.display()` opens a window and returns; the caller's loop drives it with
 //! `screen.pump()`.
 
-use super::{App, with_event_loop};
+use super::app::{App, OpenReq};
+use super::native::with_event_loop;
 use crate::error::{Error, Result};
 use crate::figure::Figure;
 use std::cell::{Cell, RefCell};
@@ -16,18 +17,18 @@ const PUMP_INTERVAL: Duration = Duration::from_millis(8);
 
 thread_local! {
     /// The one application handler shared by all pump-mode windows of this (main) thread.
-    static PUMP_APP: RefCell<Option<App>> = const { RefCell::new(None) };
+    static PUMP_APP: RefCell<Option<App<'static>>> = const { RefCell::new(None) };
 }
 
 /// Runs `f` with the event loop and the shared pump-mode app.
 fn with_pump<R>(
-    f: impl FnOnce(&mut winit::event_loop::EventLoop<super::UserEvent>, &mut App) -> Result<R>,
+    f: impl FnOnce(&mut winit::event_loop::EventLoop<super::UserEvent>, &mut App<'static>) -> Result<R>,
 ) -> Result<R> {
     with_event_loop(|el| {
         PUMP_APP.with(|cell| {
             let mut slot = cell.try_borrow_mut().map_err(|_| Error::Reentrant)?;
             if slot.is_none() {
-                *slot = Some(App::new(crate::render::gpu::gpu()?, el.create_proxy(), false, None));
+                *slot = Some(App::new(Some(crate::render::gpu::gpu()?), el.create_proxy(), false, None));
             }
             let app = slot.as_mut().expect("pump app was just created");
             f(el, app)
@@ -74,7 +75,7 @@ impl Figure {
     pub fn display(&self) -> Result<Screen> {
         let token = crate::figure::next_uid();
         with_pump(|el, app| {
-            app.to_open.push((self.clone(), token));
+            app.to_open.push(OpenReq::new(self, token));
             let start = Instant::now();
             loop {
                 let _ = el.pump_app_events(Some(Duration::ZERO), app);
@@ -86,7 +87,7 @@ impl Figure {
                     return Ok(Screen { id, last_pump: Cell::new(None), _main_thread: PhantomData });
                 }
                 if start.elapsed() > Duration::from_secs(10) {
-                    app.to_open.retain(|(_, t)| *t != token);
+                    app.to_open.retain(|r| r.token != token);
                     return Err(Error::EventLoop("the window did not open".into()));
                 }
                 std::thread::yield_now();
