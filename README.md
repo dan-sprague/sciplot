@@ -8,6 +8,8 @@ fallback). It is aimed at publication figures and at visualizing dynamic systems
 depend on it through git or a local path. So far it is developed and tested on macOS (Apple
 silicon, Metal).
 
+sciplot was built with extensive AI assistance. It's useful to me; perhaps it will be to you.
+
 ![Four panels: a damped oscillator with a confidence band and a legend, a histogram with a normal density, a log-log power law with minor grid lines, and a streamplot of a damped pendulum](docs/images/panels.png)
 
 ## Installation
