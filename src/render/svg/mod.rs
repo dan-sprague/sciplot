@@ -10,6 +10,7 @@ mod marker;
 mod num;
 #[cfg(test)]
 mod tests;
+mod three_d;
 
 use crate::color::Color;
 use crate::scene::drawlist::{
@@ -67,8 +68,21 @@ pub(crate) fn document(dl: &DrawList, opts: &SvgOptions) -> String {
     if n_markers > MANY_MARKERS {
         crate::warn_once("an SVG with more than 100k markers is large and slow to view; consider PNG output");
     }
-    for item in &dl.items {
-        w.item(item);
+    let mut i = 0;
+    while i < dl.items.len() {
+        let item = &dl.items[i];
+        match three_d::group(&item.prim) {
+            // A run of 3D items of one Axis3: projected and depth-sorted together.
+            Some(g) => {
+                let n = dl.items[i..].iter().take_while(|it| three_d::group(&it.prim) == Some(g)).count();
+                w.items3d(&dl.items[i..i + n]);
+                i += n;
+            }
+            None => {
+                w.item(item);
+                i += 1;
+            }
+        }
     }
     w.finish()
 }
@@ -157,6 +171,23 @@ impl Writer<'_> {
             Prim::Lines(l) => self.lines(l, xf),
             Prim::Glyphs(g) => self.glyphs(g, xf),
             Prim::Field(f) => self.field(f, xf),
+            Prim::Lines3d(_) | Prim::Markers3d(_) | Prim::Mesh3d(_) => self.items3d(std::slice::from_ref(item)),
+        }
+    }
+
+    /// 3D items of one depth group, in painter's order (see `three_d`).
+    fn items3d(&mut self, items: &[Item]) {
+        let Some(first) = items.first() else { return };
+        let clip = first.clip;
+        self.set_clip(clip);
+        let xf = [1.0, 1.0, 0.0, 0.0];
+        for prim in three_d::flatten(items) {
+            match &prim {
+                Prim::Mesh(m) => self.mesh(m, xf),
+                Prim::Lines(l) => self.lines(l, xf),
+                Prim::Markers(m) => self.markers(m, xf, clip),
+                _ => {}
+            }
         }
     }
 

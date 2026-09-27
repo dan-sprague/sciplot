@@ -16,6 +16,7 @@ pub use crate::{
 };
 pub use crate::{CellCoords, Colormap, Edges, Heatmap, IntoColormap, heatmap, heatmap_xy};
 pub use crate::{ColorMapped, Colorbar};
+pub use crate::{Aspect3, Axis3, Lines3d, Scatter3d, Surface, ViewMode, lines3d, scatter3d, surface};
 pub use crate::{Contour, Contourf, ContourfMode, Extend, Levels, contour, contour_xy, contourf, contourf_xy};
 pub use crate::{HLines, RefLines, VLines, ablines, hlines, vlines};
 pub use crate::{Legend, LegendElement, LegendEntry, Orientation, PlotRef, Pos, axislegend};

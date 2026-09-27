@@ -254,6 +254,9 @@ pub(crate) struct View3d {
     /// Local -> world (the normalized box the lights live in): `world = local * scale + offset`.
     pub world_scale: [f64; 3],
     pub world_offset: [f64; 3],
+    /// Data-space normal -> world-space direction: multiply componentwise, then normalize
+    /// (Makie's normal matrix `inv(model)ᵀ`).
+    pub normal_scale: [f64; 3],
     /// Content outside this local-space box `[min, max]` is hidden (Makie's `clip`).
     pub clip: Option<[[f32; 3]; 2]>,
     /// World-space direction the light travels (Makie's camera-relative default light).
@@ -291,9 +294,11 @@ pub(crate) struct Markers3dPrim {
     pub marker: Marker,
     pub stroke_color: Color,
     pub stroke_width: f32,
+    /// `pos.key.rev` is an append-only revision (see `LinesPrim::append`).
+    pub append: bool,
 }
 
-/// A mesh vertex in local coordinates with its (local-space, unnormalized) normal.
+/// A mesh vertex in local coordinates with its data-space normal.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 pub(crate) struct Vertex3d {

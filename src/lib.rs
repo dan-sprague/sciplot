@@ -64,6 +64,14 @@ pub use blocks::colorbar::ColorbarTheme;
 pub use blocks::label::LabelTheme;
 pub use blocks::legend::LegendTheme;
 pub use blocks::{Axis, Label, linkaxes, linkxaxes, linkyaxes};
+pub use blocks::{Aspect3, Axis3, ViewMode};
+pub use blocks::axis3::Axis3Theme;
+pub use plots::lines3d::{Lines3dTheme, lines3d};
+pub use plots::scatter3d::{Scatter3dTheme, scatter3d};
+pub use plots::surface::{SurfaceTheme, surface};
+pub use plots::{Lines3d, Scatter3d, Surface};
+#[doc(hidden)]
+pub use scene::axis3::{Axis3Geometry, DimGeometry};
 pub use blocks::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
 pub use color::{Color, IntoColor, WONG, colors};
 pub use color::{Colormap, IntoColormap};
@@ -145,6 +153,10 @@ const _: () = {
     ok::<StreamPlot>();
     ok::<Contour>();
     ok::<Contourf>();
+    ok::<Axis3>();
+    ok::<Lines3d>();
+    ok::<Scatter3d>();
+    ok::<Surface>();
     #[cfg(feature = "window")]
     ok_send_sync::<Live>();
 };

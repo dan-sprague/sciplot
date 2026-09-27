@@ -315,3 +315,38 @@ macro_rules! rich {
         $crate::RichText::from_spans(spans)
     }};
 }
+
+/// `Axis3!(fig.at(1, 1); azimuth = 0.3, title = "t")` = `Axis3::new(fig.at(1, 1)).azimuth(0.3).title("t")`.
+#[macro_export]
+macro_rules! Axis3 {
+    ($pos:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!($crate::Axis3::new($pos) $(; $($k = $v),*)?)
+    };
+    ($pos:expr, $($rest:tt)*) => {
+        compile_error!("use `;` before keyword arguments: Axis3!(fig.at(1, 1); title = \"...\")")
+    };
+}
+
+/// Makie's `lines!(ax3, x, y, z; kw...)` into an [`Axis3`](crate::Axis3).
+#[macro_export]
+macro_rules! lines3d {
+    ($ax:expr, $x:expr, $y:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!(($ax).lines($x, $y, $z) $(; $($k = $v),*)?)
+    };
+}
+
+/// Makie's `scatter!(ax3, x, y, z; kw...)` into an [`Axis3`](crate::Axis3).
+#[macro_export]
+macro_rules! scatter3d {
+    ($ax:expr, $x:expr, $y:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!(($ax).scatter($x, $y, $z) $(; $($k = $v),*)?)
+    };
+}
+
+/// Makie's `surface!(ax3, x, y, z; kw...)` into an [`Axis3`](crate::Axis3).
+#[macro_export]
+macro_rules! surface {
+    ($ax:expr, $x:expr, $y:expr, $z:expr $(; $($k:ident = $v:expr),* $(,)?)?) => {
+        $crate::__kw!(($ax).surface($x, $y, $z) $(; $($k = $v),*)?)
+    };
+}

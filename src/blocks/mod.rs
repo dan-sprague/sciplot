@@ -7,11 +7,13 @@
 //! - `inside_axis` places it over an axis instead of in a grid cell (e.g. `axislegend`).
 
 pub(crate) mod axis;
+pub(crate) mod axis3;
 pub(crate) mod colorbar;
 pub(crate) mod label;
 pub(crate) mod legend;
 
 pub use axis::{Axis, linkaxes, linkxaxes, linkyaxes};
+pub use axis3::{Aspect3, Axis3, ViewMode};
 pub use colorbar::Colorbar;
 pub use label::Label;
 pub use legend::{Legend, LegendEntry, LegendSource, Orientation, PlotRef, Pos, axislegend};
@@ -101,6 +103,7 @@ block_kinds! {
     Label(label::LabelState),
     Legend(legend::LegendState),
     Colorbar(colorbar::ColorbarState),
+    Axis3(axis3::Axis3State),
 }
 
 impl Block {

@@ -1,8 +1,14 @@
-//! `Axis3`: Makie's 3D axis (a box with panels, grids, ticks and labels on the edges facing the
-//! viewer, seen by an orbit camera).
+//! `Axis3`: Makie's 3D axis. A box with panels, grid lines and frame lines on its three far
+//! sides, ticks, tick labels and axis labels on the edges facing the viewer, seen by an orbit
+//! camera (azimuth, elevation, perspectiveness).
 //!
-//! Layout, decorations and plots are lowered by [`crate::scene::axis3`]; the camera math lives in
-//! [`crate::scene::axis3::camera`].
+//! Limits, ticks, decorations and plots are lowered by [`crate::scene::axis3`]; the camera math
+//! (Makie's `calculate_matrices`) lives in [`crate::scene::axis3::camera`].
+//!
+//! Interaction: [`Axis3::rotate_by`] and [`Axis3::zoom_by`] apply Makie's `DragRotate` and
+//! `ScrollZoom` (pure versions: [`crate::scene::axis3::drag_rotate`],
+//! [`crate::scene::axis3::scroll_zoom_limits`]); windows find the Axis3 under the cursor with
+//! [`crate::scene::axis3::area_at`].
 
 use super::{BlockCtx, BlockImpl, BlockLayout};
 use crate::attrs::{Conv, attributes, conv_identity};
@@ -17,8 +23,8 @@ use std::sync::Arc;
 pub use crate::scene::axis3::camera::{Aspect3, ViewMode};
 
 /// Makie's `Axis3`: a 3D axis. Plot into it with [`Axis3::lines`], [`Axis3::scatter`] and
-/// [`Axis3::surface`]; rotate it with [`Axis3::azimuth`] / [`Axis3::elevation`] (or by dragging in
-/// a window).
+/// [`Axis3::surface`]; rotate it with [`Axis3::azimuth`] / [`Axis3::elevation`] (or
+/// [`Axis3::rotate_by`], what dragging does).
 ///
 /// ```no_run
 /// use ezviz::prelude::*;
@@ -53,7 +59,10 @@ pub(crate) struct Axis3State {
     pub plots: Vec<PlotId>,
     /// `xlims!`/`ylims!`/`zlims!` values `[x0, x1, y0, y1, z0, z1]` (None = automatic).
     pub limits: [Option<f64>; 6],
-    /// Scroll zoom (Makie's `zoom_mult`; 1 = none).
+    /// Limits set by interaction (scroll zoom), ordered `[x0, x1, y0, y1, z0, z1]`. Cleared by
+    /// [`Axis3::reset_view`] and [`Axis3::autolimits`].
+    pub interactive: Option<[f64; 6]>,
+    /// Scroll zoom of `viewmode = Free` (Makie's `zoom_mult`; 1 = none).
     pub zoom_mult: f64,
     /// `viewmode = Free` translation (Makie's `axis_offset`).
     pub offset: [f64; 2],
@@ -61,7 +70,14 @@ pub(crate) struct Axis3State {
 
 impl Default for Axis3State {
     fn default() -> Self {
-        Axis3State { attrs: Axis3Attrs::default(), plots: Vec::new(), limits: [None; 6], zoom_mult: 1.0, offset: [0.0; 2] }
+        Axis3State {
+            attrs: Axis3Attrs::default(),
+            plots: Vec::new(),
+            limits: [None; 6],
+            interactive: None,
+            zoom_mult: 1.0,
+            offset: [0.0; 2],
+        }
     }
 }
 
@@ -83,17 +99,17 @@ attributes! {
     Axis3(Axis3Attrs, Axis3Resolved, Axis3Theme) via with_attrs {
         /// Camera elevation above the xy plane in radians (Makie default π/8).
         elevation: f64 = |_| std::f64::consts::PI / 8.0, LAYOUT;
-        /// Camera azimuth in radians: 0 looks from +x, rotating counter-clockwise seen from above
+        /// Camera azimuth in radians: 0 looks from +x, growing counter-clockwise seen from above
         /// (Makie default 1.275π).
         azimuth: f64 = |_| 1.275 * std::f64::consts::PI, LAYOUT;
-        /// 0 = (nearly) orthographic, 1 = 90° field of view.
+        /// 0 = (nearly) orthographic, 1 = 90° field of view (clamped to 0..=1).
         perspectiveness: f64 = |_| 0.0, LAYOUT;
-        /// Near clip distance (Makie's `near`).
+        /// Minimum near clip distance (Makie's `near`, > 0).
         near: f64 = |_| 1e-3, LAYOUT;
         /// Box proportions: [`Aspect3::Ratio`] (default `(1, 1, 2/3)`), [`Aspect3::Data`] or
-        /// [`Aspect3::Equal`]; a tuple `(a, b, c)` converts.
+        /// [`Aspect3::Equal`]; a tuple `(a, b, c)` and [`DataAspect`](crate::DataAspect) convert.
         aspect: Aspect3 = |_| Aspect3::Ratio(1.0, 1.0, 2.0 / 3.0), LAYOUT;
-        /// How the box is fitted into the axis area (default [`ViewMode::FitZoom`]).
+        /// How the box is fitted into the axis area (Makie default [`ViewMode::FitZoom`]).
         viewmode: ViewMode = |_| ViewMode::FitZoom, LAYOUT;
         /// Hide plot content outside the limits box (Makie's `clip`).
         clip: bool = |_| true, STYLE;
@@ -176,9 +192,22 @@ attributes! {
         xspinesvisible: bool = |_| true, STYLE;
         yspinesvisible: bool = |_| true, STYLE;
         zspinesvisible: bool = |_| true, STYLE;
-        xspinecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
-        yspinecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
-        zspinecolor: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        /// Color of the x spine where the ticks are.
+        xspinecolor_1: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        yspinecolor_1: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        zspinecolor_1: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        /// Color of the x spine towards the center.
+        xspinecolor_2: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        yspinecolor_2: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        zspinecolor_2: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        /// Color of the x spine opposite of the ticks.
+        xspinecolor_3: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        yspinecolor_3: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        zspinecolor_3: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        /// Color of the front x spine (drawn with `front_spines`).
+        xspinecolor_4: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        yspinecolor_4: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
+        zspinecolor_4: Color = |_| Color::rgb(0.0, 0.0, 0.0), STYLE;
         xspinewidth: f64 = |_| 1.0, STYLE;
         yspinewidth: f64 = |_| 1.0, STYLE;
         zspinewidth: f64 = |_| 1.0, STYLE;
@@ -190,12 +219,13 @@ attributes! {
         xypanelvisible: bool = |_| true, STYLE;
         yzpanelvisible: bool = |_| true, STYLE;
         xzpanelvisible: bool = |_| true, STYLE;
-        /// Room reserved around the box for labels, `(left, right, bottom, top)` (Makie: 30 on
-        /// every side; Axis3 does not compute it from its labels).
+        /// Room around the box for labels, `(left, right, bottom, top)` (Makie: 30 on every
+        /// side). Axis3 reserves it in the layout and fits the box inside the area it leaves.
         protrusions: [f64; 4] = |_| [30.0; 4], LAYOUT;
         xautolimitmargin: [f64; 2] = |_| [0.05, 0.05], LIMITS;
         yautolimitmargin: [f64; 2] = |_| [0.05, 0.05], LIMITS;
         zautolimitmargin: [f64; 2] = |_| [0.05, 0.05], LIMITS;
+        /// Makie's `xreversed`: the x axis runs the other way.
         xreversed: bool = |_| false, LIMITS;
         yreversed: bool = |_| false, LIMITS;
         zreversed: bool = |_| false, LIMITS;
@@ -263,6 +293,7 @@ impl Axis3 {
         self.with_state(Dirty::LIMITS, |a| {
             a.limits[2 * i] = lo;
             a.limits[2 * i + 1] = hi;
+            a.interactive = None;
         });
         self.clone()
     }
@@ -281,45 +312,79 @@ impl Axis3 {
     }
     /// Makie's `limits!(ax, x1, x2, y1, y2, z1, z2)`.
     pub fn limits(&self, x1: f64, x2: f64, y1: f64, y2: f64, z1: f64, z2: f64) -> Axis3 {
-        self.with_state(Dirty::LIMITS, |a| a.limits = [x1, x2, y1, y2, z1, z2].map(Some));
+        self.with_state(Dirty::LIMITS, |a| {
+            a.limits = [x1, x2, y1, y2, z1, z2].map(Some);
+            a.interactive = None;
+        });
         self.clone()
     }
-    /// Makie's `autolimits!`: forget all fixed limits.
+    /// Makie's `autolimits!`: forget all fixed and interactive limits.
     pub fn autolimits(&self) -> Axis3 {
-        self.with_state(Dirty::LIMITS, |a| a.limits = [None; 6]);
+        self.with_state(Dirty::LIMITS, |a| {
+            a.limits = [None; 6];
+            a.interactive = None;
+        });
         self.clone()
     }
 
-    /// Rotates the camera like dragging in a window: `dx`, `dy` in units (see
-    /// [`crate::scene::axis3::drag_rotate`]).
+    /// The limits shown right now, `[x0, x1, y0, y1, z0, z1]` (ordered; `None` if deleted).
+    pub fn current_limits(&self) -> Option<[f64; 6]> {
+        let st = self.sh.state.lock();
+        let g = st.theme.globals();
+        match st.block(self.id) {
+            Some(super::Block::Axis3(a)) => Some(crate::scene::axis3::final_limits(&st, a, &g)),
+            _ => None,
+        }
+    }
+
+    /// Rotates the camera like dragging in a window by `(dx, dy)` units (Makie's `DragRotate`:
+    /// see [`crate::scene::axis3::drag_rotate`]).
     pub fn rotate_by(&self, dx: f64, dy: f64) -> Axis3 {
-        let (az, el) = {
-            let st = self.sh.state.lock();
+        let id = self.id;
+        self.sh.update(Dirty::LAYOUT, |st| {
             let g = st.theme.globals();
-            match st.block(self.id) {
-                Some(super::Block::Axis3(a)) => {
-                    let r = a.attrs.resolve(&st.theme.axis3, &g);
-                    (r.azimuth, r.elevation)
-                }
-                _ => return self.clone(),
+            let theme = st.theme.axis3.clone();
+            if let Some(super::Block::Axis3(a)) = st.block_mut(id) {
+                let r = a.attrs.resolve(&theme, &g);
+                let (az, el) = crate::scene::axis3::drag_rotate(r.azimuth, r.elevation, dx, dy);
+                a.attrs.azimuth = Some(az);
+                a.attrs.elevation = Some(el);
             }
-        };
-        let (az, el) = crate::scene::axis3::drag_rotate(az, el, dx, dy);
-        self.azimuth(az).elevation(el)
+        });
+        self.clone()
     }
 
     /// Zooms like scrolling in a window: `amount > 0` zooms in (Makie's `ScrollZoom(0.05)`: the
-    /// zoom multiplier is scaled by `(1 - 0.05)^amount`).
+    /// limits shrink about their center by `(1 - 0.05)^amount`; with `viewmode = Free` the camera
+    /// moves instead).
     pub fn zoom_by(&self, amount: f64) -> Axis3 {
-        self.with_state(Dirty::LAYOUT, |a| a.zoom_mult = crate::scene::axis3::scroll_zoom(a.zoom_mult, amount));
+        if !amount.is_finite() || amount == 0.0 {
+            return self.clone();
+        }
+        let id = self.id;
+        self.sh.update(Dirty::LIMITS, |st| {
+            let g = st.theme.globals();
+            let Some(super::Block::Axis3(a)) = st.block(id) else { return };
+            let r = a.attrs.resolve(&st.theme.axis3, &g);
+            let lims = crate::scene::axis3::final_limits(st, a, &g);
+            let free = r.viewmode == ViewMode::Free;
+            if let Some(super::Block::Axis3(a)) = st.block_mut(id) {
+                if free {
+                    a.zoom_mult *= crate::scene::axis3::zoom_factor(amount);
+                } else {
+                    a.interactive = Some(crate::scene::axis3::scroll_zoom_limits(lims, amount));
+                }
+            }
+        });
         self.clone()
     }
 
     /// Resets zoom and translation (Makie's `LimitReset`).
     pub fn reset_view(&self) -> Axis3 {
-        self.with_state(Dirty::LAYOUT, |a| {
+        self.with_state(Dirty::LIMITS, |a| {
             a.zoom_mult = 1.0;
             a.offset = [0.0; 2];
+            a.interactive = None;
         });
         self.clone()
     }
@@ -343,7 +408,7 @@ impl Axis3 {
         let st = self.sh.snapshot();
         let mut cache = crate::scene::SceneCache::new();
         crate::scene::build(&st, None, &mut cache);
-        crate::scene::axis3::geometry(&cache, self.id)
+        crate::scene::axis3::geometry(&st, &cache, self.id)
     }
 }
 

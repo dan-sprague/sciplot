@@ -4,6 +4,7 @@
 //! converted f32 buffers and per-axis rebases so unchanged data is never reconverted or reuploaded.
 
 pub(crate) mod axis;
+pub(crate) mod axis3;
 pub(crate) mod drawlist;
 mod plots;
 
@@ -32,6 +33,8 @@ pub(crate) struct SceneCache {
     memos: HashMap<(u64, u8), (u64, Arc<dyn std::any::Any + Send + Sync>)>,
     /// (plot uid, part) -> append-aware conversion of live, append-only point data
     pub(crate) append: HashMap<(u64, u8), crate::data::points::LocalCache>,
+    /// Axis3 rebases, live 3D conversions and the last build's Axis3 areas.
+    pub(crate) axis3: axis3::Axis3Cache,
 }
 
 impl SceneCache {
@@ -315,6 +318,7 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
     let (axes, inside) = (c.axes, c.inside);
 
     // 3. Emit.
+    cache.axis3.frames.clear();
     let mut em = Emitter::new();
     let mut xforms = Vec::with_capacity(axes.len());
     for a in &axes {
@@ -335,6 +339,10 @@ pub(crate) fn build(st: &FigState, size: Option<[f64; 2]>, cache: &mut SceneCach
     for (id, r) in
         block_rects.into_iter().chain(inside.into_iter().filter_map(|(id, ax)| axis_rect(ax).map(|r| (id, r))))
     {
+        if let Some(Block::Axis3(_)) = st.block(id) {
+            axis3::emit(st, &g, id, r, size, cache, &mut em);
+            continue;
+        }
         if let Some(imp) = st.block(id).and_then(|b| b.imp()) {
             imp.emit(&crate::blocks::BlockCtx { st, g: &g, axes: &axes, id }, &mut em, r);
         }
