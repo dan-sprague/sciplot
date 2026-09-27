@@ -65,3 +65,20 @@ opt-level = 2
 
 [profile.release]
 debug = 1
+
+# Examples that open windows need the `window` feature.
+[[example]]
+name = "s1_show"
+required-features = ["window"]
+
+[[example]]
+name = "s5_live"
+required-features = ["window"]
+
+[[example]]
+name = "s5_animate"
+required-features = ["window"]
+
+[[example]]
+name = "interact_check"
+required-features = ["window"]

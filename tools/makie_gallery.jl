@@ -244,6 +244,38 @@ function stress_dense(d)
     fig
 end
 
+function stress_marker_strokes(d)
+    markers = [:circle, :rect, :diamond, :cross, :xcross, :utriangle, :dtriangle, :ltriangle,
+        :rtriangle, :pentagon, :hexagon, :star5, Circle, Rect]
+    fig = Figure(size = (900, 420))
+    ax = Axis(fig[1, 1], title = "stroked markers (1, 4, translucent 3, rotated 2)", limits = (0, 15, 0, 5))
+    for (i, m) in enumerate(markers)
+        scatter!(ax, [i], [4.0], marker = m, markersize = 34, color = WONG[1], strokewidth = 1,
+            strokecolor = :black)
+        scatter!(ax, [i], [3.0], marker = m, markersize = 34, color = WONG[3], strokewidth = 4,
+            strokecolor = :black)
+        scatter!(ax, [i], [2.0], marker = m, markersize = 34, color = (WONG[2], 0.4), strokewidth = 3,
+            strokecolor = (:black, 0.6))
+        scatter!(ax, [i], [1.0], marker = m, markersize = 18, rotation = 0.4, color = WONG[6],
+            strokewidth = 2, strokecolor = :red)
+    end
+    fig
+end
+
+function stress_strokes(d)
+    fig = Figure(size = (900, 700))
+    a = Axis(fig[1, 1], title = "barplot, strokewidth 4")
+    barplot!(a, 1:4, [3.0, -1.0, 2.0, 0.0], color = (WONG[1], 0.6), strokewidth = 4, strokecolor = :black)
+    b = Axis(fig[1, 2], title = "direction = x, gap 0")
+    barplot!(b, 1:3, [2.0, 4.0, 3.0], direction = :x, gap = 0, color = WONG[2], strokewidth = 2,
+        strokecolor = :red)
+    c = Axis(fig[2, 1], title = "hist, strokewidth 2")
+    hist!(c, d["samples"], bins = 12, color = WONG[3], strokewidth = 2, strokecolor = (:black, 0.7))
+    e = Axis(fig[2, 2], title = "band, strokewidth 3")
+    band!(e, d["x"], d["lo"], d["hi"], color = (WONG[4], 0.4), strokewidth = 3, strokecolor = WONG[5])
+    fig
+end
+
 const PAGES = [
     ("s1_scatter", s1_scatter),
     ("s1_axis", s1_axis),
@@ -262,6 +294,8 @@ const PAGES = [
     ("stress_text", stress_text),
     ("stress_bars", stress_bars),
     ("stress_dense", stress_dense),
+    ("stress_marker_strokes", stress_marker_strokes),
+    ("stress_strokes", stress_strokes),
 ]
 
 mkpath(OUT)
