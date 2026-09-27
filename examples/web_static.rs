@@ -1,7 +1,7 @@
 //! A static figure for comparing the browser canvas (WebGPU and WebGL2) with the native PNG
 //! export pixel by pixel (`tools/web/check.sh`).
 //!
-//! Native: `cargo run --release --example web_static` writes `out/web_static_native.png` at
+//! Native: `cargo run --example web_static` writes `out/web_static_native.png` at
 //! 2 px per unit (the capture's device pixel ratio).
 //! Browser: mounts the figure into `<canvas id="ezviz">` (`examples/web/web_static.html`), then
 //! renders it again offscreen with `Figure::to_png_bytes_async` and shows that PNG in an `<img

@@ -18,7 +18,7 @@ mkdir -p "$OUT"
 if [ "${1:-}" != "--no-build" ]; then
   tools/web/build.sh web_static web_lorenz web_grayscott
 fi
-cargo run --quiet --release --example web_static
+cargo run --quiet --example web_static  # dev profile (optimized for this package, see Cargo.toml)
 cp out/web_static_native.png "$OUT/static_native.png"
 
 python3 -m http.server "$PORT" --bind 127.0.0.1 --directory examples/web >/dev/null 2>&1 &
