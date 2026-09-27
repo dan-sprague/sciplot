@@ -46,7 +46,7 @@ impl Offscreen {
             view_formats: &[],
         });
         let view = tex.create_view(&Default::default());
-        let cmd = self.r.render(&dl, &view, size, self.ppu);
+        let cmd = self.r.render(&dl, &view, crate::render::gpu::TARGET_FORMAT, size, self.ppu);
         let idx = gpu.queue.submit([cmd]);
         gpu.device
             .poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None })
