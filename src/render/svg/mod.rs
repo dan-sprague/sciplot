@@ -80,7 +80,6 @@ struct MarkerKey {
     rotation: i64,
     stroke: [u8; 4],
     stroke_width: i64,
-    outer_only: bool,
 }
 
 struct Writer<'a> {
@@ -263,27 +262,15 @@ impl Writer<'_> {
         }
     }
 
-    /// A marker definition. The stroke is GLMakie's outer stroke: for opaque fills a centered
-    /// stroke of twice the width painted below the fill (`paint-order`); for translucent fills
-    /// the stroke is masked to the outside of the shape so it does not show through. Round
-    /// joins match the offset of the GPU's signed distance field.
-    fn marker_def(
-        &mut self,
-        marker: Marker,
-        size: f64,
-        rotation: f64,
-        stroke: Color,
-        sw: f64,
-        translucent: bool,
-    ) -> u32 {
-        let outer_only = sw > 0.0 && translucent;
+    /// A marker definition. The stroke is CairoMakie's: centered on the outline and painted over
+    /// the fill, with miter joins and CairoMakie's miter limit 2 (as the GPU sprite shader).
+    fn marker_def(&mut self, marker: Marker, size: f64, rotation: f64, stroke: Color, sw: f64) -> u32 {
         let key = MarkerKey {
             marker,
             size: (size * 1000.0).round() as i64,
             rotation: (rotation * 1e6).round() as i64,
             stroke: if sw > 0.0 { stroke.to_rgba8() } else { [0; 4] },
             stroke_width: (sw * 1000.0).round() as i64,
-            outer_only,
         };
         if let Some(id) = self.markers.get(&key) {
             return *id;
@@ -303,30 +290,18 @@ impl Writer<'_> {
                 e
             }
         };
-        let mut stroke_attrs = String::new();
-        if sw > 0.0 {
-            paint(&mut stroke_attrs, "stroke", stroke);
-            let _ = write!(stroke_attrs, " stroke-width=\"{}\" stroke-linejoin=\"round\"", N(2.0 * sw));
-        }
         let d = &mut self.defs;
-        if outer_only {
-            let r = marker::bounding_radius(&sh) * size + 2.0 * sw + 1.0;
-            let _ = write!(d, "<mask id=\"k{id}\" maskUnits=\"userSpaceOnUse\"");
-            rect_attrs(d, -r, -r, 2.0 * r, 2.0 * r);
-            d.push_str("><rect");
-            rect_attrs(d, -r, -r, 2.0 * r, 2.0 * r);
-            let _ = writeln!(d, " fill=\"#ffffff\"/>{elem} fill=\"#000000\"/></mask>");
-            let _ =
-                writeln!(d, "<g id=\"m{id}\">{elem} fill=\"none\"{stroke_attrs} mask=\"url(#k{id})\"/>{elem}/></g>");
-        } else {
-            let tail = elem.strip_prefix('<').unwrap_or(&elem);
-            let (tag, rest) = tail.split_once(' ').unwrap_or((tail, ""));
-            let _ = write!(d, "<{tag} id=\"m{id}\" {rest}{stroke_attrs}");
-            if sw > 0.0 {
-                d.push_str(" paint-order=\"stroke\"");
+        let tail = elem.strip_prefix('<').unwrap_or(&elem);
+        let (tag, rest) = tail.split_once(' ').unwrap_or((tail, ""));
+        let _ = write!(d, "<{tag} id=\"m{id}\" {rest}");
+        if sw > 0.0 {
+            paint(d, "stroke", stroke);
+            let _ = write!(d, " stroke-width=\"{}\"", N(sw));
+            if matches!(sh, marker::Shape::Polygon(_)) {
+                d.push_str(" stroke-miterlimit=\"2\"");
             }
-            d.push_str("/>\n");
         }
+        d.push_str("/>\n");
         id
     }
 
@@ -360,7 +335,7 @@ impl Writer<'_> {
                     continue;
                 }
             }
-            let id = self.marker_def(m.marker, size, m.rotation as f64, m.stroke_color, sw, fill.a < 1.0);
+            let id = self.marker_def(m.marker, size, m.rotation as f64, m.stroke_color, sw);
             let mut s = format!("<use xlink:href=\"#m{id}\" x=\"{}\" y=\"{}\"", N(q[0]), N(q[1]));
             if !uniform {
                 paint(&mut s, "fill", fill);

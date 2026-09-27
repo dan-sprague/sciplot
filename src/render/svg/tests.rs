@@ -271,13 +271,16 @@ fn markers_all_shapes() {
     }
     let dl = list(items);
     let s = svg(&dl);
+    // CairoMakie's stroke: centered on the outline, over the fill, miter joins with limit 2.
+    assert!(s.contains("<circle id=\"m2\" r=\"14.1\" stroke=\"#000000\" stroke-width=\"2\"/>"), "{s}");
     assert!(
         s.contains(
-            "<circle id=\"m2\" r=\"14.1\" stroke=\"#000000\" stroke-width=\"4\" stroke-linejoin=\"round\" \
-             paint-order=\"stroke\"/>"
+            "<path id=\"m4\" d=\"M0 17.86L17.86 0L0 -17.86L-17.86 0Z\" stroke=\"#000000\" stroke-width=\"2\" \
+             stroke-miterlimit=\"2\"/>"
         ),
         "{s}"
     );
+    assert!(!s.contains("paint-order") && !s.contains("linejoin"), "{s}");
     assert_eq!(s.matches("<use").count(), 28);
     assert!(s.contains("<path id=\"m3\" d=\"M-12.629 12.629L12.629 12.629L12.629 -12.629L-12.629 -12.629Z\"/>"), "{s}");
     rasterize(&dl, "svg_unit_markers");
@@ -384,7 +387,7 @@ fn glyph_inst_is_figure_space() {
 }
 
 #[test]
-fn translucent_marker_stroke_stays_outside() {
+fn translucent_marker_stroke_is_centered() {
     let m = MarkersPrim {
         pos: Buf::transient(vec![[5.0, 5.0]]),
         color: PrimColor::Uniform(BLUE.with_alpha(0.5)),
@@ -396,14 +399,8 @@ fn translucent_marker_stroke_stays_outside() {
         rotation: 0.0,
     };
     let s = svg(&list(vec![(Space::Data(0), Prim::Markers(m))]));
-    assert!(s.contains("<mask id=\"k2\" maskUnits=\"userSpaceOnUse\""), "{s}");
-    assert!(s.contains("<circle r=\"7.05\" fill=\"#000000\"/></mask>"), "{s}");
-    assert!(
-        s.contains(
-            "<g id=\"m2\"><circle r=\"7.05\" fill=\"none\" stroke=\"#000000\" stroke-width=\"4\" \
-             stroke-linejoin=\"round\" mask=\"url(#k2)\"/><circle r=\"7.05\"/></g>"
-        ),
-        "{s}"
-    );
+    // CairoMakie strokes translucent markers like opaque ones: centered, over the fill.
+    assert!(!s.contains("<mask"), "{s}");
+    assert!(s.contains("<circle id=\"m2\" r=\"7.05\" stroke=\"#000000\" stroke-width=\"2\"/>"), "{s}");
     assert!(s.contains("<use xlink:href=\"#m2\" x=\"310\" y=\"220\" fill=\"#0072b2\" fill-opacity=\"0.5\"/>"), "{s}");
 }

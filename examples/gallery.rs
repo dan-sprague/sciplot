@@ -448,6 +448,65 @@ fn stress_bars() -> ezviz::Result<()> {
     save("stress_bars", &fig, Data::default().put("samples", &samples), None)
 }
 
+/// Every marker stroked: thin and thick strokes on opaque fills, a translucent fill with a
+/// translucent stroke, and small rotated markers (CairoMakie's centered, mitered stroke).
+fn stress_marker_strokes() -> ezviz::Result<()> {
+    let markers = [
+        Marker::Circle,
+        Marker::Rect,
+        Marker::Diamond,
+        Marker::Cross,
+        Marker::XCross,
+        Marker::UTriangle,
+        Marker::DTriangle,
+        Marker::LTriangle,
+        Marker::RTriangle,
+        Marker::Pentagon,
+        Marker::Hexagon,
+        Marker::Star5,
+        Marker::FullCircle,
+        Marker::FullRect,
+    ];
+    let fig = Figure::new().size((900, 420));
+    let title = "stroked markers (1, 4, translucent 3, rotated 2)";
+    let ax = Axis::new(fig.at(1, 1)).title(title).limits(0.0, 15.0, 0.0, 5.0);
+    for (i, m) in markers.iter().enumerate() {
+        let x = (i + 1) as f64;
+        ax.scatter([x], [4.0]).marker(*m).markersize(34).color(WONG[0]).strokewidth(1).strokecolor(BLACK);
+        ax.scatter([x], [3.0]).marker(*m).markersize(34).color(WONG[2]).strokewidth(4).strokecolor(BLACK);
+        ax.scatter([x], [2.0])
+            .marker(*m)
+            .markersize(34)
+            .color((WONG[1], 0.4))
+            .strokewidth(3)
+            .strokecolor((BLACK, 0.6));
+        ax.scatter([x], [1.0]).marker(*m).markersize(18).rotation(0.4).color(WONG[5]).strokewidth(2).strokecolor(RED);
+    }
+    save("stress_marker_strokes", &fig, &Data::default(), None)
+}
+
+/// Bar, hist and band strokes (Makie: each rectangle stroked centered on its edges; a band's
+/// stroke runs along its lower and upper curves).
+fn stress_strokes() -> ezviz::Result<()> {
+    let mut r = Rng(0x2545F4914F6CDD1D);
+    let samples: Vec<f64> = (0..500).map(|_| r.normal()).collect();
+    let x = linspace_v(0.0, 6.0, 40);
+    let lo: Vec<f64> = x.iter().map(|x| x.sin() - 0.5).collect();
+    let hi: Vec<f64> = x.iter().map(|x| x.sin() + 0.3 + 0.1 * x).collect();
+    let fig = Figure::new().size((900, 700));
+    let a = Axis::new(fig.at(1, 1)).title("barplot, strokewidth 4");
+    a.barplot([1.0, 2.0, 3.0, 4.0], [3.0, -1.0, 2.0, 0.0]).color((WONG[0], 0.6)).strokewidth(4).strokecolor(BLACK);
+    let b = Axis::new(fig.at(1, 2)).title("direction = x, gap 0");
+    b.barplot([1.0, 2.0, 3.0], [2.0, 4.0, 3.0]).direction(Direction::X).gap(0).color(WONG[1]).strokewidth(2).strokecolor(RED);
+    let c = Axis::new(fig.at(2, 1)).title("hist, strokewidth 2");
+    c.hist(&samples).bins(12).color(WONG[2]).strokewidth(2).strokecolor((BLACK, 0.7));
+    let d = Axis::new(fig.at(2, 2)).title("band, strokewidth 3");
+    d.band(&x, &lo, &hi).color((WONG[3], 0.4)).strokewidth(3).strokecolor(WONG[4]);
+    let mut data = Data::default();
+    data.put("samples", &samples).put("x", &x).put("lo", &lo).put("hi", &hi);
+    save("stress_strokes", &fig, &data, None)
+}
+
 /// 50 000 translucent points (blending and marker AA at small sizes).
 fn stress_dense() -> ezviz::Result<()> {
     let mut r = Rng(0x94D049BB133111EB);
@@ -480,6 +539,8 @@ const PAGES: &[(&str, PageFn)] = &[
     ("stress_text", stress_text),
     ("stress_bars", stress_bars),
     ("stress_dense", stress_dense),
+    ("stress_marker_strokes", stress_marker_strokes),
+    ("stress_strokes", stress_strokes),
 ];
 
 fn main() -> ezviz::Result<()> {
