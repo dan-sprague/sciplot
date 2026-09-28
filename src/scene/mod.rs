@@ -109,6 +109,8 @@ pub(crate) struct AxisFrame {
     pub limits: [f64; 4],
     /// Visible limits in scaled space (log etc. applied).
     pub view: [f64; 4],
+    /// Data extent in scaled space (no margins); `NAN` where a dimension has no data.
+    pub extent: [f64; 4],
     pub rebase: Rebase,
     pub xticks: crate::ticks::Ticks,
     pub yticks: crate::ticks::Ticks,
@@ -220,12 +222,14 @@ fn collect(st: &FigState, g: &Globals, cache: &mut SceneCache) -> Collected {
         let slot = c.axes.len();
         let attrs = ax.attrs.resolve(&st.theme.axis, g);
         let lim = limits[slot];
+        let extent = axis::data_extent(st, id, &attrs);
         let mut frame = AxisFrame {
             id,
             slot: slot as u16,
             attrs,
             limits: lim,
             view: [0.0; 4],
+            extent,
             rebase: Rebase::for_view([0.0, 1.0, 0.0, 1.0], 0),
             xticks: Ticks::default(),
             yticks: Ticks::default(),

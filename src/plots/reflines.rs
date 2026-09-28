@@ -1,8 +1,9 @@
 //! `hlines`, `vlines` and `ablines`: reference lines spanning the axis (Makie's `HLines`,
 //! `VLines`, `ABLines`).
 //!
-//! - `hlines(ys)` spans `xmin..xmax` (fractions of the visible x range, default the whole axis)
-//!   and counts toward the y autolimits only;
+//! - `hlines(ys)` spans `xmin..xmax` (fractions of the x data extent clipped to the visible range,
+//!   default all of it; the whole axis when there is no x data) and counts toward the y autolimits
+//!   only. Unlike Makie it does not run into the autolimit margins;
 //! - `vlines(xs)` likewise with `ymin..ymax`, counting toward the x autolimits only;
 //! - `ablines(intercepts, slopes)` draws `y = a + b·x` across the visible x range and does not
 //!   affect the limits (linear axes only, like Makie).
@@ -100,19 +101,34 @@ fn extrema(v: &[f64], s: Scale) -> Option<(f64, f64)> {
 
 impl RefLinesState {
     /// Segment end points in scaled space for the visible range `view` (`[x0, x1, y0, y1]`).
-    fn segments(&self, r: &RefLinesResolved, view: [f64; 4], xs: Scale, ys: Scale) -> Vec<[f64; 2]> {
+    /// `hlines`/`vlines` span the data `extent` clipped to the view (the whole view where there is
+    /// no data), so they don't run into the autolimit margins.
+    fn segments(
+        &self,
+        r: &RefLinesResolved,
+        view: [f64; 4],
+        extent: [f64; 4],
+        xs: Scale,
+        ys: Scale,
+    ) -> Vec<[f64; 2]> {
         let [x0, x1, y0, y1] = view;
+        let span = |v: (f64, f64), e: (f64, f64)| {
+            let (lo, hi) = (e.0.max(v.0), e.1.min(v.1));
+            if lo < hi { (lo, hi) } else { v }
+        };
         let mut out = Vec::new();
         match &self.kind {
             RefKind::H(v) => {
-                let (a, b) = (x0 + (x1 - x0) * r.xmin, x0 + (x1 - x0) * r.xmax);
+                let (s0, s1) = span((x0, x1), (extent[0], extent[1]));
+                let (a, b) = (s0 + (s1 - s0) * r.xmin, s0 + (s1 - s0) * r.xmax);
                 for y in v.iter() {
                     let y = ys.forward(*y);
                     out.extend([[a, y], [b, y]]);
                 }
             }
             RefKind::V(v) => {
-                let (a, b) = (y0 + (y1 - y0) * r.ymin, y0 + (y1 - y0) * r.ymax);
+                let (s0, s1) = span((y0, y1), (extent[2], extent[3]));
+                let (a, b) = (s0 + (s1 - s0) * r.ymin, s0 + (s1 - s0) * r.ymax);
                 for x in v.iter() {
                     let x = xs.forward(*x);
                     out.extend([[x, a], [x, b]]);
@@ -168,7 +184,7 @@ impl PlotImpl for RefLinesState {
         }
         let a = ctx.axis;
         let (xs, ys) = (a.attrs.xscale, a.attrs.yscale);
-        let seg = self.segments(&r, a.view, xs, ys);
+        let seg = self.segments(&r, a.view, a.extent, xs, ys);
         if seg.is_empty() {
             return;
         }
@@ -178,7 +194,7 @@ impl PlotImpl for RefLinesState {
             .collect();
         let key = {
             let mut h = std::collections::hash_map::DefaultHasher::new();
-            (ctx.data_rev, self.style_rev, a.rebase.epoch, a.view.map(f64::to_bits)).hash(&mut h);
+            (ctx.data_rev, self.style_rev, a.rebase.epoch, a.view.map(f64::to_bits), a.extent.map(f64::to_bits)).hash(&mut h);
             h.finish()
         };
         let pts = ctx.keyed_buf(0, key, Arc::new(local));
@@ -319,10 +335,14 @@ mod tests {
             _ => unreachable!(),
         };
         let r = get(0).attrs.resolve(&Default::default(), &st.theme.globals());
-        let seg = get(0).segments(&r, [0.0, 10.0, -1.0, 1.0], Scale::Identity, Scale::Identity);
+        let nan = [f64::NAN; 4];
+        let seg = get(0).segments(&r, [0.0, 10.0, -1.0, 1.0], nan, Scale::Identity, Scale::Identity);
+        assert_eq!(seg, vec![[1.0, 0.5], [9.0, 0.5]]);
+        // With data, lines span the data extent (clipped to the view), not the margins.
+        let seg = get(0).segments(&r, [-0.5, 10.5, -1.0, 1.0], [0.0, 10.0, 0.0, 0.0], Scale::Identity, Scale::Identity);
         assert_eq!(seg, vec![[1.0, 0.5], [9.0, 0.5]]);
         let r = get(1).attrs.resolve(&Default::default(), &st.theme.globals());
-        let seg = get(1).segments(&r, [0.0, 10.0, -1.0, 1.0], Scale::Identity, Scale::Identity);
+        let seg = get(1).segments(&r, [0.0, 10.0, -1.0, 1.0], nan, Scale::Identity, Scale::Identity);
         assert_eq!(seg, vec![[0.0, 0.0], [10.0, 1.0], [0.0, 1.0], [10.0, 2.0]]);
         drop(h);
         // Rendering works end to end (SVG).

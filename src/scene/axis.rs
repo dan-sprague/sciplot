@@ -67,6 +67,40 @@ fn default_limits(scale: Scale) -> (f64, f64) {
     }
 }
 
+/// Raw data bounds of an axis' plots in scaled space (before margins), and whether any is tight.
+fn raw_bounds(st: &FigState, id: BlockId, r: &AxisResolved) -> (Bounds, Bounds, bool) {
+    let ax = st.block(id).and_then(|b| b.as_axis()).unwrap();
+    let mut bx: Bounds = None;
+    let mut by: Bounds = None;
+    let mut tight = false;
+    for pid in &ax.plots {
+        if let Some(p) = st.plot(*pid) {
+            if !p.common.visible {
+                continue;
+            }
+            tight |= p.kind.imp().tight_limits();
+            if let Some([x0, x1, y0, y1]) = p.kind.imp().data_bounds(r.xscale, r.yscale) {
+                if p.common.xautolimits && x0.is_finite() {
+                    bx = union(bx, Some((x0, x1)));
+                }
+                if p.common.yautolimits && y0.is_finite() {
+                    by = union(by, Some((y0, y1)));
+                }
+            }
+        }
+    }
+    (bx, by, tight)
+}
+
+/// The data extent of an axis in scaled space `[x0, x1, y0, y1]` (no margins); `NAN` for a
+/// dimension without data. Reference lines span this instead of the margin-padded view.
+pub(crate) fn data_extent(st: &FigState, id: BlockId, r: &AxisResolved) -> [f64; 4] {
+    let (bx, by, _) = raw_bounds(st, id, r);
+    let (x0, x1) = bx.unwrap_or((f64::NAN, f64::NAN));
+    let (y0, y1) = by.unwrap_or((f64::NAN, f64::NAN));
+    [x0, x1, y0, y1]
+}
+
 /// Visible limits (data space, ordered) for each axis in `ids`, in order.
 pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec<[f64; 4]> {
     // Per-axis resolved attributes and raw data bounds in scaled space.
@@ -77,29 +111,7 @@ pub(crate) fn compute_limits(st: &FigState, ids: &[BlockId], g: &Globals) -> Vec
     let raw: Vec<(Bounds, Bounds, bool)> = ids
         .iter()
         .zip(&resolved)
-        .map(|(id, r)| {
-            let ax = st.block(*id).and_then(|b| b.as_axis()).unwrap();
-            let mut bx: Bounds = None;
-            let mut by: Bounds = None;
-            let mut tight = false;
-            for pid in &ax.plots {
-                if let Some(p) = st.plot(*pid) {
-                    if !p.common.visible {
-                        continue;
-                    }
-                    tight |= p.kind.imp().tight_limits();
-                    if let Some([x0, x1, y0, y1]) = p.kind.imp().data_bounds(r.xscale, r.yscale) {
-                        if p.common.xautolimits && x0.is_finite() {
-                            bx = union(bx, Some((x0, x1)));
-                        }
-                        if p.common.yautolimits && y0.is_finite() {
-                            by = union(by, Some((y0, y1)));
-                        }
-                    }
-                }
-            }
-            (bx, by, tight)
-        })
+        .map(|(id, r)| raw_bounds(st, *id, r))
         .collect();
 
     let index_of = |id: &BlockId| ids.iter().position(|i| i == id);
